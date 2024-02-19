@@ -2,4 +2,4 @@
 Internship 2024
 django superuser\
 username : zerowaste\
-password : Zerowaste\
+password : Zerowaste
