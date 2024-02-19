@@ -1,5 +1,5 @@
 # ZeroWaste
 Internship 2024
-django superuser
-username : zerowaste
-password : Zerowaste
+django superuser\
+username : zerowaste\
+password : Zerowaste\
