@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Global styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f3f3; /* Subtle background */
+    }
+    label{
+        font-weight: bold;
+    }
+
+    /* Header styles */
+    .head {
+      display: flex;
+      align-items: center;
+      margin: 10px;
+    }
+
+    .head img {
+      width: 50px; /* Adjust the width of your logo */
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    .head h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    /* Centering and responsiveness */
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column; /* Adjust to column for better display */
+    }
+
+    /* Signup card styling */
+    .signup-card {
+      display: flex;
+      width: 80%; /* Adjusted width */
+      padding: 30px;
+      height: 600px; /* Adjusted height */
+      border-radius: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      margin-top: 0px; /* Adjust for space between header and card */
+    }
+
+    /* Signup details section */
+    .signup-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-right: 40px; /* Adjust spacing between form and picture */
+    }
+
+    .signup-details h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .signup-details h3 {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #666;
+    }
+
+    .signup-details form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .signup-details label {
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    .signup-details input[type="text"],
+    .signup-details input[type="password"],
+    .signup-details select {
+      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 8px;
+      display: block;
+      margin-bottom: 10px; /* Adjusted gap between fields */
+      font-size: 16px;
+    }
+
+    .signup-details input[type="submit"] {
+      background-color: #007bff; /* Blue */
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .signup-details input[type="submit"]:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    /* Already have an account section */
+    .already-have-account {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .already-have-account a {
+      color: #007bff; /* Blue */
+      text-decoration: none;
+    }
+
+    .already-have-account a:hover {
+      text-decoration: underline;
+    }
+
+    /* Picture section */
+    .picture {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .picture img {
+      max-width: 100%; /* Set maximum width to ensure responsiveness */
+      max-height: 100%; /* Set maximum height to ensure responsiveness */
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <img src="simple-icons_overleaf.png" alt="Overleaf Logo">
+    <h1>ZeroWaste</h1>
+  </div>
+  <div class="container">
+    <div class="signup-card">
+      <div class="signup-details">
+        <div>
+          <h1>Sign Up</h1>
+          <h3>Please enter your details</h3>
+        </div>
+        <form>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="text" placeholder="Enter your email">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Enter your username">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter your password">
+            <label for="location">Location</label>
+            <input id="location" name="location" type="text" placeholder="Enter your location">
+            <label for="role">Role</label>
+            <select id="role" name="role">
+              <option value="receiver">Receiver</option>
+              <option value="provider">Provider</option>
+              <option value="enduser">End User</option>
+            </select>
+            <input type="submit" value="Sign Up">
+          </form>
+        <p class="already-have-account">Already have an account? <a href="login.html">Login</a></p>
+      </div>
+      <div class="picture">
+        <img src="Rectangle 6.png" alt="Picture">
+      </div>
+    </div>
+  </div>
+</body>
+</html>
