@@ -5,3 +5,8 @@ def index(request):
     #logic here
     return render(request, "admin/home.html", context)
 
+def login(request):
+    return render(request, "admin/login.html")
+
+def register(request):
+    return render(request, "admin/register.html")
