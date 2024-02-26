@@ -1,10 +1,10 @@
+{%load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     /* Global styles */
     body {
@@ -113,6 +113,16 @@
       background-color: #0056b3; /* Darker blue on hover */
     }
 
+    /* Error message styles */
+    .error-message {
+      background-color: #f8d7da; /* Red background color */
+      color: #721c24; /* Red text color */
+      border: 1px solid #f5c6cb; /* Red border color */
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
     /* Already have an account section */
     .already-have-account {
       margin-top: 20px;
@@ -146,7 +156,7 @@
 </head>
 <body>
   <div class="head">
-    <img src="simple-icons_overleaf.png" alt="Overleaf Logo">
+    <img src="{% static 'simple-icons_overleaf.png' %}" alt="Overleaf Logo">
     <h1>ZeroWaste</h1>
   </div>
   <div class="container">
@@ -156,29 +166,75 @@
           <h1>Sign Up</h1>
           <h3>Please enter your details</h3>
         </div>
-        <form>
-            <label for="email">Email</label>
-            <input id="email" name="email" type="text" placeholder="Enter your email">
-            <label for="username">Username</label>
-            <input id="username" name="username" type="text" placeholder="Enter your username">
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="Enter your password">
-            <label for="location">Location</label>
-            <input id="location" name="location" type="text" placeholder="Enter your location">
-            <label for="role">Role</label>
-            <select id="role" name="role">
-              <option value="receiver">Receiver</option>
-              <option value="provider">Provider</option>
-              <option value="enduser">End User</option>
-            </select>
-            <input type="submit" value="Sign Up">
-          </form>
+        <form id="signupForm" method="POST" \onsubmit="return validateForm()">
+          {% csrf_token %}
+          <div id="errorMessage" class="error-message" style="display: none;"></div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="text" placeholder="Enter your email">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" placeholder="Enter your username">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Enter your password">
+           <label for="location">Location</label>
+          <input id="location" name="location" type="text" placeholder="Enter your location">
+          <label for="role">Role</label>
+          <select id="role" name="role">
+            <option value="receiver">Receiver</option>
+            <option value="provider">Provider</option>
+            <option value="enduser">End User</option>
+          </select>
+          <input type="submit" value="Sign Up">
+        </form>
         <p class="already-have-account">Already have an account? <a href="login">Login</a></p>
       </div>
       <div class="picture">
-        <img src="Rectangle 6.png" alt="Picture">
+        <img src="{% static 'Rectangle 6.png' %}" alt="Picture">
       </div>
     </div>
   </div>
+  <script>
+    function validateForm() {
+      var email = document.getElementById("email").value;
+      var username = document.getElementById("username").value;
+      var password = document.getElementById("password").value;
+      var location = document.getElementById("location").value;
+      var role = document.getElementById("role").value;
+
+      // Clear previous error message
+      document.getElementById("errorMessage").style.display = "none";
+
+      // Validation logic
+      if (!email || !username || !password  || !location || !role) {
+        document.getElementById("errorMessage").innerHTML = "Please fill out all fields";
+        document.getElementById("errorMessage").style.display = "block";
+        return false;
+      }
+
+      // Email validation
+      var emailRegex = /\S+@\S+\.\S+/;
+      if (!emailRegex.test(email)) {
+        document.getElementById("errorMessage").innerHTML = "Please enter a valid email address";
+        document.getElementById("errorMessage").style.display = "block";
+        return false;
+      }
+
+      // Password strength validation (you can add more complex validation as needed)
+      if (password.length < 8) {
+        document.getElementById("errorMessage").innerHTML = "Password must be at least 8 characters long";
+        document.getElementById("errorMessage").style.display = "block";
+        return false;
+      }
+
+      // Confirm password validation
+      if (password !== confirm_password) {
+        document.getElementById("errorMessage").innerHTML = "Passwords do not match";
+        document.getElementById("errorMessage").style.display = "block";
+        return false;
+      }
+
+      // If all validations pass, the form will be submitted
+      return true;
+    }
+  </script>
 </body>
 </html>

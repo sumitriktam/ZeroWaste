@@ -1,10 +1,11 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     /* Global styles */
     body {
@@ -39,10 +40,10 @@
       width: 1400px; /* Adjusted width */
       padding: 20px;
       height: 500px;
-      border-radius: 5px;
-      background-color: #f7f7f75d;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-      margin-top: 20px; /* Adjust for space between header and card */
+      border-radius: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      margin-top: 0px; /* Adjust for space between header and card */
     }
 
     /* Login details section */
@@ -114,15 +115,27 @@
     }
 
     .picture img {
-      max-width: 100%;
-      max-height: 100%;
+      max-width: 100%; /* Set maximum width to ensure responsiveness */
+      max-height: 100%; /* Set maximum height to ensure responsiveness */
       border-radius: 5px;
     }
+
+    /* Validation message styling */
+    .validation-message {
+      background-color: #f8d7da; /* Red background color */
+        color: #721c24; /* Red text color */
+        border: 1px solid #f5c6cb; /* Red border color */
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+      
   </style>
 </head>
 <body>
   <div class="head">
-    <img src="simple-icons_overleaf.png" alt="Overleaf Logo" style="height: 50px;width:50px;padding:10px">
+    <img src="{% static 'simple-icons_overleaf.png' %}" alt="Overleaf Logo" style="height: 50px;width:50px;padding:10px">
   <h1>ZeroWaste</h1>
   </div>
   <div class="container">
@@ -130,10 +143,20 @@
     <div class="login-card">
       <div class="login-details">
         <div>
-          <h1>Login page</h1>
-          <h3>Please Enter your email and password</h3>
+          <h1>Login</h1>
         </div>
-        <form>
+        <form id="loginForm" method="post" onsubmit="return validateForm()">
+          {% csrf_token %}
+          {% if messages %}
+  <div class="validation-message" id="validationMessage">
+    <ul>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  
           <label for="email">Email</label><br>
           <input id="email" name="email" type="text"><br>
 
@@ -147,6 +170,7 @@
             </div>
             <a href="forgot_password.html">Forgot Password?</a>
           </div>
+          
 
           <input type="submit" value="Login">
         </form>
@@ -154,9 +178,36 @@
       </div>
 
       <div class="picture">
-        <img src ="Rectangle 6.png" alt="Picture" >
+        <img src ="{% static 'Rectangle 6.png' %}" alt="Picture" >
       </div>
     </div>
   </div>
+
+  <script>
+    function validateForm() {
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      var validationMessage = document.getElementById("validationMessage");
+
+      // Clear previous validation messages
+      validationMessage.innerHTML = '';
+
+      // Simple email validation
+      var emailRegex = /\S+@\S+\.\S+/;
+      if (!emailRegex.test(email)) {
+        validationMessage.innerHTML = "Please enter a valid email address.";
+        return false;
+      }
+
+      // Password length validation
+      if (password.length < 6) {
+        validationMessage.innerHTML = "Password must be at least 6 characters long.";
+        return false;
+      }
+
+      // Form is valid, allow submission
+      return true;
+    }
+  </script>
 </body>
 </html>
