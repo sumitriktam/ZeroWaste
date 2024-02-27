@@ -6,6 +6,7 @@ from django.contrib import messages
 from .custom_auth import  CustomBackend
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from . import urls
 
 def index(request):
     context = {}
@@ -41,30 +42,27 @@ def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
-        # Instantiate your custom authentication backend
         custom_backend = CustomBackend()
-        
-        # Use the authenticate method of the custom authentication backend to authenticate the user
         user = custom_backend.authenticate(request, email=email, password=password)
+        regUser = custom_backend.authenticate(request, email=email)
+
+        if regUser is None:
+            return redirect('/register')
         
-        if user is not None:
-            # Authentication successful, log the user in
+        elif user is not None:
             request.session['user_id'] = user.id
             if user.role=='admin':
-                return  redirect("adminPanel")
+                return  redirect("admin/adminPanel")
             elif user.role=='provider':
-                return  redirect("providerHome")
+                return  redirect("provider/home")
             elif user.role=='receiver':
-                return  redirect("receiverHome")
-            # Redirect to dashboard or profile page
+                return  redirect("receiver/home")
             else:
-                # need to add a alert showing the user is not registered, then redirect to register page
-                return redirect('register')
+                return redirect('/register')
         else:
             # Authentication failed
             messages.error(request, 'Invalid email or password.')
-            return redirect('login')
+            return redirect('/login')
     else:
         # Render the login page
         return render(request, 'admin/login.html' , {"message":messages.get_messages(request)})
@@ -80,7 +78,7 @@ def register(request):
         
         if form.is_valid():
             form.save()
-            return redirect('wait')
+            return redirect('/wait')
         else:
             print(form.errors)
     else:
