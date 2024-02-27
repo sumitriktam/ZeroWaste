@@ -256,12 +256,16 @@
             padding: 10px 0;
             text-align: center;
         }
+        .leaderboard h1 {
+            padding: 150px;
+            background-color: lightyellow;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="logo-title">
-            <img class="logo" src="{% static 'simple-icons_overleaf.png' %}" alt="Overleaf Logo">
+            <img class="logo" src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
             <h1 class="title">ZeroWaste</h1>
         </div>
         <nav class="nav-menu">
@@ -275,9 +279,10 @@
         </div>
     </header>
 
-    <div class="banner">
-        <h2>Welcome to ZeroWaste</h2>
-        <p>Connecting Communities for a Sustainable Future</p>
+    <div class="leaderboard">
+        <h1>
+            leaderboard will be displayed header
+        </h1>
     </div>
 
     <section class="vision">
@@ -293,7 +298,7 @@
                 Join us in our mission to make zero waste a reality!
             </p>
         </div>
-        <img class="vision-image" src="{% static 'Rectangle 13.png' %}" alt="Vision Image">
+        <img class="vision-image" src="{% static 'admin/media/Rectangle 13.png' %}" alt="Vision Image">
     </section>
     <h2 style="padding-left: 40px;">What We Offer</h2>
     <section class="Features">

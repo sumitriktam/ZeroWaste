@@ -6,7 +6,6 @@ from django.contrib import messages
 from .custom_auth import  CustomBackend
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from . import urls
 
 def index(request):
     context = {}
@@ -23,7 +22,8 @@ def adminPanel(request):
         'pending_users': pending_users,
         'rejected_users': rejected_users,
     }
-    return render(request, "admin/adminPanel.html")
+    return render(request, "admin/adminPanel.html", context)
+
 
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -44,15 +44,12 @@ def login(request):
         password = request.POST.get('password')
         custom_backend = CustomBackend()
         user = custom_backend.authenticate(request, email=email, password=password)
-        regUser = custom_backend.authenticate(request, email=email)
-
-        if regUser is None:
-            return redirect('/register')
+        # regUser = custom_backend.authenticate(request, email=email)
         
-        elif user is not None:
+        if user is not None:
             request.session['user_id'] = user.id
             if user.role=='admin':
-                return  redirect("admin/adminPanel")
+                return  redirect("/adminPanel")
             elif user.role=='provider':
                 return  redirect("provider/home")
             elif user.role=='receiver':
