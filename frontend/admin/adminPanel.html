@@ -177,7 +177,7 @@
 </head>
 <body>
     <div class="head">
-        <img src="{% static 'simple-icons_overleaf.png' %}" alt="Overleaf Logo">
+        <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
         <h1>ZeroWaste</h1>
     </div>
 
@@ -221,8 +221,8 @@
             <div class="user-details">
                 <p><strong>Username:</strong> {{ user.username }}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
-                <button onclick="approveUser('{{ user.id }}')">Approve</button>
-                <button onclick="rejectUser('{{ user.id }}')">Reject</button>
+                <button type="button" onclick="approveUser('{{ user.id }}')">Approve</button>
+                <button type="button" onclick="rejectUser('{{ user.id }}')">Reject</button>
             </div>
             {% endfor %}
         </div>
