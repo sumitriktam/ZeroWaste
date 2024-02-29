@@ -57,7 +57,7 @@ def login(request):
             else:
                 return redirect('/register')
         else:
-            # Authentication failed
+            request.session['user_id'] = 0    #invalidated user
             messages.error(request, 'Invalid email or password.')
             return redirect('/login')
     else:
