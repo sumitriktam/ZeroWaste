@@ -9,14 +9,13 @@ from django.shortcuts import get_object_or_404
 
 def index(request):
     context = {}
-    #logic here
     return render(request, "admin/home.html", context)
 
 def adminPanel(request):
-    accepted_users = User.objects.filter(status='accepted')  
+    accepted_users = User.objects.filter(status='accepted')
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
-    
+
     context = {
         'accepted_users': accepted_users,
         'pending_users': pending_users,
@@ -24,19 +23,37 @@ def adminPanel(request):
     }
     return render(request, "admin/adminPanel.html", context)
 
-
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user.status = 'accepted'
-    user.save()
-    return JsonResponse({'message': 'User approved successfully'})
+    user.save(update_fields=['status'])
+
+    accepted_users = User.objects.filter(status='accepted')
+    pending_users = User.objects.filter(status='pending')
+    rejected_users = User.objects.filter(status='rejected')
+
+    data = {
+        'accepted_users': list(accepted_users.values()),
+        'pending_users': list(pending_users.values()),
+        'rejected_users': list(rejected_users.values()),
+    }
+    return JsonResponse(data)
 
 def reject_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    print(user)
     user.status = 'rejected'
-    user.save()
-    return JsonResponse({'message': 'User rejected successfully'})
+    user.save(update_fields=['status'])
+
+    accepted_users = User.objects.filter(status='accepted')
+    pending_users = User.objects.filter(status='pending')
+    rejected_users = User.objects.filter(status='rejected')
+
+    data = {
+        'accepted_users': list(accepted_users.values()),
+        'pending_users': list(pending_users.values()),
+        'rejected_users': list(rejected_users.values()),
+    }
+    return JsonResponse(data)
 
 def login(request):
     if request.method == 'POST':
@@ -48,7 +65,9 @@ def login(request):
         
         if user is not None:
             request.session['user_id'] = user.id
-            if user.role=='admin':
+            if user.status == 'pending':
+                return  redirect("/wait")
+            elif user.role=='admin':
                 return  redirect("/adminPanel")
             elif user.role=='provider':
                 return  redirect("provider/home")
@@ -57,7 +76,6 @@ def login(request):
             else:
                 return redirect('/register')
         else:
-            # Authentication failed
             messages.error(request, 'Invalid email or password.')
             return redirect('/login')
     else:
