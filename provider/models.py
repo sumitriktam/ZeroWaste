@@ -1,6 +1,7 @@
 from django.db import models
 from admin_mod.models import User 
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 # Create your models here.
@@ -35,6 +36,16 @@ class post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='live')
     quantity = models.CharField(max_length=25, default='1')
     created_at = models.DateTimeField(default=timezone.now)
+
+class toysDes(models.Model):
+    age_group = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(30)])
+    COND_CHOICES = (
+        ('new', 'New'),
+        ('mint', 'Mint'),
+        ('old','Old'),
+    )
+    condition = models.CharField(max_length=10, choices=COND_CHOICES)
+    desc = models.CharField(max_length=1000, default="")
 
 
     

@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    
-    <link rel="stylesheet" href="/statics/provider/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-</head>
-<body>
+{% extends "provider/provbase.html" %}
+{% block content %}
 
-    <div class="container">
-        <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
-        <p class="top-left-text" >ZeroWaste</p>
-        <nav class="navbar">
-            <!-- Add your navbar content here -->
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#feedback">Feedback</a></li>
-                <li><a href="#chatbox">Chat box</a></li>
-            </ul>
-        </nav>
-        <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
         <p class="welcome" >Welcome <span style="color:green">{{uname}}</span>!</p>
         <p class="code" >You are an <span style="color:green">{{data}}</span> donor!</p>
         <div class="custom-box box1"><p class="text-donations" >No.of donations:</p>
@@ -36,7 +14,7 @@
             <div class=" custom-box-2">
                 {% for post in posts %}
                     <div class="historybox">
-                        <img src="{{ post.photo }}" alt="Your Image" class="image2">
+                        <img src="/{{ post.photo }}" alt="Your Image" class="image2">
                         <div class="history-details">
                             <div class="custom-box-line2 line2_position1"><b>ID: </b><span style="color:green">{{ post.id }}</span> <span style="position:absolute;right:0px">{{ post.created_at|timesince }}</span></div>
                             <div class="custom-box-line2 line2_position2"><span>{{ post.name }}</span></div>
@@ -71,9 +49,11 @@
         </div>
         <div class="custom-box6">
             <center><p style="font-family: 'Inter', sans-serif;font-size:22px; position:absolute;top:20px;left:60px;">Share what you can spare, someone out there will care</p></center>
-            <button class="donate-button ">
+            <a href="/provider/new">
+                <button class="donate-button ">
                     <i class="fas fa-plus plus-icon"></i>
                 Donate</button>
+            </a>
         </div>
         <div class="custom-box-line line_position4"></div>
         <div class="custom-box7">
@@ -100,5 +80,5 @@
           document.getElementById('custom-box8').style.marginBottom = `${10 + arrowPressCount * 40}px`;
         }
       </script>
-</body>
-</html>
+
+{% endblock %}
