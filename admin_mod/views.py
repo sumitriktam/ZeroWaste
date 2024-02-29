@@ -12,10 +12,10 @@ def index(request):
     return render(request, "admin/home.html", context)
 
 def adminPanel(request):
-    accepted_users = User.objects.filter(status='accepted')  
+    accepted_users = User.objects.filter(status='accepted')
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
-    
+
     context = {
         'accepted_users': accepted_users,
         'pending_users': pending_users,
@@ -23,18 +23,37 @@ def adminPanel(request):
     }
     return render(request, "admin/adminPanel.html", context)
 
-
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user.status = 'accepted'
     user.save(update_fields=['status'])
-    return JsonResponse({'message': 'User approved successfully'})
+
+    accepted_users = User.objects.filter(status='accepted')
+    pending_users = User.objects.filter(status='pending')
+    rejected_users = User.objects.filter(status='rejected')
+
+    data = {
+        'accepted_users': list(accepted_users.values()),
+        'pending_users': list(pending_users.values()),
+        'rejected_users': list(rejected_users.values()),
+    }
+    return JsonResponse(data)
 
 def reject_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user.status = 'rejected'
     user.save(update_fields=['status'])
-    return JsonResponse({'message': 'User rejected successfully'})
+
+    accepted_users = User.objects.filter(status='accepted')
+    pending_users = User.objects.filter(status='pending')
+    rejected_users = User.objects.filter(status='rejected')
+
+    data = {
+        'accepted_users': list(accepted_users.values()),
+        'pending_users': list(pending_users.values()),
+        'rejected_users': list(rejected_users.values()),
+    }
+    return JsonResponse(data)
 
 def login(request):
     if request.method == 'POST':
