@@ -1,20 +1,22 @@
 from django.contrib.auth.backends import ModelBackend
+import hashlib
 from .models import User, Admin
-from django.contrib.auth.hashers import check_password
 
-class CustomBackend:
+class CustomBackend(ModelBackend):
     def authenticate(self, request, email=None, password=None):
         try:
             user = User.objects.get(email=email)
-            if user and check_password(password, user.password):
+            if user and user.password == hashlib.sha256(password.encode()).hexdigest():
                 return user
             admin = Admin.objects.get(email=email)
-            if admin and check_password(password, admin.password):
+            if admin and admin.password == hashlib.sha256(password.encode()).hexdigest():
                 return admin
             else:
                 return None
-        except:
+        except (User.DoesNotExist, Admin.DoesNotExist):
             return None
+
+
         
 
 

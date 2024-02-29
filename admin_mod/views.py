@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404
 
 def index(request):
     context = {}
-    #logic here
     return render(request, "admin/home.html", context)
 
 def adminPanel(request):
@@ -28,14 +27,13 @@ def adminPanel(request):
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user.status = 'accepted'
-    user.save()
+    user.save(update_fields=['status'])
     return JsonResponse({'message': 'User approved successfully'})
 
 def reject_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    print(user)
     user.status = 'rejected'
-    user.save()
+    user.save(update_fields=['status'])
     return JsonResponse({'message': 'User rejected successfully'})
 
 def login(request):
@@ -48,7 +46,9 @@ def login(request):
         
         if user is not None:
             request.session['user_id'] = user.id
-            if user.role=='admin':
+            if user.status == 'pending':
+                return  redirect("/wait")
+            elif user.role=='admin':
                 return  redirect("/adminPanel")
             elif user.role=='provider':
                 return  redirect("provider/home")
@@ -57,7 +57,6 @@ def login(request):
             else:
                 return redirect('/register')
         else:
-            # Authentication failed
             messages.error(request, 'Invalid email or password.')
             return redirect('/login')
     else:
