@@ -19,7 +19,7 @@
                             <div class="custom-box-line2 line2_position1"><b>ID: </b><span style="color:green">{{ post.id }}</span> <span style="position:absolute;right:0px">{{ post.created_at|timesince }}</span></div>
                             <div class="custom-box-line2 line2_position2"><span>{{ post.name }}</span></div>
                             <div class="custom-box-line2 line2_position3"><span>{{ post.quantity }}</span></div>
-                            <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:330px;">Completed</span></center></div>
+                            <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:330px;">{{post.status}}</span></center></div>
                 
                         </div>
                     </div> 

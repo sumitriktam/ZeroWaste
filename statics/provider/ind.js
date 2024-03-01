@@ -1,36 +1,31 @@
 // Add your JavaScript code here
 
-// Function to dynamically generate form fields based on selected category
+
 function generateFormFields(category) {
     const formFieldsDiv = document.getElementById('form-fields');
-    formFieldsDiv.innerHTML = ''; // Clear existing form fields
+    formFieldsDiv.innerHTML = ''; 
 
     switch(category) {
         case 'food':
             formFieldsDiv.innerHTML = `
-                <input type="text" id="name" placeholder="Name">
-                <input type="text" id="food-quantity" placeholder="Food Quantity">
-                <input type="date" id="expiry-date">
-                <textarea id="description" placeholder="Description"></textarea>
+            <input type="date" name="expiry-date">
+            <input type="time" name="expiry-time">
+            <textarea name="desc" placeholder="Description"></textarea>
             `;
             break;
         case 'clothes':
             formFieldsDiv.innerHTML = `
-                <input type="text" id="name" placeholder="Name">
-                <input type="text" id="clothing-type" placeholder="Clothing Type">
-                <input type="text" id="gender" placeholder="Gender">
-                <input type="text" id="clothing-size" placeholder="Clothing Size">
-                <input type="text" id="condition" placeholder="Condition">
-                <textarea id="description" placeholder="Description"></textarea>
+                <input type="text" name="gender" placeholder="Gender">
+                <input type="text" name="size" placeholder="Clothing Size">
+                <input type="text" name="cond" placeholder="Condition">
+                <textarea name="desc" placeholder="Description"></textarea>
             `;
             break;
         case 'groceries':
             formFieldsDiv.innerHTML = `
-                <input type="text" id="name" placeholder="Name">
-                <input type="text" id="quantity" placeholder="Quantity">
-                <input type="date" id="expiry-date">
-                <input type="time" id="expiry-time">
-                <textarea id="description" placeholder="Description"></textarea>
+                <input type="date" name="expiry-date">
+                <input type="time" name="expiry-time">
+                <textarea name="desc" placeholder="Description"></textarea>
             `;
             break;
         case 'toys':
@@ -39,6 +34,11 @@ function generateFormFields(category) {
                 <input type="text" name="cond" placeholder="Condition">
                 <textarea name="desc" placeholder="Description"></textarea>
             `;
+            break;
+        case 'others':
+                formFieldsDiv.innerHTML = `
+                    <textarea name="desc" placeholder="Description"></textarea>
+                `;
             break;
         default:
             // Do nothing

@@ -47,20 +47,39 @@ class toysDes(models.Model):
     condition = models.CharField(max_length=10, choices=COND_CHOICES)
     desc = models.CharField(max_length=1000, default="")
 
+class groceryDes(models.Model):
+    desc = models.CharField(max_length=1000, default="")
+    expiry_date = models.DateField()
+    expiry_time = models.TimeField()
 
-    
+class clothDes(models.Model):
+    desc = models.CharField(max_length=1000, default="")
+    GENDER_CHOICES = [
+        ('male', 'For Male'),
+        ('female', 'For Female'),
+        ('both', 'For Both'),
+    ]
+    gender = models.CharField(max_length=25, choices=GENDER_CHOICES)
+    COND_CHOICES = (
+        ('new', 'New'),
+        ('mint', 'Mint'),
+        ('old','Old'),
+    )
+    condition = models.CharField(max_length=10, choices=COND_CHOICES)
+    SIZE_CHOICES = (
+        ('s', 'S'),
+        ('m', 'M'),
+        ('l','L'),
+        ('xl', 'XL'),
+        ('xxl', 'XXL'),
+        ('other', 'Other'),
+    )
+    size = models.CharField(max_length=10, choices=COND_CHOICES)
 
-# from provider.models import post
+class foodDes(models.Model):
+    desc = models.CharField(max_length=1000, default="")
+    expiry_date = models.DateField()
+    expiry_time = models.TimeField()
 
-
-# new_post = post(
-#     user_id=1,
-#     photo='/statics/provider/postpics/pizza.jpeg',
-#     category='toys',
-#     description_id='d110',
-#     name='Buzz LightYear',
-#     location='Delhi, India',
-#     drop_pickup='drop',
-#     will_expire='expirable'
-# )
-# new_post.save()
+class otherDes(models.Model):
+    desc = models.CharField(max_length=1000, default="")

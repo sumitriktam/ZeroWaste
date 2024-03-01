@@ -418,3 +418,12 @@ body {
     /* top:135%; */
     top:1150px;
 }
+
+.message-any {
+    background-color: #29791b; /* Red background color */
+      color: #041b08; /* Red text color */
+      border: 1px solid #132405; /* Red border color */
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+  }
