@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 # Create your models here.
-class post(models.Model):
+class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='statics/provider/postpics', blank=True)
     CATEGORY_CHOICES = (

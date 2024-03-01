@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from admin_mod.models import User
-from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
+from .models import Post, toysDes, groceryDes, clothDes, foodDes, otherDes
 from django.contrib import messages
 from datetime import datetime
 
@@ -11,7 +11,7 @@ def homePage(request):
     except:
         messages.error(request, 'You need to login first.')
         return redirect('/login')
-    matching_posts = post.objects.filter(user_id=1).order_by('-created_at')
+    matching_posts = Post.objects.filter(user_id=1).order_by('-created_at')
     context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts}
     return render(request, "provider/dashboard.html", context)
 
@@ -56,7 +56,7 @@ def newPost(request):
         #saving description
         obj.save()
 
-        post_here = post(
+        post_here = Post(
             user_id = uid,
             photo = request.FILES.get('photo'),
             category = category,

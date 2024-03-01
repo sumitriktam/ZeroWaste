@@ -1,0 +1,390 @@
+{% load static %}
+<html>
+  <head>
+    <style>
+      #logo {
+        margin-top: 12px;
+        margin-left: 10px;
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      #name {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 10px;
+        font-weight: bold;
+        font-size: large;
+      }
+
+      .navbar-container {
+        border: 1px solid rgb(80, 76, 76);
+        padding: 5px;
+        display: inline-block;
+        background-color: lightgray;
+        border-radius: 10px;
+        width: 500px;
+        height: 20px;
+        margin-top: 10px;
+        margin-left: 320px;
+      }
+
+      .nav-con {
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        width: 320px;
+        height: 20px;
+        margin-left: 10px;
+        margin-top: 10px;
+      }
+
+      .navbar {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+
+      .navbar li {
+        margin-left: 50px;
+      }
+
+      .navbar li a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .navbar li a:hover {
+        text-decoration: underline;
+      }
+
+      .horizontal {
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+      }
+
+      .vertical {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid lightgray;
+        padding: 10px;
+        margin: 20px;
+        margin-top: 0px;
+        border-radius: 10px;
+        background-color: white;
+        width: 500px;
+      }
+
+      .vertical img {
+        margin: 20px;
+        border-radius: 10px;
+        margin-bottom: 0px;
+        width: 300px;
+        height: 300px;
+      }
+
+      .container {
+        background-color: lightgray;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        margin-top: 5px;
+      }
+
+      .left img {
+        width: 440px;
+        height: auto;
+      }
+      .details {
+        display: inline-flex;
+        margin-left: 20px;
+      }
+      /* CSS */
+      .button {
+        align-items: center;
+        appearance: none;
+        background-color: #fff;
+        border-radius: 24px;
+        border-style: none;
+        box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px -1px,
+          rgba(0, 0, 0, 0.14) 0 6px 10px 0, rgba(0, 0, 0, 0.12) 0 1px 18px 0;
+        box-sizing: border-box;
+        color: #3c4043;
+        cursor: pointer;
+        display: inline-flex;
+        fill: currentcolor;
+        font-family: "Google Sans", Roboto, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        height: 48px;
+        justify-content: center;
+        letter-spacing: 0.25px;
+        line-height: normal;
+        max-width: 100%;
+        overflow: visible;
+        padding: 2px 24px;
+        position: relative;
+        text-align: center;
+        text-transform: none;
+        transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 15ms linear 30ms,
+          transform 270ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        width: auto;
+        will-change: transform, opacity;
+        z-index: 0;
+      }
+
+      .button {
+        background: #f6f9fe;
+        color: green;
+      }
+
+      .button:active {
+        box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%),
+          0 8px 12px 6px rgb(60 64 67 / 15%);
+        outline: none;
+      }
+
+      .button:focus {
+        outline: none;
+        border: 2px solid #4285f4;
+      }
+
+      .button:not(:disabled) {
+        box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+          rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+      }
+
+      .button:not(:disabled):hover {
+        box-shadow: rgba(60, 64, 67, 0.3) 0 2px 3px 0,
+          rgba(60, 64, 67, 0.15) 0 6px 10px 4px;
+      }
+
+      .button:not(:disabled):focus {
+        box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+          rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+      }
+
+      .button:not(:disabled):active {
+        box-shadow: rgba(60, 64, 67, 0.3) 0 4px 4px 0,
+          rgba(60, 64, 67, 0.15) 0 8px 12px 6px;
+      }
+
+      .button:disabled {
+        box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+          rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+      }
+    </style>
+  </head>
+  <body>
+    {{post_data}}
+    <div class="horizontal">
+      <img
+        id="logo"
+        src="{% static 'logo_zero_waste.png' %}"
+        alt="Zero Waste Logo"
+      />
+      <h3 id="name">ZEROWASTE</h3>
+
+      <div class="navbar-container">
+        <ul class="navbar">
+          <li><a href="#">HOME</a></li>
+          <li><a href="#">ABOUT</a></li>
+          <li><a href="#">FEEDBACK</a></li>
+          <li><a href="#">CHAT</a></li>
+        </ul>
+      </div>
+
+      <div class="circle"></div>
+    </div>
+    <div class="container">
+      <div class="horizontal">
+        <div class="one">
+          <p
+            style="
+              color: green;
+              font-weight: bold;
+              margin-top: 20px;
+              margin-left: 30px;
+            "
+          >
+            ORDER-IMAGE
+          </p>
+          <div class="vertical">
+            <div
+              style="
+                background-color: lightgrey;
+                border-radius: 10px;
+                width: 480px;
+                margin: 10px;
+                margin-top: 0px;
+              "
+            >
+              <div class="left">
+                <img src="{{post_data.image}}" />
+                <p style="margin-left: 200px">&#9673; &#9673; &#9673;</p>
+              </div>
+            </div>
+          </div>
+          <div class="nav-con">
+            <div
+              style="
+                border-radius: 20px;
+                background-color: white;
+                width: 170px;
+                height: 20px;
+                display: flex;
+                padding: 10px;
+                margin: 5px;
+              "
+            >
+              RESTAURANT NAME
+            </div>
+            <p style="color: red; margin-top: 12px">
+              &nbsp;&nbsp;&nbsp;&#9733;&#9733;&#9733;&#9733;
+            </p>
+          </div>
+          <br />
+          <div
+            style="
+              border-radius: 20px;
+              background-color: white;
+              width: 130px;
+              height: 20px;
+              display: inline;
+              padding: 10px;
+              margin-left: 20px;
+            "
+          >
+            DELIVERY TYPE
+          </div>
+        </div>
+        <div class="one">
+          <p
+            style="
+              color: green;
+              font-weight: bold;
+              margin-top: 20px;
+              margin-left: 30px;
+            "
+          >
+            ORDER-DETAILS
+          </p>
+          <div class="vertical">
+            <div class="details">
+              <div
+                style="
+                  border-radius: 20px;
+                  background-color: lightgrey;
+                  width: 120px;
+                  height: 20px;
+                  display: flex;
+                  padding: 10px;
+                  margin: 5px;
+                "
+              >
+                FOOD QUALITY
+              </div>
+              <div
+                style="
+                  border-radius: 20px;
+                  background-color: lightgrey;
+                  width: 120px;
+                  height: 20px;
+                  display: flex;
+                  padding: 10px;
+                  margin: 5px;
+                "
+              >
+                NON-VEG/VEG
+              </div>
+            </div>
+            <div class="details">
+              <div
+                style="
+                  border-radius: 20px;
+                  background-color: lightgrey;
+                  width: 120px;
+                  height: 20px;
+                  display: flex;
+                  padding: 10px;
+                  margin: 5px;
+                "
+              >
+                EXPIRY DATE
+              </div>
+              <div
+                style="
+                  border-radius: 20px;
+                  background-color: lightgrey;
+                  width: 120px;
+                  height: 20px;
+                  display: flex;
+                  padding: 10px;
+                  margin: 5px;
+                "
+              >
+                LOCATION
+              </div>
+            </div>
+            <div
+              style="
+                width: 300px;
+                height: 80px;
+                background-color: lightgray;
+                padding: 10px;
+                margin: 10px;
+                border-radius: 20px;
+                margin-left: 20px;
+              "
+            >
+              DESCRIPTION
+            </div>
+            <div
+              class="bold-line"
+              style="border-top: 3px solid black; width: 95%; margin-left: 5px"
+            ></div>
+            <div
+              style="
+                border-radius: 20px;
+                background-color: lightgrey;
+                width: 180px;
+                height: 20px;
+                display: flex;
+                padding: 10px;
+                margin: 5px;
+              "
+            >
+              QUANTITY REQUIRED
+            </div>
+            <form
+              action="{% url 'order' post_id=post_data.post_id %}"
+              method="post"
+            >
+              {% csrf_token %}
+              <button
+                class="button"
+                style="
+                  color: red;
+                  margin-left: 35px;
+                  margin-bottom: 5px;
+                  margin-top: 5px;
+                "
+              >
+                ORDER ME
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
