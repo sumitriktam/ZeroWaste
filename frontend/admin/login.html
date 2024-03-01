@@ -6,182 +6,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <style>
-    /* Global styles */
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f3f3f3; /* Subtle background */
-    }
-
-    /* Header styles */
-    .head {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .header img {
-      width: 100px; /* Adjust the width of your logo */
-      height: 100px;
-    }
-
-    /* Centering and responsiveness */
-    .container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column; /* Adjust to column for better display */
-    }
-
-    /* Login card styling */
-    .login-card {
-      display: flex;
-      width: 1400px; /* Adjusted width */
-      padding: 20px;
-      height: 500px;
-      border-radius: 20px;
-      background-color: #fff;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      margin-top: 0px; /* Adjust for space between header and card */
-    }
-
-    /* Login details section */
-    .login-details {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-
-    }
-
-    .login-details h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .login-details h3 {
-      font-size: 16px;
-      margin-bottom: 20px;
-      color: #999;
-    }
-
-    .login-details form {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .login-details label {
-      margin-bottom: 5px;
-    }
-
-    .login-details input[type="text"],
-    .login-details input[type="password"] {
-      border: 1px solid #ccc;
-      padding: 5px;
-      border-radius: 10px;
-      display: block;
-      height: 30px;
-      margin-bottom: 10px;
-    }
-
-    .login-details input[type="submit"] {
-      background-color: rgb(16, 100, 195); /* Green */
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    /* Checkbox styling */
-    .login-details .remember-me {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    /* Picture section */
-    .picture {
-      flex: 1;
-      border-radius: 5px;
-      display: flex;
-    
-      justify-content: center;
-      align-items: center;
-    }
-
-    .picture img {
-      max-width: 100%; /* Set maximum width to ensure responsiveness */
-      max-height: 100%; /* Set maximum height to ensure responsiveness */
-      border-radius: 5px;
-    }
-
-    /* Validation message styling */
-    .validation-message {
-      background-color: #f8d7da; /* Red background color */
-        color: #721c24; /* Red text color */
-        border: 1px solid #f5c6cb; /* Red border color */
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
-
-      
-  </style>
+  <link rel="stylesheet" href="{% static 'admin/css/login.css' %}">
 </head>
+<style>
+  body {
+    background-image: url('{% static 'admin/media/loginbg.png' %}');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(5px);
+  }
+</style>
 <body>
-  <div class="head">
-    <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo" style="height: 50px;width:50px;padding:10px">
-  <h1>ZeroWaste</h1>
-  </div>
-  <div class="container">
-
-    <div class="login-card">
-      <div class="login-details">
-        <div>
-          <h1>Login</h1>
-        </div>
-        <form id="loginForm" method="post" onsubmit="return validateForm()">
-          {% csrf_token %}
-          {% if messages %}
-  <div class="validation-message" id="validationMessage">
-    <ul>
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
   
-          <label for="email">Email</label><br>
-          <input id="email" name="email" type="text"><br>
-
-          <label for="password">Password</label><br>
-          <input id="password" name="password" type="password"><br>
-
-          <div class="remember-me">
-            <div>
-              <input type="checkbox" id="remember" name="remember">
-              <label for="remember">Remember me</label>
-            </div>
-            <a href="forgot_password.html">Forgot Password?</a>
-          </div>
-          
-
-          <input type="submit" value="Login">
-        </form>
-        <p>Don't have an account? <a href="register">Register now</a> at the bottom.</p>
-      </div>
-
-      <div class="picture">
-        <img src ="{% static 'admin/media/Rectangle 6.png' %}" alt="Picture" >
-      </div>
+  <div class="container">
+    <div class="head">
+      <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo" style="height: 50px;width:50px;padding:10px">
+      <h1 style="color:black">ZeroWaste</h1><br>
     </div>
-  </div>
+    <div class="picture">
+      <img src="{% static 'admin/media/waste1.jpg' %}" alt="Picture">
+    </div>
+  <div class="form-container">
+    <div>
+      <h2>Login here</h2>
+    </div>
+    <form id="loginForm" method="post" onsubmit="return validateForm()">
+      {% csrf_token %}
+      {% if messages %}
+<div class="validation-message" id="validationMessage">
+<ul>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+      <label for="email" style="margin-left:14%">Email</label><br>
+      <input id="email" name="email" type="text" placeholder="Enter your Email"><br>
+
+      <label for="password" style="margin-left:14%">Password</label><br>
+      <input id="password" name="password" type="password" placeholder="Enter your password"><br>
+
+      <div class="remember-me">
+        <div>
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="forgot_password.html">Forgot Password?</a>
+      </div>
+      
+
+      <input type="submit" value="Login">
+    </form>
+    <p>Don't have an account? <a href="register">Register now</a> at the bottom.</p>
+</div>
 
   <script>
     function validateForm() {
