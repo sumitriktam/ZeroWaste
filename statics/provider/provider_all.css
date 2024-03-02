@@ -1,0 +1,429 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px;
+}
+.image {
+    position: absolute;
+    left: 22px; /* X-axis */
+    top: 48px; /* Y-axis */
+    width: 40px;
+    height: 37px;
+}
+.top-left-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 69px; /* X-axis */
+    top: 31px; /* Y-axis */
+}
+.navbar {
+    position: absolute;
+    left: 700px; /* X-axis */
+    top: 40px; /* Y-axis */
+    width: 647px;
+    height: 55px;
+    border-radius: 20px;
+    background-color: #D9D9D9;
+}
+
+.navbar ul {
+    position:relative;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    top:18px;
+    left:50px;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar li {
+    margin-right: 100px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+}
+.circle {
+    width: 53px;
+    height: 50px;
+    background-color: #D9D9D9; /* Same as the navbar color */
+    border-radius: 50%; /* Use border-radius to create a circle */
+    position: absolute;
+    left: 1370px; /* Adjust the left position based on your design */
+    top: 45px; /* Align the top with the navbar */
+    text-align: center;
+    
+}
+.user{
+      position:absolute;
+      top:30%;
+      left:35%;
+      font-size: 20px;
+      cursor:pointer;
+}
+.welcome{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 44px; /* X-axis */
+    top: 90px; /* Y-axis */
+    width: 358px;
+    height: 47px;
+}
+.code{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 44px; /* X-axis */
+    top: 125px; /* Y-axis */
+    width: 355px;
+    height: 31px;
+}
+.custom-box {
+    width: 215px;
+    height: 156px;
+    background-color: #F0EFEF;
+    position: absolute;
+   
+}
+.text-donations {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    position: relative;
+    top:10px;
+    left:25px;
+}
+.donation {
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    position: relative;
+    top:10px;
+    left:80px;
+}
+.box1
+{
+    left: 51px; /* X-axis */
+    top: 222px; /* Y-axis */
+}
+.box2
+{
+    left: 350px; /* X-axis */
+    top: 222px; /* Y-axis */
+}
+.zerowastescore{
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    position: relative;
+    top:10px;
+    left:80px;
+}
+.custom-box2{
+    width: 215px;
+    height: 156px;
+    background-color: #ffffff;
+    position: absolute;
+    left: 790px; /* X-axis */
+    top: 110px; /* Y-axis */
+    width: 550px;
+    height:280px;
+    overflow-y: auto;
+}
+
+/* Add this to the existing CSS file */
+
+.historybox {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    height:190px;
+    position: relative;
+}
+
+.history-details {
+    margin-bottom: 10px;
+}
+.custom-box-history {
+    width: 500px;
+    position: absolute;
+    left: 790px;
+    top: 110px;
+}
+.custom-box-2 {
+    width: 520px;
+    height: 200px; /* Set the height to limit the number of visible items */
+    background-color: #ffffff;
+    position: absolute;
+    top: 60px;
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Additional styling for better appearance */
+.historybox img {
+    width: 200px;
+    height:100px; /* Adjust size as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px;
+}
+
+.historybox .history-details {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.historybox .custom-box-line2 {
+    margin-bottom: 5px;
+}
+
+.history{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 20px; /* X-axis */
+    top: 0px; /* Y-axis */
+   
+}
+.view-all{
+    font-size: 18px;
+    font-weight: bold;
+    color:#1D710F;
+    position: absolute;
+    top: 30px; /* Y-axis */
+    right: 15px; /* X-axis */
+    
+}
+.custom-box-line {
+    width: 100%;
+    border-bottom: 2px solid #333; /* Customize line color and thickness */
+    position: absolute;
+    left: 0;
+}
+.line_position1
+{
+    top : 60px;
+}
+.line_position2
+{
+    bottom: 0;
+}
+.line_position3
+{   width:80%;
+    top:0px;
+    left:60px;
+}
+.custom-box-line2 {
+    width: 55%;
+    border-bottom: 2px solid #CFCFCF; /* Customize line color and thickness */
+    position: absolute;
+    left: 230px;
+    
+}
+.line2_position1{
+    top:80px;
+}
+.line2_position2{
+    top:120px;
+}
+.line2_position3{
+    top:160px;
+}
+.image2{
+    width: 215px;
+    height: 156px;
+    /* background-color: #F0EFEF; */
+    position: absolute;
+    left: 10px; 
+    top: 90px; /* Y-axis */
+    border-radius: 10px;
+}
+.custom-box4{
+    width: 215px;
+    height: 156px;
+    background-color: #F2F2F2;
+    position: absolute;
+    left: 0px; /* X-axis */
+    top: 60px; /* Y-axis */
+    width: 550px;
+    height:200px;
+}
+.custom-box3{
+    width: 215px;
+    height: 156px;
+    background-color: #ffffff;
+    position: absolute;
+    left: 790px; /* X-axis */
+    top: 400px; /* Y-axis */
+    width: 550px;
+    height:280px;
+}
+.requests {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 20px; /* X-axis */
+    top: 0px; /* Y-axis */
+}
+.request-button{
+    width:160px;
+    height:28px;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    color:#ffffff;
+    border:none;
+    font-size: 18px;
+    left:35%;
+    cursor: pointer; 
+}
+.req-but-pos1{
+    position: absolute;
+    top:50%;
+    background-color: #1D710F;   
+}
+.req-but-pos2{
+    position: absolute;
+    top:70%;
+    background-color: #FE0000;  
+}
+.custom-box5{
+    position: absolute;
+    left: 50px; /* X-axis */
+    top: 400px; /* Y-axis */
+    width: 515px;
+    height:280px;
+}
+.performance{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 0px; /* X-axis */
+    top: -10px; /* Y-axis */
+}
+.image3{
+    width: 515px;
+    height: 250px;
+    position: absolute;
+    left: 0px; 
+    top: 50px; /* Y-axis */
+}
+.custom-box6{
+    position: absolute;
+    left: 28%; /* X-axis */
+    top:730px; /* Y-axis */
+    width: 680px;
+    height:170px;
+    background-color: #F2F2F2;
+}
+.donate-button{
+    width:180px;
+    height:35px;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    color:#ffffff;
+    border:none;
+    font-size: 22px;
+    left:38%;
+    cursor: pointer; 
+    position: absolute;
+    top:60%;
+    background-color: #2C991B; 
+}
+.plus-icon {
+    font-size: 18px;
+    color: #ffffff;
+    cursor: pointer;
+    position:absolute;
+    left:30px;
+    top:9px;
+}
+.line_position4{
+    width:88%;
+    left:60px;
+    border-bottom: 2px solid #CFCFCF;
+    top:133%;
+}
+.custom-box7{
+    position: absolute;
+    left: 4%; /* X-axis */
+    top: 135%; /* Y-axis */
+    width: 88%;
+    height:25%;
+    /* background-color: #f3cdcd; */
+}
+.faq{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 0px; /* X-axis */
+    top: -20px; /* Y-axis */
+}
+.custom-box8{
+    position: absolute;
+    left: 0px; /* X-axis */
+    top: 40px; /* Y-axis */
+    width:100%;
+    height:30%;
+    background-color: #D9D9D9;
+    border-radius: 10px;
+    font-size: 20px;
+}
+.questions{
+    position:absolute;
+    left:30px;
+    top:-10px;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+}
+.box8-pos{
+    top:120px;
+}
+.down-arrow-icon
+{
+    cursor: pointer;
+    position:absolute;
+    right:30px;
+    top:10px;
+
+}
+.line_position5{
+    width:88%;
+    left:60px;
+    border-bottom: 2px solid #CFCFCF;
+    /* top:135%; */
+    top:1150px;
+}
+
+.message-any {
+    background-color: #29791b; /* Red background color */
+      color: #041b08; /* Red text color */
+      border: 1px solid #132405; /* Red border color */
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+  }

@@ -6,178 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-
-    <style>
-        /* CSS styles as provided in your original code */
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-        .head {
-            display: flex;
-            flex-direction: row;
-        }
-      
-        .head img {
-            width: 50px; /* Adjust the width of your logo */
-            height: 50px;
-            padding: 10px;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-
-        .stats-card {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 200px;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #f4f4f4;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stats-card h2 {
-            font-size: 1.5rem;
-            margin: 0;
-        }
-
-        .stats-card h3 {
-            font-size: 2rem;
-            margin: 0;
-            color: #333;
-        }
-
-        .stats-card button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #0084FF;
-            color: #fff;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .stats-card button:hover {
-            background-color: #0056b3;
-        }
-
-        .stats-card.accepted {
-            background-color: #b3ffb3;
-        }
-
-        .stats-card.pending {
-            background-color: #ffe0b3;
-        }
-
-        .stats-card.rejected {
-            background-color: #ffb3b3;
-        }
-
-        .users-list-container {
-            max-height: 400px; /* Adjust the maximum height as needed */
-            overflow-y: auto;
-            width: 80%; /* Adjust the width of the user list container */
-            margin: 0 auto; /* Center the container horizontally */
-        }
-
-        .users-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-            width: 99%; /* Take full width of the container */
-            padding-right: 10px; /* Add padding to prevent overlap */
-        }
-
-        .user-details {
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(100% - 22px); /* Adjusted width to accommodate padding and border */
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .user-details p {
-            margin: 5px 0;
-        }
-
-        .user-details:hover {
-            background-color: #f0f0f0;
-        }
-
-        .user-details.expanded {
-            height: auto;
-        }
-
-        button{
-            border-radius: 10px;
-            padding: 8px 16px;
-            background-color: #0084FF;
-            color: white;
-            border: none;
-        }
-        .action-buttons {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        .action-buttons button {
-            margin-left: 5px;
-        }
-
-        #btn-accept{
-            border-radius: 10px;
-            padding: 8px 16px;
-            background-color: #009966;
-            color: white;
-            border: none;
-        }
-
-        #btn-reject{
-            border-radius: 10px;
-            padding: 8px 16px;
-            background-color: #DC2F2F;
-            color: white;
-            border: none;
-        }
-        
-        /* Scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 12px;
-            background-color: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: green;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            border-radius: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'admin/css/adminpanel.css' %}">
     <script>
        
     </script>
 </head>
 <body>
     <div class="head">
-        <img src="{% static 'simple-icons_overleaf.png' %}" alt="Overleaf Logo">
+        <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
         <h1>ZeroWaste</h1>
     </div>
 
@@ -207,7 +43,8 @@
             <div class="user-details">
                 <p><strong>Username:</strong> {{ user.username }}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
-                <!-- Additional user details -->
+                <p><strong>Role:</strong> {{ user.role }}</p>
+                <p><strong>Location:</strong> {{ user.location }}</p>
             </div>
             {% endfor %}
         </div>
@@ -221,8 +58,10 @@
             <div class="user-details">
                 <p><strong>Username:</strong> {{ user.username }}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
-                <button onclick="approveUser('{{ user.id }}')">Approve</button>
-                <button onclick="rejectUser('{{ user.id }}')">Reject</button>
+                <p><strong>Role:</strong> {{ user.role }}</p>
+                <p><strong>Location:</strong> {{ user.location }}</p>
+                <button id="btn-accept" type="button" onclick="approveUser('{{ user.id }}')">Approve</button>
+                <button id="btn-reject" type="button" onclick="rejectUser('{{ user.id }}')">Reject</button>
             </div>
             {% endfor %}
         </div>
@@ -236,7 +75,8 @@
             <div class="user-details">
                 <p><strong>Username:</strong> {{ user.username }}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
-                <!-- Additional user details -->
+                <p><strong>Role:</strong> {{ user.role }}</p>
+                <p><strong>Location:</strong> {{ user.location }}</p>
             </div>
             {% endfor %}
         </div>
@@ -257,8 +97,10 @@
                      <div class="user-details" data-user-id="${user.id}">
                          <p><strong>Username:</strong> ${user.username}</p>
                          <p><strong>Email:</strong> ${user.email}</p>
-                         <button onclick="approveUser(${user.id})">Approve</button>
-                         <button onclick="rejectUser(${user.id})">Reject</button>
+                         <p><strong>Role:</strong> ${user.role}</p>
+                         <p><strong>Location:</strong> ${user.location}</p>
+                         <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button>
+                         <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button>
                      </div>
                  `;
              });
@@ -273,6 +115,8 @@
                      <div class="user-details" data-user-id="${user.id}">
                          <p><strong>Username:</strong> ${user.username}</p>
                          <p><strong>Email:</strong> ${user.email}</p>
+                         <p><strong>Role:</strong> ${user.role}</p>
+                        <p><strong>Location:</strong> ${user.location}</p>
                      </div>
                  `;
              });
@@ -287,70 +131,91 @@
                      <div class="user-details" data-user-id="${user.id}">
                          <p><strong>Username:</strong> ${user.username}</p>
                          <p><strong>Email:</strong> ${user.email}</p>
+                         <p><strong>Role:</strong> ${user.role}</p>
+                         <p><strong>Location:</strong> ${user.location}</p>
                      </div>
                  `;
              });
          }
  
-         // Function to approve a user
          function approveUser(userId) {
-             fetch(`/approve_user/${userId}/`, {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'application/json',
-                     'X-CSRFToken': '{{ csrf_token }}' // Use Django CSRF token
-                 },
-                 body: JSON.stringify({ userId: userId })
-             })
-             .then(response => {
-                 if (response.ok) {
-                     // Find the user in the pending list
-                     let index = pendingUsers.findIndex(user => user.id === userId);
-                     if (index !== -1) {
-                         // Remove the user from the pending list
-                         let user = pendingUsers.splice(index, 1)[0];
-                         // Add the user to the accepted list
-                         acceptedUsers.push(user);
-                         // Render updated lists
-                         renderPendingUsers();
-                         renderAcceptedUsers();
-                     }
-                 } else {
-                     console.error('Failed to approve user');
-                 }
-             })
-             .catch(error => console.error('Error:', error));
-         }
- 
-         // Function to reject a user
-         function rejectUser(userId) {
-             fetch(`/reject_user/${userId}/`, {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'application/json',
-                     'X-CSRFToken': '{{ csrf_token }}' // Use Django CSRF token
-                 },
-                 body: JSON.stringify({ userId: userId })
-             })
-             .then(response => {
-                 if (response.ok) {
-                     // Find the user in the pending list
-                     let index = pendingUsers.findIndex(user => user.id === userId);
-                     if (index !== -1) {
-                         // Remove the user from the pending list
-                         let user = pendingUsers.splice(index, 1)[0];
-                         // Add the user to the rejected list
-                         rejectedUsers.push(user);
-                         // Render updated lists
-                         renderPendingUsers();
-                         renderRejectedUsers();
-                     }
-                 } else {
-                     console.error('Failed to reject user');
-                 }
-             })
-             .catch(error => console.error('Error:', error));
-         }
+            fetch(`/approve_user/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateUI(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function rejectUser(userId) {
+            fetch(`/reject_user/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateUI(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function updateUI(data) {
+            // Update accepted users list
+            let acceptedUsersList = document.getElementById("acceptedUsersList");
+            acceptedUsersList.innerHTML = "";
+            data.accepted_users.forEach(user => {
+                acceptedUsersList.innerHTML += `
+                    <div class="user-details">
+                        <p><strong>Username:</strong> ${user.username}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Role:</strong> ${user.role}</p>
+                        <p><strong>Location:</strong> ${user.location}</p>
+                    </div>
+                `;
+            });
+        
+            // Update pending users list
+            let pendingUsersList = document.getElementById("pendingUsersList");
+            pendingUsersList.innerHTML = "";
+            data.pending_users.forEach(user => {
+                pendingUsersList.innerHTML += `
+                    <div class="user-details">
+                        <p><strong>Username:</strong> ${user.username}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Role:</strong> ${user.role}</p>
+                        <p><strong>Location:</strong> ${user.location}</p>
+                        <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button>
+                        <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button>
+                    </div>
+                `;
+            });
+        
+            // Update rejected users list
+            let rejectedUsersList = document.getElementById("rejectedUsersList");
+            rejectedUsersList.innerHTML = "";
+            data.rejected_users.forEach(user => {
+                rejectedUsersList.innerHTML += `
+                    <div class="user-details">
+                        <p><strong>Username:</strong> ${user.username}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Role:</strong> ${user.role}</p>
+                        <p><strong>Location:</strong> ${user.location}</p>
+                    </div>
+                `;
+            });
+        }
+        
+
+
  
          // Initial rendering of user lists
          renderPendingUsers();

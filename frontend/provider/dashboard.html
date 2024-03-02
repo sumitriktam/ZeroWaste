@@ -1,0 +1,84 @@
+{% extends "provider/provbase.html" %}
+{% block content %}
+
+        <p class="welcome" >Welcome <span style="color:green">{{uname}}</span>!</p>
+        <p class="code" >You are an <span style="color:green">{{data}}</span> donor!</p>
+        <div class="custom-box box1"><p class="text-donations" >No.of donations:</p>
+        <p class="donation">50</p></div>
+        <div class="custom-box box2"><p class="text-donations" >ZeroWaste score:</p>
+        <p class="zerowastescore">100</p></div>
+        <div class="custom-box-history ">
+            <p class="history" >Donation History</p>
+            <a class="view-all" href="#viewall" style="text-decoration: none;">view all</a>  
+            <div class="custom-box-line line_position1"></div>
+            <div class=" custom-box-2">
+                {% for post in posts %}
+                    <div class="historybox">
+                        <img src="/{{ post.photo }}" alt="Your Image" class="image2">
+                        <div class="history-details">
+                            <div class="custom-box-line2 line2_position1"><b>ID: </b><span style="color:green">{{ post.id }}</span> <span style="position:absolute;right:0px">{{ post.created_at|timesince }}</span></div>
+                            <div class="custom-box-line2 line2_position2"><span>{{ post.name }}</span></div>
+                            <div class="custom-box-line2 line2_position3"><span>{{ post.quantity }}</span></div>
+                            <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:330px;">{{post.status}}</span></center></div>
+                
+                        </div>
+                    </div> 
+                {% endfor %}
+
+            </div>
+            </div>
+            
+
+
+        </div>
+        <div class="custom-box3">
+            <p class="requests">Requests</p>
+            <a class="view-all" href="#viewall" style="text-decoration: none;">view all</a> 
+            <div class="custom-box4">
+                <div class="custom-box-line line_position3">
+                    <center><p style="font-family: 'Poppins', sans-serif;font-size:20px;"><span style="color:green;">User2</span> has requested for <span>food.</span></p></center>
+                </div>
+                <button class="request-button req-but-pos1">Accept</button>
+                <br>
+                <button class="request-button req-but-pos2">Reject</button>
+            </div>
+        </div>
+        <div class="custom-box5">
+            <p class="performance">Your <span style="color:#1D710F">performance</span></p>
+            <img src="./images/image3.jpg" alt="Your Image" class="image3">
+        </div>
+        <div class="custom-box6">
+            <center><p style="font-family: 'Inter', sans-serif;font-size:22px; position:absolute;top:20px;left:60px;">Share what you can spare, someone out there will care</p></center>
+            <a href="/provider/new">
+                <button class="donate-button ">
+                    <i class="fas fa-plus plus-icon"></i>
+                Donate</button>
+            </a>
+        </div>
+        <div class="custom-box-line line_position4"></div>
+        <div class="custom-box7">
+            <p class="faq">FAQs</p>
+            <div class="custom-box8"><p class="questions">What items can we donate?</p>
+                    <i class="fas fa-chevron-down down-arrow-icon" onclick="showText()"></i>
+            </div>
+            <div class="custom-box8 box8-pos"><p class="questions">Are there any special instructions we want to provide about the donation?</p>
+                <i class="fas fa-chevron-down down-arrow-icon"></i>
+            </div>
+            
+        </div>
+        <div class="custom-box-line line_position5"></div>
+    </div>
+    <script>
+        let arrowPressCount = 0;
+      
+        function showText() {
+          arrowPressCount++;
+          const message = `Down arrow icon clicked ${arrowPressCount} times`;
+          document.getElementById('output').innerText = message;
+      
+          // Move the text container down
+          document.getElementById('custom-box8').style.marginBottom = `${10 + arrowPressCount * 40}px`;
+        }
+      </script>
+
+{% endblock %}

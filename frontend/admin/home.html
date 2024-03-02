@@ -9,259 +9,12 @@
     <title>ZeroWaste</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-6Zl6ySNVTuz6xoFv4aAwN6R1QI5FjRxkezlMR6XnSDt0ixusnG21S8cbPItLmU51qBxjkTzCfOsTJG5HxHHp6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* Font styling */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Header styles */
-        .header {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            border-radius: 20px;
-            background-color: white; /* Updated background color */
-            color: black; 
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Added box shadow */
-            
-        }
-        .login-box {
-    border: 1px solid #fff; /* Add border */
-    border-radius: 5px; /* Add border radius */
-    padding: 10px; /* Add padding */
-}
-
-
-        .logo-title{
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-        
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background-color: grey;
-            border-radius: 20px;
-        }
-        
-        .nav-menu a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-        
-        .nav-menu a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        
-        .logo {
-            height: 50px;
-            width: 50px;
-            padding: 10px;
-        }
-        
-        .title {
-            margin: 0;
-        }
-        
-        .login a {
-            color: black;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 2px solid black;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .login a:hover {
-            background-color: #555;
-        }
-        /* Banner styles */
-        .banner {
-            background-image: url('your-banner-image.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 500px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            font-size: 2rem;
-        }
-
-        /* Vision section styles */
-        .vision {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 50px;
-            background-color: #f0f0f0;
-        }
-
-        .vision-content {
-            max-width: 50%;
-        }
-
-        .vision-content h2 {
-            margin-bottom: 20px;
-        }
-
-        .vision-content p {
-            line-height: 1.5;
-        }
-
-        .vision-image {
-            max-width: 50%;
-        }
-
-        /* Features section styles */
-        .Features {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px 0;
-        }
-
-        .Feature {
-            flex: 1;
-            margin: 0 20px;
-            padding: 30px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center content vertically */
-        }
-
-        .Feature:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
-        }
-
-        .Feature h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .Feature p {
-            text-align: center; /* Center text */
-            line-height: 1.6; /* Improved readability */
-        }
-
-        /* Footer styles */
-        .footer {
-            background-color: #333;
-            width: device-width;
-            color: #fff;
-            padding: 20px;
-        }
-
-        .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        .footer-section {
-            flex: 1;
-            margin-bottom: 20px;
-        }
-
-        .footer-section h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .footer-section p {
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .contact {
-            margin-top: 10px;
-        }
-
-        .contact span {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .socials a {
-            color: #fff;
-            font-size: 1.2rem;
-            margin-right: 10px;
-        }
-
-        .footer-section.links ul {
-            list-style: none;
-        }
-
-        .footer-section.links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-section.links a {
-            color: #fff;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-section.links a:hover {
-            color: #ccc;
-        }
-
-        .contact-form .text-input {
-            width: 100%;
-            padding: 0px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .contact-form textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .contact-btn {
-            display: inline-block;
-            background-color: #2196F3;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .contact-btn:hover {
-            background-color: #0d8eff;
-        }
-
-        .footer-bottom {
-            background-color: #222;
-            color: #ccc;
-            padding: 10px 0;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'admin/css/home.css' %}">
 </head>
 <body>
     <header class="header">
         <div class="logo-title">
-            <img class="logo" src="{% static 'simple-icons_overleaf.png' %}" alt="Overleaf Logo">
+            <img class="logo" src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
             <h1 class="title">ZeroWaste</h1>
         </div>
         <nav class="nav-menu">
@@ -275,11 +28,23 @@
         </div>
     </header>
 
-    <div class="banner">
-        <h2>Welcome to ZeroWaste</h2>
-        <p>Connecting Communities for a Sustainable Future</p>
+    <div class="leaderboard">
+        <h1>Leaderboard</h1>
+        <div class="leaderboard-container">
+            {% for user in users %}
+            <div class="leaderboard-item">
+                <div class="rank">{{ forloop.counter }}</div>
+                <div class="details">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>ZeroWaste Score:</strong> {{ user.zerowaste_score }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-
+    
+    
+    
     <section class="vision">
         <div class="vision-content">
             <h2>Our Vision</h2>
@@ -293,7 +58,7 @@
                 Join us in our mission to make zero waste a reality!
             </p>
         </div>
-        <img class="vision-image" src="{% static 'Rectangle 13.png' %}" alt="Vision Image">
+        <img class="vision-image" src="{% static 'admin/media/Rectangle 13.png' %}" alt="Vision Image">
     </section>
     <h2 style="padding-left: 40px;">What We Offer</h2>
     <section class="Features">
