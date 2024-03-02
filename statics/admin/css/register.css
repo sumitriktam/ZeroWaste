@@ -126,12 +126,12 @@ form {
     display: flex;
     justify-content: center;
     align-items: flex-start; 
-    margin-top:0.5%;
+    margin-top:3%;
     
   }
 
   .picture img {
-    padding-top: 0%;
+    padding-top: 2%;
     max-width: 107%; 
     max-height: 75%;
     border-radius: 8px;
