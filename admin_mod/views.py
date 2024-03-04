@@ -1,12 +1,15 @@
 import json
 from django.shortcuts import render, redirect
 from django import forms
-from .models import User
+from .models import User, Admin, Resetpass
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .custom_auth import  CustomBackend
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
+import uuid
+from .mail_helper import send_forget_password_mail
 
 def index(request):
     #only get users who ate providers and whose status is accepted
@@ -22,12 +25,22 @@ def adminPanel(request):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
+    # Here, counting the users for each status
+    accepted_count = accepted_users.count()
+    pending_count = pending_users.count()
+    rejected_count = rejected_users.count()
+
     context = {
         'accepted_users': accepted_users,
         'pending_users': pending_users,
         'rejected_users': rejected_users,
+        'accepted_count': accepted_count,
+        'pending_count': pending_count,
+        'rejected_count': rejected_count,
     }
     return render(request, "admin/adminPanel.html", context)
+
+from django.db.models import Count
 
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -38,10 +51,17 @@ def approve_user(request, user_id):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
+    accepted_count = accepted_users.count()
+    pending_count = pending_users.count()
+    rejected_count = rejected_users.count()
+
     data = {
         'accepted_users': list(accepted_users.values()),
         'pending_users': list(pending_users.values()),
         'rejected_users': list(rejected_users.values()),
+        'accepted_count': accepted_count,
+        'pending_count': pending_count,
+        'rejected_count': rejected_count,
     }
     return JsonResponse(data)
 
@@ -54,12 +74,20 @@ def reject_user(request, user_id):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
+    accepted_count = accepted_users.count()
+    pending_count = pending_users.count()
+    rejected_count = rejected_users.count()
+
     data = {
         'accepted_users': list(accepted_users.values()),
         'pending_users': list(pending_users.values()),
         'rejected_users': list(rejected_users.values()),
+        'accepted_count': accepted_count,
+        'pending_count': pending_count,
+        'rejected_count': rejected_count,
     }
     return JsonResponse(data)
+
 
 def check_user_existence(request):
     if request.method == 'POST':
@@ -124,3 +152,59 @@ def register(request):
 
 def waitingPage(request):
     return render(request, "admin/waitingPage.html")
+
+def ChangePassword(request , token):
+    context = {}
+    try:
+        profile_obj = Resetpass.objects.filter(forget_password_token = token).first()
+        context = {'user_id' : profile_obj.user.id}
+        
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('reconfirm_password')
+            user_id = request.POST.get('user_id')
+            
+            if user_id is  None:
+                messages.success(request, 'No user id found.')
+                return redirect(f'/change-password/{token}/')
+                
+            
+            if  new_password != confirm_password:
+                messages.success(request, 'both should  be equal.')
+                return redirect(f'/change-password/{token}/')
+                         
+            
+            user_obj = User.objects.get(id = user_id)
+            user_obj.set_password(new_password)
+            user_obj.save()
+            return redirect('/login/') 
+        
+        
+    except Exception as e:
+        print(e)
+    return render(request , 'change-password.html' , context)
+
+
+def ForgetPassword(request):
+    try:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            
+            if not User.objects.filter(username=username).first():
+                messages.success(request, 'Not user found with this username.')
+                return redirect('/forget-password/')
+            
+            user_obj = User.objects.get(username = username)
+            token = str(uuid.uuid4())
+            profile_obj= Resetpass.objects.get(user = user_obj)
+            profile_obj.forget_password_token = token
+            profile_obj.save()
+            send_forget_password_mail(user_obj.email , token)
+            messages.success(request, 'An email is sent.')
+            return redirect('/forget-password/')
+                
+    
+    
+    except Exception as e:
+        print(e)
+    return render(request , 'forget-password.html')
