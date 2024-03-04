@@ -180,23 +180,33 @@ body {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-
-/* Additional styling for better appearance */
 .historybox img {
-    width: 200px;
-    height:100px; /* Adjust size as needed */
-    height: auto; /* Maintain aspect ratio */
+    width: 40%;
+    height:90%; /* Adjust size as needed */
+    /* Maintain aspect ratio */
     margin-right: 10px;
+    position:absolute;
+    left:2%;
+    top:5%;
 }
 
 .historybox .history-details {
     display: inline-block;
     vertical-align: top;
+
 }
 
 .historybox .custom-box-line2 {
-    margin-bottom: 5px;
+    margin-top: -30px;
+    position:absolute;
+    left:44%;
+    
 }
+/* Additional styling for better appearance */
+
+
+
+
 
 .history{
     font-size: 24px;
