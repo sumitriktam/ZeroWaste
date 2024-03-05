@@ -72,7 +72,7 @@ def newPost(request):
         messages.success(request, 'Post successfully added.')
     
         # Redirect to the dashboard or any other page with the success message as a parameter in the URL
-        return redirect('/provider/home?message=Post%20successfully%20added.')
+        return redirect('/provider/home')
         
 
     return render(request, "provider/form_newpost.html", context)
