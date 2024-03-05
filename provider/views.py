@@ -69,8 +69,14 @@ def newPost(request):
         )
         #saving post
         post_here.save()
-        messages.success(request, 'Post succesfully added.')
-        return redirect('/provider/home')
+        messages.success(request, 'Post successfully added.')
+    
+        # Redirect to the dashboard or any other page with the success message as a parameter in the URL
+        return redirect('/provider/home?message=Post%20successfully%20added.')
+        
 
     return render(request, "provider/form_newpost.html", context)
+
+def requestsViewAll(request):
+    return render(request,"provider/requests.html" )
     
