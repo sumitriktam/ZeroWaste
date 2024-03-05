@@ -9,7 +9,10 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 import uuid
+import hashlib
 from .mail_helper import send_forget_password_mail
+from django.utils import timezone
+from datetime import timedelta
 
 def index(request):
     #only get users who ate providers and whose status is accepted
@@ -152,59 +155,79 @@ def register(request):
 
 def waitingPage(request):
     return render(request, "admin/waitingPage.html")
+    
 
-def ChangePassword(request , token):
+
+import hashlib
+
+def change_password(request, token):
     context = {}
     try:
-        profile_obj = Resetpass.objects.filter(forget_password_token = token).first()
-        context = {'user_id' : profile_obj.user.id}
+        profile_obj = Resetpass.objects.filter(forget_password_token=token).first()
+        # print(token)
+        # print(Resetpass.objects.get(forget_password_token=token))
+        if profile_obj is None:
+            messages.success(request, 'Invalid token.')
+            return redirect('/forget-password/')
+
+        # Check if the token is older than 30 minutes
+        if profile_obj.created_at < timezone.now() - timedelta(minutes=30):
+            messages.success(request, 'Token has expired.')
+            profile_obj.delete()
+            return redirect('/forget-password/')
         
+        context = {'user_id': profile_obj.user.id}
+
         if request.method == 'POST':
             new_password = request.POST.get('new_password')
             confirm_password = request.POST.get('reconfirm_password')
             user_id = request.POST.get('user_id')
-            
-            if user_id is  None:
+            # print(user_id)
+
+            if user_id is None:
                 messages.success(request, 'No user id found.')
+                return redirect(f'/forget-password/{token}/')
+
+            if new_password != confirm_password:
+                messages.success(request, 'Passwords do not match.')
                 return redirect(f'/change-password/{token}/')
-                
-            
-            if  new_password != confirm_password:
-                messages.success(request, 'both should  be equal.')
-                return redirect(f'/change-password/{token}/')
-                         
-            
-            user_obj = User.objects.get(id = user_id)
-            user_obj.set_password(new_password)
+
+            user_obj = User.objects.get(id=user_id)
+            # hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+            user_obj.password = new_password
             user_obj.save()
-            return redirect('/login/') 
-        
-        
+            profile_obj.delete()  # Delete the Resetpass entry
+            return redirect('/login')
+
     except Exception as e:
         print(e)
-    return render(request , 'change-password.html' , context)
+        messages.success(request, 'link expired.')
+    return render(request, 'admin/change_password.html', context)
 
 
-def ForgetPassword(request):
+
+from django.utils import timezone
+import uuid
+
+def forget_password(request):
     try:
         if request.method == 'POST':
-            username = request.POST.get('username')
-            
-            if not User.objects.filter(username=username).first():
-                messages.success(request, 'Not user found with this username.')
+            email = request.POST.get('email')
+            if not User.objects.filter(email=email).exists():
+                messages.success(request, 'No user found with this email.')
                 return redirect('/forget-password/')
             
-            user_obj = User.objects.get(username = username)
+            user_obj = User.objects.get(email=email)
             token = str(uuid.uuid4())
-            profile_obj= Resetpass.objects.get(user = user_obj)
+            profile_obj, created = Resetpass.objects.get_or_create(user=user_obj)
             profile_obj.forget_password_token = token
+            profile_obj.created_at = timezone.now()  # Set the created_at timestamp
             profile_obj.save()
-            send_forget_password_mail(user_obj.email , token)
+            print(token)
+            send_forget_password_mail(user_obj.email, token)
             messages.success(request, 'An email is sent.')
             return redirect('/forget-password/')
-                
-    
     
     except Exception as e:
         print(e)
-    return render(request , 'forget-password.html')
+    return render(request, 'admin/forgot_password.html')

@@ -81,9 +81,9 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zerobase',
+        'NAME': 'zerowaste',
         'USER': 'root',
-        'PASSWORD': 'Buha@2097',
+        'PASSWORD': 'ZXCzxc@123',
         'HOST':'localhost',
         'PORT':'3306',
     }
@@ -139,5 +139,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'email'
-EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST_USER = 'nethetipradeep.20.it@anits.edu.in'
+EMAIL_HOST_PASSWORD = 'ASDasd@123'
