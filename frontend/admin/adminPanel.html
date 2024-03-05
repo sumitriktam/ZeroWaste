@@ -20,19 +20,20 @@
     <div class="stats">
         <div class="stats-card accepted">
             <h2>Accepted</h2>
-            <h3>63</h3>
+            <h3>{{ accepted_count }}</h3>
             <button onclick="showAcceptedUsers()">View</button>
         </div>
         <div class="stats-card pending">
             <h2>Pending</h2>
-            <h3>13</h3>
+            <h3>{{ pending_count }}</h3>
             <button onclick="showPendingUsers()">View</button>
         </div>
         <div class="stats-card rejected">
             <h2>Rejected</h2>
-            <h3>10</h3>
+            <h3>{{ rejected_count }}</h3>
             <button onclick="showRejectedUsers()">View</button>
         </div>
+        
     </div>
 
     <!-- Display accepted users -->
@@ -212,6 +213,10 @@
                     </div>
                 `;
             });
+
+            document.getElementById("acceptedCount").innerText = data.accepted_count;
+            document.getElementById("pendingCount").innerText = data.pending_count;
+            document.getElementById("rejectedCount").innerText = data.rejected_count;
         }
         
 

@@ -1,12 +1,18 @@
 import json
 from django.shortcuts import render, redirect
 from django import forms
-from .models import User
+from .models import User, Admin, Resetpass
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .custom_auth import  CustomBackend
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
+import uuid
+import hashlib
+from .mail_helper import send_forget_password_mail
+from django.utils import timezone
+from datetime import timedelta
 
 def index(request):
     #only get users who ate providers and whose status is accepted
@@ -22,12 +28,22 @@ def adminPanel(request):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
+    # Here, counting the users for each status
+    accepted_count = accepted_users.count()
+    pending_count = pending_users.count()
+    rejected_count = rejected_users.count()
+
     context = {
         'accepted_users': accepted_users,
         'pending_users': pending_users,
         'rejected_users': rejected_users,
+        'accepted_count': accepted_count,
+        'pending_count': pending_count,
+        'rejected_count': rejected_count,
     }
     return render(request, "admin/adminPanel.html", context)
+
+from django.db.models import Count
 
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -38,10 +54,17 @@ def approve_user(request, user_id):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
+    accepted_count = accepted_users.count()
+    pending_count = pending_users.count()
+    rejected_count = rejected_users.count()
+
     data = {
         'accepted_users': list(accepted_users.values()),
         'pending_users': list(pending_users.values()),
         'rejected_users': list(rejected_users.values()),
+        'accepted_count': accepted_count,
+        'pending_count': pending_count,
+        'rejected_count': rejected_count,
     }
     return JsonResponse(data)
 
@@ -54,12 +77,20 @@ def reject_user(request, user_id):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
+    accepted_count = accepted_users.count()
+    pending_count = pending_users.count()
+    rejected_count = rejected_users.count()
+
     data = {
         'accepted_users': list(accepted_users.values()),
         'pending_users': list(pending_users.values()),
         'rejected_users': list(rejected_users.values()),
+        'accepted_count': accepted_count,
+        'pending_count': pending_count,
+        'rejected_count': rejected_count,
     }
     return JsonResponse(data)
+
 
 def check_user_existence(request):
     if request.method == 'POST':
@@ -124,3 +155,79 @@ def register(request):
 
 def waitingPage(request):
     return render(request, "admin/waitingPage.html")
+    
+
+
+import hashlib
+
+def change_password(request, token):
+    context = {}
+    try:
+        profile_obj = Resetpass.objects.filter(forget_password_token=token).first()
+        # print(token)
+        # print(Resetpass.objects.get(forget_password_token=token))
+        if profile_obj is None:
+            messages.success(request, 'Invalid token.')
+            return redirect('/forget-password/')
+
+        # Check if the token is older than 30 minutes
+        if profile_obj.created_at < timezone.now() - timedelta(minutes=30):
+            messages.success(request, 'Token has expired.')
+            profile_obj.delete()
+            return redirect('/forget-password/')
+        
+        context = {'user_id': profile_obj.user.id}
+
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('reconfirm_password')
+            user_id = request.POST.get('user_id')
+            # print(user_id)
+
+            if user_id is None:
+                messages.success(request, 'No user id found.')
+                return redirect(f'/forget-password/{token}/')
+
+            if new_password != confirm_password:
+                messages.success(request, 'Passwords do not match.')
+                return redirect(f'/change-password/{token}/')
+
+            user_obj = User.objects.get(id=user_id)
+            # hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+            user_obj.password = new_password
+            user_obj.save()
+            profile_obj.delete()  # Delete the Resetpass entry
+            return redirect('/login')
+
+    except Exception as e:
+        print(e)
+        messages.success(request, 'link expired.')
+    return render(request, 'admin/change_password.html', context)
+
+
+
+from django.utils import timezone
+import uuid
+
+def forget_password(request):
+    try:
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            if not User.objects.filter(email=email).exists():
+                messages.success(request, 'No user found with this email.')
+                return redirect('/forget-password/')
+            
+            user_obj = User.objects.get(email=email)
+            token = str(uuid.uuid4())
+            profile_obj, created = Resetpass.objects.get_or_create(user=user_obj)
+            profile_obj.forget_password_token = token
+            profile_obj.created_at = timezone.now()  # Set the created_at timestamp
+            profile_obj.save()
+            print(token)
+            send_forget_password_mail(user_obj.email, token)
+            messages.success(request, 'An email is sent.')
+            return redirect('/forget-password/')
+    
+    except Exception as e:
+        print(e)
+    return render(request, 'admin/forgot_password.html')
