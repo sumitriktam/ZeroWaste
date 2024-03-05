@@ -109,6 +109,8 @@ document.getElementById('post-form').addEventListener('submit', function(event) 
 });
 
 
+        
+
 // function generateFormFields(category) {
 //     const formFieldsDiv = document.getElementById('form-fields');
 //     formFieldsDiv.innerHTML = ''; 

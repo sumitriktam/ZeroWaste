@@ -40,7 +40,7 @@
                 <div class="image-placeholder"></div>
             </div>
             <div class="right-side">
-                <form method="POST" enctype="multipart/form-data" action="" style="width: 800px; display:flex;justify-content:space-between;">
+                <form method="POST" enctype="multipart/form-data" action=""  style="width: 800px; display:flex;justify-content:space-between;">
                     {% csrf_token %}
                     <div class="right-section">
                         <label for="photo">Photo:</label><br>
@@ -83,12 +83,16 @@
                         <label for="quantity">Quantity:</label><br>
                         <input type="text" id="quantity" name="quantity" required><br><br>
 
-                        <input type="submit" value="Post">
+                        <input type="submit"  value="Post">
                     </div>
+
                 </form>
+                
             </div>
         </div>
     </div>
+    
+      
 
     <script src="/statics/provider/ind.js"></script>
 </body>
