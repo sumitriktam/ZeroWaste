@@ -1,7 +1,6 @@
 from django.db import models
 
 import hashlib
-
 class User(models.Model):
     email = models.EmailField()
     username = models.CharField(max_length=100)
@@ -22,12 +21,14 @@ class User(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     zerowaste_score = models.IntegerField(default=0)
+    is_verified = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # Hash the password using sha256
         if self.password:
             self.password = hashlib.sha256(self.password.encode()).hexdigest()
         super().save(*args, **kwargs)
+
 
 
 
@@ -52,3 +53,10 @@ class Resetpass(models.Model):
     def __str__(self):
         return self.user.username
 
+class EmailVerification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email

@@ -72,6 +72,14 @@ TEMPLATES = [
     },
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+#enter your email and password here
+EMAIL_HOST_USER = 'nethetipradeep.20.it@anits.edu.in'
+EMAIL_HOST_PASSWORD = 'ASDasd@123'
+
 WSGI_APPLICATION = 'project.wsgi.application'
 
 
@@ -135,11 +143,3 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-
-#enter your email and password here
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''

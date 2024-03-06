@@ -1,18 +1,19 @@
 import json
 from django.shortcuts import render, redirect
 from django import forms
-from .models import User, Admin, Resetpass
+from .models import User, Admin, Resetpass, EmailVerification
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .custom_auth import  CustomBackend
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 import uuid
 import hashlib
-from .mail_helper import send_forget_password_mail
+from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
 from datetime import timedelta
+import base64
 
 def index(request):
     #only get users who ate providers and whose status is accepted
@@ -137,21 +138,40 @@ def login(request):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'username', 'password', 'location', 'role']
+        fields = ['email', 'username', 'password', 'location', 'role', 'is_verified']
 
+
+# views.py
 def register(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
-        
         if form.is_valid():
-            form.save()
+            user = form.save()
+            send_user_confirmation_email(user)
             return redirect('/wait')
-        else:
-            print(form.errors)
     else:
-        print('get request')
         form = UserForm()
     return render(request, 'admin/register.html', {'form': form})
+
+
+# views.py
+def email_verification_pending(request):
+    return render(request, 'admin/verification_pending.html')
+
+def email_verified(request):
+    return render(request, 'admin/email_confirmed.html')
+
+
+def confirm_account(request, token):
+    verification = get_object_or_404(EmailVerification, token=token)
+    user = verification.user
+    user.email_verified = True
+    user.save()
+    verification.delete()
+    return redirect('/login/')
+
+
+
 
 def waitingPage(request):
     return render(request, "admin/waitingPage.html")
