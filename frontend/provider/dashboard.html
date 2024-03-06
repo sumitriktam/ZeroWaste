@@ -68,37 +68,25 @@
         </div>
         <div class="custom-box-line line_position5"></div>
     </div>
-    <div class="overlay">
+
+    {% for message in messages %}
+    <div class="overlay" style="display: flex">
         <div class="popup">
           <!-- Your popup content goes here -->
           <p style="font-family: Arial, Helvetica, sans-serif;font-weight: bold;font-size:25px; position:relative;left:33%;top:7%; ">Thank you!</p>
           <img src="/statics/provider/images/tick.jpeg" alt="" class="imagetick">
           <br><br>
-          {% for message in messages %}
-                
-           
           <p id="popupMessage" style="font-family: Arial, Helvetica, sans-serif;font-size:20px; position:relative;left:26%;top:10%;font-weight: bold;">{{ message }}</p>
-          {% endfor %}
           <button class="close-btn" onclick= closePopup(event) >Done</button>
-        
         </div>
       </div>
+    {% endfor %}
+
+
     <script>
         function closePopup() {
         document.querySelector('.overlay').style.display = 'none';
         }
-
-        window.onload = function() {
-        // Get the message from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const message = urlParams.get('message');
-        
-        // Display the message in the popup
-        if (message) {
-            document.querySelector('.overlay').style.display = 'flex';
-            document.getElementById('popupMessage').innerText = message;
-        }
-    };
         
         let arrowPressCount = 0;
       

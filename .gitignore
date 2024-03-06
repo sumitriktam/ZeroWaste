@@ -3,4 +3,5 @@ eVar
 virt
 admin_mod/__pycache__
 provider/__pycache__
-receiver/__pycache__
+receiver/__pycache__ 
+statics/provider/postpics

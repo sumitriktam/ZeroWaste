@@ -58,6 +58,6 @@ def send_user_confirmation_email(user):
     </html>
     '''
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = [email]
+    recipient_list = [user.email]
     send_mail(subject, message, email_from, recipient_list, html_message=message)
     return True
