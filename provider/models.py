@@ -21,7 +21,7 @@ class Post(models.Model):
         ('pickup', 'Pickup'),
     )
     drop_pickup = models.CharField(max_length=10, choices=DROP_PICKUP_CHOICES)
-    description_id = models.CharField(max_length=100)  #problematic
+    description_id = models.CharField(max_length=100)  
     name = models.CharField(max_length=1000)
     location = models.CharField(max_length = 100)
     EXPIRY_CHOICES = (

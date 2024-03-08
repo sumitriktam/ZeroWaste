@@ -69,8 +69,55 @@ def newPost(request):
         )
         #saving post
         post_here.save()
-        messages.success(request, 'Post succesfully added.')
+        messages.success(request, 'Post successfully added.')
+    
+        # Redirect to the dashboard or any other page with the success message as a parameter in the URL
         return redirect('/provider/home')
+        
 
     return render(request, "provider/form_newpost.html", context)
-    
+
+def requestsViewAll(request):
+    return render(request,"provider/requests.html" )
+
+def allPosts(request):
+    posts_with_descriptions = []
+
+    # Fetch all posts
+    posts = post.objects.filter(user_id=1).order_by('-created_at')
+
+    # Fetch descriptions for each post
+    for single_post in posts:
+        # Initialize variables to hold descriptions
+        toys_desc = None
+        grocery_desc = None
+        cloth_desc = None
+        food_desc = None
+        other_desc = None
+
+        # Retrieve descriptions for the current post if available
+        if single_post.category == 'toys':
+            toys_desc = toysDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'groceries':
+            grocery_desc = groceryDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'clothes':
+            cloth_desc = clothDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'food':
+            food_desc = foodDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'others':
+            other_desc = otherDes.objects.filter(id=single_post.description_id).first()
+
+        # Append the post and its descriptions to the list
+        posts_with_descriptions.append({
+            'post': single_post,
+            'toys_desc': toys_desc,
+            'grocery_desc': grocery_desc,
+            'cloth_desc': cloth_desc,
+            'food_desc': food_desc,
+            'other_desc': other_desc,
+        })
+
+    context = {
+        'posts_with_descriptions': posts_with_descriptions,
+    }
+    return render(request, "provider/all_posts.html", context)
