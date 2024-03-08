@@ -21,6 +21,8 @@ class User(models.Model):
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
+    zerowaste_score = models.IntegerField(default=0)
+
     def save(self, *args, **kwargs):
         # Hash the password using sha256
         if self.password:
@@ -34,5 +36,7 @@ class Admin(models.Model):
     password = models.CharField(max_length=300)
 
     def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
+        # Hash the password using sha256
+        if self.password:
+            self.password = hashlib.sha256(self.password.encode()).hexdigest()
         super().save(*args, **kwargs)

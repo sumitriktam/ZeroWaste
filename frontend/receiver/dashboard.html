@@ -12,82 +12,7 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
-    </style>
-    <style>
-      .navbar-brand {
-        color: #1a1a1a;
-        font-family: "Lexend Deca", sans-serif;
-        font-weight: bold;
-        font-size: 24;
-      }
-      .nav-item {
-        font-family: "Lexend Deca", sans-serif;
-        font-weight: regular;
-        font-size: 24;
-        padding-left: 15px;
-      }
-      .navbar .container {
-        padding: 10px 0; /* Adjust the padding as needed */
-      }
-      .navbar {
-        position: sticky;
-        top: 0;
-        z-index: 3;
-        background-color: #e9e9e9;
-      }
-      .navbar-nav {
-        border-radius: 5px;
-      }
-      .dropdown {
-        position: fixed;
-        right: 0px;
-      }
-      .restaurant-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 200px));
-        gap: 15px;
-        justify-content: center;
-      }
-
-      .restaurant-card {
-        background-color: #fff;
-        border-radius: 8px;
-        height: 260px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.8s ease;
-      }
-
-      .restaurant-card:hover {
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-        transform: translateY(-5px);
-        transition: transform 0.6s ease;
-        cursor: pointer;
-      }
-
-      .restaurant-card img {
-        width: 100%;
-        height: 138px;
-        display: block;
-      }
-
-      .card-body {
-        padding: 20px;
-      }
-
-      .card-body h4 {
-        margin: 0;
-        font-size: 1.2em;
-        font-weight: bold;
-      }
-
-      .card-body p {
-        margin: 5px 0;
-        font-size: 0.9em;
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'receiver/css/dashboard.css'%}" />
   </head>
   <body>
     {% csrf_token %}
@@ -95,10 +20,10 @@
       <div class="container">
         <!-- Company Name and Logo -->
         <a class="navbar-brand" href="#">
-          <img src="{% static 'logo.png' %}" alt="Company Icon" />
+          <img src="{% static 'receiver/logo.png' %}" alt="Company Icon" />
           <span class="company-name">ZeroWaste</span>
         </a>
-        <!-- Navbar Toggler -->
+        <!-- Navbar Toggler --> 
         <button
           class="navbar-toggler"
           type="button"
@@ -130,26 +55,61 @@
         </div>
       </div>
     </nav>
-    <div class="dropdown">
-      <a
-        class="btn btn-secondary dropdown-toggle"
-        href="#"
-        role="button"
-        id="dropdownMenuLink"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Dropdown link
-      </a>
-
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <li><a class="dropdown-item" href="#">All</a></li>
-        <li><a class="dropdown-item" href="#">Food</a></li>
-        <li><a class="dropdown-item" href="#">Clothes</a></li>
-        <li><a class="dropdown-item" href="#">Toys</a></li>
-        <li><a class="dropdown-item" href="#">Groceries</a></li>
-        <li><a class="dropdown-item" href="#">Others</a></li>
+    {% if messages %}
+    <div class="validation-message" id="validationMessage">
+      <ul class="message-list">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
       </ul>
+    </div>
+    {%endif%}
+    <div>
+      <div class="dropdown">
+        <a
+          class="btn btn-secondary dropdown-toggle"
+          href="#"
+          role="button"
+          id="dropdownMenuLink"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Dropdown link
+        </a>
+
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <li>
+            <a class="dropdown-item" href="#" onclick="filterPosts('all')"
+              >All</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="filterPosts('food')"
+              >Food</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="filterPosts('clothes')"
+              >Clothes</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="filterPosts('toys')"
+              >Toys</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="filterPosts('groceries')"
+              >Groceries</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="filterPosts('others')"
+              >Others</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div id="post-container">
@@ -178,10 +138,44 @@
     </div>
   </body>
   <script>
-    function sendRequest(postId) {
-      document.getElementById("form_" + postId).submit();
-    }
+        function sendRequest(postId) {
+           const form = document.getElementById(`form_${postId}`);
+           form.action = `/receiver/view_post/${postId}/`;
+           document.getElementById("form_" + postId).submit();
+         }
+         function filterPosts(category) {
+
+             let all_posts = {{ data.posts | safe }};
+             filteredPosts=all_posts.filter((post)=>post.category===category)
+              if(category==='all')filteredPosts=all_posts
+    document.querySelector('.restaurant-cards').innerHTML=''
+     if(filteredPosts.length===0)document.querySelector('.restaurant-cards').innerHTML="<h6>Sorry no posts available</h6>"
+             filteredPosts.forEach(function(post) {
+         let postElement = document.createElement('div');
+         postElement.className = 'restaurant-card';
+         postElement.onclick = function() {
+           sendRequest(post.post_id);
+         };
+         postElement.innerHTML = `
+           <img src="${post.image}" alt="Item Image" />
+           <div class="card-body">
+             <h4>${post.item_name}</h4>
+             <p>${post.location}</p>
+             <p>${post.drop_pickup}</p>
+           </div>
+          <form id="form_${post.post_id}" action="" method="post">
+              {% csrf_token %}
+          </form>
+         `;
+
+         // Append the post container to "restaurent-cards" class
+         document.querySelector('.restaurant-cards').appendChild(postElement);
+       });
+
+       }
   </script>
+
+  <!-- CDN's -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

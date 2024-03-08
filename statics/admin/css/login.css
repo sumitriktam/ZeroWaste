@@ -1,7 +1,5 @@
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #A2FF90;
+    background-color: #fefefe;
     color: white;
     font-family: Arial, sans-serif;
     /* display: flex;
@@ -17,16 +15,26 @@ body {
   flex-direction: row;
 }
 
+.head {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .header img {
+    width: 100px; /* Adjust the width of your logo */
+    height: 100px;
+  }
+
 .form-container {
-  margin-top: 1px;
-    background-color: white;
+  margin-top: 6%;
+    background-color: rgb(211, 209, 209);
     /* margin-top: 100px; */
-    width: 85%;
-    height: 90%;
+    width: 40%;
+    height: 70%;
     padding: 12px;
     display: flex;
+    margin-left: 0%;
     flex-direction: column;
-    margin-right: 0%;
     border-radius: 15px;
 }
 
@@ -37,7 +45,7 @@ form {
 
   .form-container h2 {
     margin-left: 34%;
-    font-size: 20px;
+    font-size: 27px;
     padding: 20px;
     color: black;
   }
@@ -50,33 +58,18 @@ form {
   }
 
   .form-container label {
-    margin-left: 14%;
-    padding-top: 0.7em;
-    margin-bottom: 4px;
-    color: black;
+        color: black;
   }
 
   .form-container input[type="text"],
   .form-container input[type="password"]{
     border: 1px solid #ccc;
-    padding: 12px;
+    padding: 15px;
     border-radius: 15px;
     display: block;
     margin-left: 14%;
-    margin-bottom: 10px;
     font-size: 16px;
     max-width: 70%;
-  }
-
-  .form-container select {
-    border: 1px solid #ccc;
-    padding: 12px;
-    border-radius: 15px;
-    display: block;
-    margin-left: 14%;
-    margin-bottom: 10px;
-    font-size: 16px;
-    max-width: 73%;
   }
 
   .form-container input[type="submit"] {
@@ -97,43 +90,49 @@ form {
     background-color: #0056b3;
   }
 
-  .error-message {
-    background-color: #f8d7da;
+  .form-container .remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 14%;
+    width: 72%;
+    margin-bottom: 10px;
+  }
+  
+  .form-container .remember-me label {
+    font-size: 16px;
+  }
+  
+
+  .form-container .validation-message {
+    background-color: #f7a9af;
     color: #721c24;
     border: 1px solid #f5c6cb;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
   }
-
-  .already-have-account {
+  p {
     margin-left: 14%;
-    margin-top: 30px;
-    font-size: 20px;
-    color: black;
+    color: #000000;
+    font-size: 1em;
+    margin-bottom: 20px;
   }
 
-  .already-have-account a {
-    color: #EC9C00;
-    text-decoration: none;
-  }
-
-  .already-have-account a:hover {
-    text-decoration: underline;
-  }
-
+  
   .picture {
     display: flex;
     justify-content: center;
     align-items: flex-start; 
-    margin-top:3%;
-    
+    margin-top:6%;
+
   }
 
   .picture img {
-    padding-top: 2%;
-    max-width: 107%; 
-    max-height: 75%;
+    padding-top: 0%;
+    width: 148%;
+    margin-left: 25%;
+    max-height: 81%;
     border-radius: 8px;
   }
 

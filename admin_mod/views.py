@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django import forms
 from .models import User
@@ -8,7 +9,12 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 def index(request):
-    context = {}
+    #only get users who ate providers and whose status is accepted
+    #other condition is get users whose zerowaste score is grater than zero because by default we're assigning everyone a score of zero
+    users = User.objects.filter(status="accepted", role="provider", zerowaste_score__gt=0).order_by('-zerowaste_score')[:9]
+    context = {
+        'users': users
+    }
     return render(request, "admin/home.html", context)
 
 def adminPanel(request):
@@ -55,6 +61,20 @@ def reject_user(request, user_id):
     }
     return JsonResponse(data)
 
+def check_user_existence(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        username = data.get('username')
+
+        if User.objects.filter(email=email).exists() or User.objects.filter(username=username).exists():
+            return JsonResponse({'error': 'User already exists'}, status=400)
+        else:
+            return JsonResponse({'success': 'User does not exist'})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -72,7 +92,7 @@ def login(request):
             elif user.role=='provider':
                 return  redirect("provider/home")
             elif user.role=='receiver':
-                return  redirect("receiver/home")
+                return  redirect("receiver")
             else:
                 return redirect('/register')
         else:

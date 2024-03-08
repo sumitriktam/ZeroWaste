@@ -1,9 +1,12 @@
 from django.db import models
 from provider.models import User,Post
+from django.utils import timezone
+
 # Create your models here.
 
 class Order(models.Model):
     ordered_post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    date_time= models.DateTimeField(default=timezone.now)
     receiver_user=models.ForeignKey(User,on_delete=models.CASCADE)
     STATUS_OPTIONS=(
         ('accept','Accept'),

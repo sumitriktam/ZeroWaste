@@ -4,13 +4,29 @@ from provider.models import Post, toysDes, groceryDes, clothDes, foodDes, otherD
 from receiver.models import Order
 from django.contrib import messages
 from datetime import datetime
+from admin_mod import views
+from django.urls import reverse
+
+
+def check_user_login_status(request):
+   try:
+    user_id=request.session['user_id']
+   except KeyError:
+    #clear previous error messages
+      
+    messages.error(request,"Please login before acessing the page")
+    return redirect('/login')
+def is_receiver(request):
+  user_id=request.session['user_id']
+  user_role=User.objects.get(id=user_id).role
+  return user_role=='receiver'  
 
 def give_all_posts():
   #send all the posts as list of dictionaries 
   combined_posts = []
   #filter live(which are not ordered) posts
   posts=Post.objects.filter(status='live')
-  #add each post (along with category details) to combined data
+  #add each post (along with category details) to combined_posts
   for post in posts:
     post_data={
       'item_name':post.name,
@@ -22,26 +38,52 @@ def give_all_posts():
     user_details=User.objects.get(id=post.user_id)
     post_data['user_name']=user_details.username
     post_data['post_id']=post.id
+    post_data['category']=post.category
     category=post.category
     if category=='food':
       description=foodDes.objects.get(id=post.description_id)
       post_data['quantity']=post.quantity
-      post_data['expiry_date']=description.expiry_date
-      post_data['expiry_time']=description.expiry_time
-    
+      post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
+      post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
     combined_posts.append(post_data) 
   data={'posts':combined_posts}
   return data
 
+
 def dashboard(request):
-  data=give_all_posts()
-  print(data)
-  return render(request, "receiver/dashboard.html", {'data':data})  
+   #check wether the user is logged in or not
+   try:
+    user_id=request.session['user_id']
+   except KeyError:
+    #clear previous error messages
+      
+    messages.error(request,"Please login before acessing the page")
+    return redirect('/login')
+  #if the user is not receiver redirect to login
+   if(not is_receiver(request)):
+    #clear previous error messages
+      
+    messages.error(request,"Sorry,you dont have permission")
+    return redirect('/login')
+   #take all posts into 'data' dictionary
+   data=give_all_posts()
+   return render(request, "receiver/dashboard.html", {'data':data}) 
+
+  
 
 def view_post(request,post_id):
-   try:
+  #check if user is logged in or not
+  try:
+    user_id=request.session['user_id']
+  except KeyError:
+    #clear previous error messages
+      
+    messages.error(request,"Please login before acessing the page")
+    return redirect('/login') 
+  #check wether the post id is valid
+  
+  try:
       post = Post.objects.get(id=post_id)
-        
       post_data={
       'item_name':post.name,
       'image':post.photo.url,
@@ -52,25 +94,59 @@ def view_post(request,post_id):
       user_details=User.objects.get(id=post.user_id)
       post_data['user_name']=user_details.username
       post_data['post_id']=post.id
-      category=post.category
-      if category=='food':
+      
+    #add the description data based on the category
+      if post.category=='food':
         description=foodDes.objects.get(id=post.description_id)
-        post_data['quantity']=post.quantity
-        post_data['expiry_date']=description.expiry_date
-        post_data['expiry_time']=description.expiry_time
-        return render(request, "receiver/viewPost.html",{'post_data':post_data})
-   except Post.DoesNotExist:
-        messages.error(request, 'Sorry, the post does not exist.')
+        post_data['description'] = {
+        'desc': description.desc,
+        'expiry_date': description.expiry_date.strftime('%Y-%m-%d'),
+        'expiry_time': description.expiry_time.strftime('%H:%M'),
+        }
+       
+      elif post.category=='toys':
+        description=toysDes.objects.get(id=post.description_id)
+        post_data['description'] = {
+            'age_group': description.age_group,
+            'condition': description.condition,
+            'desc': description.desc
+        }
+      elif post.category=='clothes':
+        description=clothDes.objects.get(id=post.description_id)
+        post_data['description'] = {
+            'gender': description.gender,
+            'condition': description.condition,
+            'size': description.size,
+            'desc': description.desc
+        }
+      elif post.category=='others':
+        description=otherDes.objects.get(id=post.description_id)
+        post_data['description'] = {
+            'desc': description.desc
+        }
+      elif post.category=='groceries':
+        description=groceryDes.objects.get(id=post.description_id)
+        post_data['description'] = {
+            'desc': description.desc,
+            'expiry_date': description.expiry_date.strftime('%Y-%m-%d'),
+            'expiry_time': description.expiry_time.strftime('%H:%M')
+        }
+        
+      return render(request, 'receiver/viewPost.html',{'post_data':post_data})
+  except Post.DoesNotExist:
+        #clear previous error messages
+          
+        messages.error(request, 'Sorry, the post does not exist')
         return redirect('/receiver')
-    
         
 
-def order(request,post_id):
-    #not fully completed 
+def order(request):
+    check_user_login_status(request)
+    post_id = request.POST.get('post_id')
     try:
      ordered_post=Post.objects.get(id=post_id)
-     #take the user id of receiver(have to make it dynamic)
-     receiver_user_id=1
+     provider_location=ordered_post.location
+     receiver_user_id=request.session['user_id']
      receiver_user=User.objects.get(id=receiver_user_id)
      delivery_location=User.objects.get(id=receiver_user_id).location
      quantity=20#it should be (request.POST.quantity)
@@ -83,14 +159,102 @@ def order(request,post_id):
        'image':ordered_post.photo.url,
      }
      data['message']='Order successful'
+     data['location']=provider_location
+   
+     #render order tracking page with sucess message
+     return redirect('track_order',post_id=post_id)
      
+    #if there is no such post
+    except Post.DoesNotExist:   
+      #clear previous error messages
+        
+      #render the page with the specific error(not implemented)
+      messages.error(request, 'Sorry there is no such item or the item is already ordered')
+      return redirect('/receiver')
+    
+def track_order(request,post_id):
+    try:
+     user_id=request.session['user_id']
+    except KeyError:
+    #clear previous error messages
+     messages.error(request,"Please login before acessing the page")
+     return redirect('/login')
+    #user can only track his active order(not yet implemeted)
+    try:
+     ordered_post=Post.objects.get(id=post_id)
+     provider_location=ordered_post.location
+     receiver_user_id=request.session['user_id']
+     receiver_user=User.objects.get(id=receiver_user_id)
+     delivery_location=User.objects.get(id=receiver_user_id).location
+     quantity=20#it should be (request.POST.quantity)
+     #create a new order in order table
+     
+     data = {
+       'image':ordered_post.photo.url,
+     }
+     data['message']='Order successful'
+     data['location']=provider_location
+    
+   
      #render order tracking page with sucess message
      return render(request,"receiver/trackOrder.html",{'data':data})
     
      
     #if there is no such post
     except Post.DoesNotExist:   
-      #render the page with the specific error(not implemented)
+      #clear previous error messages
+        
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
       return redirect('/receiver')
+
+
+#all orders of the user
+def order_history(request):
+   #get the user id
+   user_id=request.session['user_id']
+   #all orders made by user
+   orders=Order.objects.filter(receiver_user_id=user_id)
+   #seperate all kinds of orders made by this user
+   accepted=[]
+   pending=[]
+   rejected=[]
+   delivered=[]
+   for order in orders:
+       order_details={}
+       order_details['status']=order.status
+       order_details['order_id']=order.id
+       order_details['date']=order.date_time.strftime('%d-%m-%Y')
+       order_details['time']=order.date_time.strftime('%H:%M')
+       order_details['quantity']=order.quantity
+
+       if(order.status=='accepted'):
+         accepted.append(order_details)
+       elif(order.status=='pending'):
+         pending.append(order_details)
+       elif(order.status=='rejected'):
+         rejected.append(order_details)
+       else:
+         delivered.append(order_details)
+       
+     #take image,item_name,post location from post table
+       post=Post.objects.get(id=order.ordered_post_id)
+       order_details['image']=post.photo.url
+       order_details['item_name']=post.name
+       order_details['location']=post.location
+     #take location from user table
+      
+   all_orders={
+      'accepted':accepted,
+      'pending':pending,
+      'rejected':rejected,
+      'delivered':delivered,
+    }
+   return render(request,'receiver/orderHistory.html',{'orders':all_orders})
+           
+# def reports(request):
+  
+     
+     
+     
+  
      

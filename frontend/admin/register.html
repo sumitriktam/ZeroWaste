@@ -1,93 +1,150 @@
-{%load static %}
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
-  <link rel="stylesheet" href="{% static 'admin/css/register.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Include CSRF token -->
+    {% csrf_token %}
+    <link rel="stylesheet" href="{% static 'admin/css/register.css' %}">
 </head>
 <body>
-  <div class="container">
+<div class="container">
     <div class="picture">
-      <img src="{% static 'admin/media/register1.png' %}" alt="Picture">
+        <img src="{% static 'admin/media/register1.png' %}" alt="Picture">
     </div>
-  <div class="form-container">
-    <div>
-      <h2>Create your Account here</h2>
+    <div class="form-container">
+        <div>
+            <h2>Create your Account here</h2>
+        </div>
+        <form id="signupForm" method="POST" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="text" placeholder="Enter your email">
+
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Enter your username">
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter your password">
+
+            <label for="confirm_password">Confirm Password</label>
+            <input id="confirm_password" name="confirm_password" type="password" placeholder="Confirm your password">
+
+            <label for="location">Location</label>
+            <input id="location" name="location" type="text" placeholder="Enter your location">
+
+            <label for="role">Role</label>
+            <select id="role" name="role">
+                <option value="default">Select your Role</option>
+                <option value="receiver">Receiver</option>
+                <option value="provider">Provider</option>
+                <option value="enduser">End User</option>
+            </select>
+
+            <input type="submit" value="Sign Up">
+        </form>
+        <p class="already-have-account">Already have an account? <a href="login">Login</a></p>
     </div>
-    <form id="signupForm" method="POST" \onsubmit="return validateForm()">
-      {% csrf_token %}
-        <div id="errorMessage" class="error-message" style="display: none;"></div>
-        <label for="email">Email</label>
-        <input id="email" name="email" type="text" placeholder="Enter your email">
-
-        <label for="username">Username</label>
-        <input id="username" name="username" type="text" placeholder="Enter your username">
-
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="Enter your password">
-
-         <label for="location">Location</label>
-        <input id="location" name="location" type="text" placeholder="Enter your location">
-
-        <label for="role">Role</label>
-        <select id="role" name="role">
-          <option value="default:">select your Role</option>
-          <option value="receiver">Receiver</option>
-          <option value="provider">Provider</option>
-          <option value="enduser">End User</option>
-        </select>
-
-      <input type="submit" value="Sign Up">
-    </form>
-    <p class="already-have-account">Already have an account? <a href="login">Login</a></p>
-  </div>
 </div>
-        
-  <script>
+
+<script>
     function validateForm() {
-      var email = document.getElementById("email").value;
-      var username = document.getElementById("username").value;
-      var password = document.getElementById("password").value;
-      var location = document.getElementById("location").value;
-      var role = document.getElementById("role").value;
+        var email = document.getElementById("email").value;
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirm_password").value;
+        var location = document.getElementById("location").value;
+        var role = document.getElementById("role").value;
 
-      // Clear previous error message
-      document.getElementById("errorMessage").style.display = "none";
+        // Clear previous error message
+        document.getElementById("errorMessage").style.display = "none";
 
-      // Validation logic
-      if (!email || !username || !password  || !location || !role) {
-        document.getElementById("errorMessage").innerHTML = "Please fill out all fields";
-        document.getElementById("errorMessage").style.display = "block";
-        return false;
-      }
+        // Validation logic
+        if (!email || !username || !password || !confirmPassword || !location || !role) {
+            document.getElementById("errorMessage").innerHTML = "Please fill out all fields";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
 
-      // Email validation
-      var emailRegex = /\S+@\S+\.\S+/;
-      if (!emailRegex.test(email)) {
-        document.getElementById("errorMessage").innerHTML = "Please enter a valid email address";
-        document.getElementById("errorMessage").style.display = "block";
-        return false;
-      }
+        // Email validation
+        var emailRegex = /\S+@\S+\.\S+/;
+        if (!emailRegex.test(email)) {
+            document.getElementById("errorMessage").innerHTML = "Please enter a valid email address";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
 
-      // Password strength validation (you can add more complex validation as needed)
-      if (password.length < 8) {
-        document.getElementById("errorMessage").innerHTML = "Password must be at least 8 characters long";
-        document.getElementById("errorMessage").style.display = "block";
-        return false;
-      }
+        // Password strength validation (you can add more complex validation as needed)
+        if (password.length < 8) {
+            document.getElementById("errorMessage").innerHTML = "Password must be at least 8 characters long";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
 
-      // Confirm password validation
-      if (password !== confirm_password) {
-        document.getElementById("errorMessage").innerHTML = "Passwords do not match";
-        document.getElementById("errorMessage").style.display = "block";
-        return false;
-      }
+        // Confirm password validation
+        if (password !== confirmPassword) {
+            document.getElementById("errorMessage").innerHTML = "Passwords do not match";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
 
-      // If all validations pass, the form will be submitted
-      return true;
+        // If all validations pass, send form data to server for further validation
+        if(sendDataToServer(email, username)==false){
+          return false;
+        }
+        return false; // Prevent form submission
     }
-  </script>
+
+    var csrftoken = getCookie('csrftoken');
+
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  function sendDataToServer(email, username) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/check_user_existence/", true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.setRequestHeader("X-CSRFToken", csrftoken); 
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // User does not exist, proceed with registration
+                document.getElementById("signupForm").submit();
+            } else {
+                // Display error message returned from server
+                var response = JSON.parse(xhr.responseText);
+                if (response.error === "User already exists") {
+                    document.getElementById("errorMessage").innerHTML = response.error;
+                    document.getElementById("errorMessage").style.display = "block";
+                } else {
+                    // Handle other error cases
+                    document.getElementById("errorMessage").innerHTML = "An error occurred. Please try again later.";
+                    document.getElementById("errorMessage").style.display = "block";
+                }
+            }
+        }
+    };
+    var data = JSON.stringify({email: email, username: username});
+    xhr.send(data);
+    return false;
+}
+
+</script>
 </body>
 </html>
