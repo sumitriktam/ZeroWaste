@@ -197,8 +197,7 @@ def change_password(request, token):
         # print(token)
         # print(Resetpass.objects.get(forget_password_token=token))
         if profile_obj is None:
-            messages.success(request, 'Invalid token.')
-            return redirect('/forget-password/')
+            return redirect('/invalid-token/')
 
         # Check if the token is older than 30 minutes
         if profile_obj.created_at < timezone.now() - timedelta(minutes=30):
@@ -216,7 +215,7 @@ def change_password(request, token):
 
             if user_id is None:
                 messages.success(request, 'No user id found.')
-                return redirect(f'/forget-password/{token}/')
+                return redirect(f'/forget-password/')
 
             if new_password != confirm_password:
                 messages.success(request, 'Passwords do not match.')
@@ -274,7 +273,6 @@ def resend_email(request):
         try:
             user_obj = User.objects.get(email=email)
             resetpass_obj = Resetpass.objects.get(user=user_obj)
-            # Check if the previous token is older than 30 minutes
             if resetpass_obj.created_at < timezone.now() - timedelta(minutes=30):
                 resetpass_obj.forget_password_token = str(uuid.uuid4())
                 resetpass_obj.created_at = timezone.now()
@@ -290,3 +288,5 @@ def resend_email(request):
             messages.error(request, 'Failed to resend email. Please try again later.')
     return redirect('/forget-password/')
 
+def invalid_token(request):
+    return render(request, 'admin/invalid_token.html')

@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,6 +41,10 @@
     </style>
 </head>
 <body>
+    <div class="head">
+        <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
+        <h1>ZeroWaste</h1>
+    </div>
     <div class="container">
         <h1>Email Verification</h1>
         <p>An email has been sent to your email address. Click the link in the email to verify your account.</p>

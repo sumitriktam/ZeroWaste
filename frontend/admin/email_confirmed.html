@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,6 +20,17 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .head {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .head img {
+            width: 50px; /* Adjust the width of your logo */
+            height: 50px;
+            padding: 10px;
+        }
+
         h1 {
             color: #333;
         }
@@ -39,6 +52,10 @@
     </style>
 </head>
 <body>
+    <div class="head">
+        <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
+        <h1>ZeroWaste</h1>
+    </div>
     <div class="container">
         <h1>Email Confirmed</h1>
         <p>Your email has been successfully confirmed.</p>
