@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 from django.core.mail import send_mail
 from django.conf import settings 
+=======
+import base64
+from django.conf import settings
+from django.core.mail import send_mail
+from .models import EmailVerification
+>>>>>>> ab650a66b3375062a42473e15353448b889235e0
 
 def send_forget_password_mail(email, token):
     subject = 'Please reset your password'
@@ -28,3 +35,37 @@ def send_forget_password_mail(email, token):
     recipient_list = [email]
     send_mail(subject, message, email_from, recipient_list, html_message=message)
     return True
+<<<<<<< HEAD
+=======
+
+
+def send_user_confirmation_email(user):
+    verification_token = base64.urlsafe_b64encode(user.email.encode()).decode()[:20]
+    EmailVerification.objects.create(user=user, token=verification_token)
+    subject = 'Verify your Email Address'
+    message = f'''
+    <html>
+    <body>
+    <p>Dear User,</p>
+    <p>Tap the button below to confirm your email address.</p>
+    <a href="http://127.0.0.1:8000/confirm-account/{verification_token}/"><button style="background-color: #0084FF;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;">Confirm account</button></a>
+    <p>If the button above doesn't work, copy and paste the following link in your browser:</p>
+    <p><a href="http://127.0.0.1:8000/confirm-account/{verification_token}/">http://127.0.0.1:8000/confirm-account/{verification_token}/</a></p>
+    <p>This account verification link is only valid for 30 minutes after you receive this email.</p>
+    <p>If this was not you, you can safely delete this email.</p>
+    <p>Your ZeroWaste team</p>
+    </body>
+    </html>
+    '''
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [user.email]
+    send_mail(subject, message, email_from, recipient_list, html_message=message)
+    return True
+>>>>>>> ab650a66b3375062a42473e15353448b889235e0
