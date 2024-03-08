@@ -15,4 +15,7 @@ urlpatterns = [
     path('confirm-account/<str:token>/', views.confirm_account, name='confirm_account'),
     path('email-verification-pending/', views.email_verification_pending, name='email_verification_pending'),
     path('email-verified/', views.email_verified, name='email_verified'),
+    path('failed-to-verify/', views.failed_to_verify),
+    path('resend-email/', views.resend_email, name='resend_email'),
+
 ]
