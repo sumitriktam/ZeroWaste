@@ -168,6 +168,7 @@ def confirm_account(request, token):
     try:
         verification = get_object_or_404(EmailVerification, token=token)
         user = verification.user
+        print(user)
         if user.is_verified:
             messages.success(request, 'Email already verified.')
             return redirect('/login')
@@ -238,6 +239,10 @@ def forget_password(request):
     try:
         if request.method == 'POST':
             email = request.POST.get('email')
+
+            if email == '':
+                messages.success(request, 'No email provided.')
+                return redirect('/forget-password/')
             if not User.objects.filter(email=email).exists():
                 messages.success(request, 'No user found with this email.')
                 return redirect('/forget-password/')
@@ -270,6 +275,10 @@ def forget_password(request):
 def resend_email(request):
     if request.method == 'POST':
         email = request.POST.get('email')
+        if email == '':
+            messages.success(request, 'No email provided.')
+            return redirect('/forget-password/')
+        # print("email is : ", email)
         try:
             user_obj = User.objects.get(email=email)
             resetpass_obj = Resetpass.objects.get(user=user_obj)
@@ -281,7 +290,9 @@ def resend_email(request):
                 messages.success(request, 'An email is sent.')
                 return redirect('/forget-password/')
             else:
+                # print("it is in else block and email is sent")
                 send_forget_password_mail(user_obj.email, resetpass_obj.forget_password_token)
+                messages.success(request, 'An email is sent.')
                 return redirect('/forget-password/')
         except Exception as e:
             print(e)

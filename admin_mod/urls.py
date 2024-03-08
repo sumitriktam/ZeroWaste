@@ -16,7 +16,7 @@ urlpatterns = [
     path('email-verification-pending/', views.email_verification_pending, name='email_verification_pending'),
     path('email-verified/', views.email_verified, name='email_verified'),
     path('failed-to-verify/', views.failed_to_verify),
-    path('resend-email/', views.resend_email, name='resend_email'),
+    path('forget-password/resend-email/', views.resend_email, name='resend_email'),
     path('invalid-token/', views.invalid_token, name='invalid_token'),
 
 ]
