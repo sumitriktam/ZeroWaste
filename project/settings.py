@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'zw3',
         'USER': 'root',
-        'PASSWORD': 'j@g@nN1969',
+        'PASSWORD': 'pass',
         'HOST':'localhost',
         'PORT':'3306',
     }
@@ -134,3 +134,12 @@ AUTHENTICATION_BACKENDS = [
     'admin_mod.custom_auth.CustomBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+
+#enter your email and password here
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''

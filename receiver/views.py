@@ -94,7 +94,7 @@ def view_post(request,post_id):
       user_details=User.objects.get(id=post.user_id)
       post_data['user_name']=user_details.username
       post_data['post_id']=post.id
-      
+      post_data['category']=post.category
     #add the description data based on the category
       if post.category=='food':
         description=foodDes.objects.get(id=post.description_id)
@@ -131,7 +131,7 @@ def view_post(request,post_id):
             'expiry_date': description.expiry_date.strftime('%Y-%m-%d'),
             'expiry_time': description.expiry_time.strftime('%H:%M')
         }
-        
+      post_data['quantity'] = post.quantity
       return render(request, 'receiver/viewPost.html',{'post_data':post_data})
   except Post.DoesNotExist:
         #clear previous error messages
@@ -143,6 +143,7 @@ def view_post(request,post_id):
 def order(request):
     check_user_login_status(request)
     post_id = request.POST.get('post_id')
+    print(post_id)
     try:
      ordered_post=Post.objects.get(id=post_id)
      provider_location=ordered_post.location
@@ -162,7 +163,7 @@ def order(request):
      data['location']=provider_location
    
      #render order tracking page with sucess message
-     return redirect('track_order',post_id=post_id)
+     return redirect('waiting_page')
      
     #if there is no such post
     except Post.DoesNotExist:   
@@ -208,6 +209,11 @@ def track_order(request,post_id):
       return redirect('/receiver')
 
 
+def waiting_page(request):
+  check_user_login_status(request)
+  return render(request,'receiver/waitingPage.html')
+    
+
 #all orders of the user
 def order_history(request):
    #get the user id
@@ -218,7 +224,7 @@ def order_history(request):
    accepted=[]
    pending=[]
    rejected=[]
-   delivered=[]
+   delivered=[] #receiver have a button wether the order is delivered or not when he clicks on that the status will be updated to delivered(not yet implemented)  
    for order in orders:
        order_details={}
        order_details['status']=order.status

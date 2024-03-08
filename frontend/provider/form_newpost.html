@@ -1,49 +1,104 @@
-{% extends "provider/provbase.html" %}
-{% block content %}
-
-    <form method="POST" enctype="multipart/form-data" action="" style="position: absolute; top: 10vw;">
-        {% csrf_token %}
-
-        <label for="photo">Photo:</label><br>
-        <input type="file" id="photo" name="photo"><br><br>
-
-        <label for="category">Category:</label><br>
-        <select id="category" name="category" required>
-            <option value="toys">Toys</option>
-            <option value="food">Food</option>
-            <option value="clothes">Clothes</option>
-            <option value="others">Others</option>
-            <option value="groceries">Groceries</option>
-        </select><br><br>
-
-        <label for="drop_pickup">Drop or Pickup:</label><br>
-        <select id="drop_pickup" name="drop_pickup" required>
-            <option value="drop">Drop</option>
-            <option value="pickup">Pickup</option>
-        </select><br><br>
-
-        <div id="form-fields">
-            
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Waste Page</title>
+    <link rel="stylesheet" href="/statics/provider/newpost.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Top part containing zero waste logo, nav bar, and profile -->
+        <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
+        <p class="top-left-text" >ZeroWaste</p>
+        <nav class="navbar">
+            <!-- Add your navbar content here -->
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+                <li><a href="#chatbox">Chat box</a></li>
+            </ul>
+        </nav>
+        <div class="circle"><i class="fa fa-user user" aria-hidden="true" style="line-height:2.5"></i></div>
+        
+        <div class="req-name">
+            <p>
+                <a href="/provider/home">
+                    <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+                </a>
+            New Post</p>
         </div>
 
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+        <!-- Remaining page content -->
+        <div class="outerbox">
+            <div class="left-side">
+                
+                <img id="previewImage" alt="Please upload pictures to make your donation post more impactful!" class="image2" style="max-width: 100%; max-height: 100%;">
+                
+                <div class="uploaded-pics">
+                    <!-- Display uploaded pics here -->
+                </div>
+                <!-- Place to display uploaded images -->
+                <div class="image-placeholder"></div>
+            </div>
+            <div class="right-side">
+                <form method="POST" enctype="multipart/form-data" action=""  style="width: 800px; display:flex;justify-content:space-between;">
+                    {% csrf_token %}
+                    <div class="right-section">
+                        <label for="photo">Photo:</label><br>
+                        <input type="file" id="photo" name="photo" onchange="previewImage(event)">
+                        <br><br>
 
-        <label for="location">Location:</label><br>
-        <input type="text" id="location" name="location" required><br><br>
+                        <label for="category">Category:</label><br>
+                        <select id="category" name="category" required>
+                            <option value="toys">Toys</option>
+                            <option value="food">Food</option>
+                            <option value="clothes">Clothes</option>
+                            <option value="others">Others</option>
+                            <option value="groceries">Groceries</option>
+                        </select><br><br>
 
-        <label for="will_expire">Will Expire:</label><br>
-        <select id="will_expire" name="will_expire" required>
-            <option value="expirable">Expirable or Perishable</option>
-            <option value="non_expirable">Not Expirable or Non Perishable</option>
-        </select><br><br>
+                        <label for="drop_pickup">Drop or Pickup:</label><br>
+                        <select id="drop_pickup" name="drop_pickup" required>
+                            <option value="drop">Drop</option>
+                            <option value="pickup">Pickup</option>
+                        </select><br><br>
 
-        <label for="quantity">Quantity:</label><br>
-        <input type="text" id="quantity" name="quantity" required><br><br>
+                        <div id="form-fields">
+                            <!-- Additional fields based on category -->
+                        </div>
+                    </div>
 
-        <input type="submit" value="Submit">
-    </form>
+                    <div class="right-section">
+                        <label for="name">Name:</label><br>
+                        <input type="text" id="name" name="name" required><br><br>
+
+                        <label for="location">Location:</label><br>
+                        <input type="text" id="location" name="location" required><br><br>
+
+                        <label for="will_expire">Will Expire:</label><br>
+                        <select id="will_expire" name="will_expire" required>
+                            <option value="expirable">Expirable or Perishable</option>
+                            <option value="non_expirable">Not Expirable or Non Perishable</option>
+                        </select><br><br>
+
+                        <label for="quantity">Quantity:</label><br>
+                        <input type="text" id="quantity" name="quantity" required><br><br>
+
+                        <input type="submit"  value="Post">
+                    </div>
+
+                </form>
+                
+            </div>
+        </div>
+    </div>
+    
+      
 
     <script src="/statics/provider/ind.js"></script>
+</body>
+</html>
 
-{% endblock %}

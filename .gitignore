@@ -1,3 +1,9 @@
 venv
 eVar
-virt  
+virt
+admin_mod/__pycache__
+provider/__pycache__
+provider/migrations/__pycache__
+receiver/__pycache__ 
+project/__pycache__
+statics/provider/postpics
