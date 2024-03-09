@@ -90,7 +90,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'zw3',
-        'USER': 'root',
+        'USER': 'root',         
         'PASSWORD': 'pass',
         'HOST':'localhost',
         'PORT':'3306',
