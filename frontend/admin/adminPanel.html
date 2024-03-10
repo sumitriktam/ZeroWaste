@@ -39,48 +39,72 @@
     <!-- Display accepted users -->
     <div class="users-list-container" id="acceptedUsersContainer" style="display: none;">
         <h2 id="acceptedListHeading">Accepted Users</h2>
-        <div class="users-list" id="acceptedUsersList">
+        <table class="users-list" id="acceptedUsersList">
+            <thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>
             {% for user in accepted_users %}
-            <div class="user-details">
-                <p><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Role:</strong> {{ user.role }}</p>
-                <p><strong>Location:</strong> {{ user.location }}</p>
-            </div>
+            <tr class="user-details">
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td> {{ user.location }}</td>
+                <td><button id="btn-reject" type="button" onclick="rejectUser('{{ user.id }}')">Reject</button></td>
+            </tr>
             {% endfor %}
-        </div>
+        </table>
     </div>
 
     <!-- Display pending users -->
     <div class="users-list-container" id="pendingUsersContainer" style="display: none;">
         <h2 id="pendingListHeading">Pending Users</h2>
-        <div class="users-list" id="pendingUsersList">
+        <table class="users-list" id="pendingUsersList">
+            <thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>
             {% for user in pending_users %}
-            <div class="user-details">
-                <p><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Role:</strong> {{ user.role }}</p>
-                <p><strong>Location:</strong> {{ user.location }}</p>
-                <button id="btn-accept" type="button" onclick="approveUser('{{ user.id }}')">Approve</button>
-                <button id="btn-reject" type="button" onclick="rejectUser('{{ user.id }}')">Reject</button>
-            </div>
+            <tr class="user-details">
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td> {{ user.location }}</td>
+               <td> <button id="btn-accept" type="button" onclick="approveUser('{{ user.id }}')">Approve</button></td>
+               <td><button id="btn-reject" type="button" onclick="rejectUser('{{ user.id }}')">Reject</button></td>
+
+            </tr>
             {% endfor %}
-        </div>
+        </table>
     </div>
 
     <!-- Display rejected users -->
     <div class="users-list-container" id="rejectedUsersContainer" style="display: none;">
         <h2 id="rejectedListHeading">Rejected Users</h2>
-        <div class="users-list" id="rejectedUsersList">
+        <table class="users-list" id="rejectedUsersList">
+            <thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>
             {% for user in rejected_users %}
-            <div class="user-details">
-                <p><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Role:</strong> {{ user.role }}</p>
-                <p><strong>Location:</strong> {{ user.location }}</p>
-            </div>
+            <tr class="user-details">
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td> {{ user.location }}</td>
+                <td> <button id="btn-accept" type="button" onclick="approveUser('{{ user.id }}')">Approve</button></td>
+            </tr>
             {% endfor %}
-        </div>
+        </table>
     </div>
 
     <script>
@@ -92,17 +116,23 @@
          // Function to render pending users
          function renderPendingUsers() {
              let pendingContainer = document.getElementById("pendingUsersList");
-             pendingContainer.innerHTML = "";
+             pendingContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
              pendingUsers.forEach(user => {
                  pendingContainer.innerHTML += `
-                     <div class="user-details" data-user-id="${user.id}">
-                         <p><strong>Username:</strong> ${user.username}</p>
-                         <p><strong>Email:</strong> ${user.email}</p>
-                         <p><strong>Role:</strong> ${user.role}</p>
-                         <p><strong>Location:</strong> ${user.location}</p>
-                         <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button>
-                         <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button>
-                     </div>
+                 <tr class="user-details" data-user-id="${user.id}">
+                    <td> ${user.username}</td>
+                    <td> ${user.email}</td>
+                    <td> ${user.role}</td>
+                   <td> ${user.location}</td>
+                        <td> <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button></td>
+                         <td> <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button></td>
+                 </tr>
                  `;
              });
          }
@@ -110,15 +140,23 @@
          // Function to render accepted users
          function renderAcceptedUsers() {
              let acceptedContainer = document.getElementById("acceptedUsersList");
-             acceptedContainer.innerHTML = "";
-             acceptedUsers.forEach(user => {
+             acceptedContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
+         
+        acceptedUsers.forEach(user => {
                  acceptedContainer.innerHTML += `
-                     <div class="user-details" data-user-id="${user.id}">
-                         <p><strong>Username:</strong> ${user.username}</p>
-                         <p><strong>Email:</strong> ${user.email}</p>
-                         <p><strong>Role:</strong> ${user.role}</p>
-                        <p><strong>Location:</strong> ${user.location}</p>
-                     </div>
+                     <tr class="user-details" data-user-id="${user.id}">
+                         <td> ${user.username}</td>
+                         <td> ${user.email}</td>
+                         <td> ${user.role}</td>
+                        <td> ${user.location}</td>
+                        <td>    <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button>  </td>
+                     </tr>
                  `;
              });
          }
@@ -126,15 +164,22 @@
          // Function to render rejected users
          function renderRejectedUsers() {
              let rejectedContainer = document.getElementById("rejectedUsersList");
-             rejectedContainer.innerHTML = "";
+             rejectedContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
              rejectedUsers.forEach(user => {
                  rejectedContainer.innerHTML += `
-                     <div class="user-details" data-user-id="${user.id}">
-                         <p><strong>Username:</strong> ${user.username}</p>
-                         <p><strong>Email:</strong> ${user.email}</p>
-                         <p><strong>Role:</strong> ${user.role}</p>
-                         <p><strong>Location:</strong> ${user.location}</p>
-                     </div>
+                 <tr class="user-details" data-user-id="${user.id}">
+                    <td> ${user.username}</td>
+                    <td> ${user.email}</td>
+                    <td> ${user.role}</td>
+                   <td> ${user.location}</td>
+                   <td> <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button></td>
+                </tr>
                  `;
              });
          }
@@ -149,7 +194,8 @@
             })
             .then(response => response.json())
             .then(data => {
-                updateUI(data);
+                
+             updateUI(data);
             })
             .catch(error => console.error('Error:', error));
         }
@@ -171,46 +217,67 @@
         
         function updateUI(data) {
             // Update accepted users list
-            let acceptedUsersList = document.getElementById("acceptedUsersList");
-            acceptedUsersList.innerHTML = "";
-            data.accepted_users.forEach(user => {
-                acceptedUsersList.innerHTML += `
-                    <div class="user-details">
-                        <p><strong>Username:</strong> ${user.username}</p>
-                        <p><strong>Email:</strong> ${user.email}</p>
-                        <p><strong>Role:</strong> ${user.role}</p>
-                        <p><strong>Location:</strong> ${user.location}</p>
-                    </div>
-                `;
-            });
+             let acceptedContainer = document.getElementById("acceptedUsersList");
+             acceptedContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
+         
+        data.accepted_users.forEach(user => {
+                 acceptedContainer.innerHTML += `
+                     <tr class="user-details" data-user-id="${user.id}">
+                         <td> ${user.username}</td>
+                         <td> ${user.email}</td>
+                         <td> ${user.role}</td>
+                        <td> ${user.location}</td>
+                        <td>    <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button>  </td>
+                     </tr>
+                 `;
+             });    
         
             // Update pending users list
-            let pendingUsersList = document.getElementById("pendingUsersList");
-            pendingUsersList.innerHTML = "";
-            data.pending_users.forEach(user => {
-                pendingUsersList.innerHTML += `
-                    <div class="user-details">
-                        <p><strong>Username:</strong> ${user.username}</p>
-                        <p><strong>Email:</strong> ${user.email}</p>
-                        <p><strong>Role:</strong> ${user.role}</p>
-                        <p><strong>Location:</strong> ${user.location}</p>
-                        <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button>
-                        <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button>
-                    </div>
-                `;
-            });
+            let pendingContainer = document.getElementById("pendingUsersList");
+             pendingContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Role</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
+             data.pending_users.forEach(user => {
+                 pendingContainer.innerHTML += `
+                 <tr class="user-details" data-user-id="${user.id}">
+                    <td> ${user.username}</td>
+                    <td> ${user.email}</td>
+                    <td> ${user.role}</td>
+                   <td> ${user.location}</td>
+                        <td> <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button></td>
+                         <td> <button id="btn-reject" onclick="rejectUser(${user.id})">Reject</button></td>
+                 </tr>
+                 `;
+             });
         
             // Update rejected users list
-            let rejectedUsersList = document.getElementById("rejectedUsersList");
-            rejectedUsersList.innerHTML = "";
-            data.rejected_users.forEach(user => {
-                rejectedUsersList.innerHTML += `
-                    <div class="user-details">
-                        <p><strong>Username:</strong> ${user.username}</p>
-                        <p><strong>Email:</strong> ${user.email}</p>
-                        <p><strong>Role:</strong> ${user.role}</p>
-                        <p><strong>Location:</strong> ${user.location}</p>
-                    </div>
+            let rejectedContainer = document.getElementById("rejectedUsersList");
+            rejectedContainer.innerHTML = `<thead>
+               <td>Username</td>
+               <td>Email</td>
+               <td>Role</td>
+               <td>Location</td>
+               <td>Action</td>
+           </thead>`;
+           data.rejected_users.forEach(user => {
+                rejectedContainer.innerHTML += `
+                <tr class="user-details" data-user-id="${user.id}">
+                   <td> ${user.username}</td>
+                   <td> ${user.email}</td>
+                   <td> ${user.role}</td>
+                  <td> ${user.location}</td>
+                  <td> <button id="btn-accept" onclick="approveUser(${user.id})">Approve</button></td>
+               </tr>
                 `;
             });
 
@@ -243,8 +310,11 @@
             document.getElementById("pendingUsersContainer").style.display = "none";
             document.getElementById("rejectedUsersContainer").style.display = "block";
         }
+        location.onload = function() {
+            showRejectedUsers(); // Call the function after the page reloads
+        };
 
-        
+
         
     </script>
 </body>

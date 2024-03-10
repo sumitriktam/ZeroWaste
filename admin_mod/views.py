@@ -44,6 +44,9 @@ def adminPanel(request):
     }
     return render(request, "admin/adminPanel.html", context)
 
+
+
+
 from django.db.models import Count
 
 def approve_user(request, user_id):
