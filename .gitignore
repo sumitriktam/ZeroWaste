@@ -5,3 +5,5 @@ admin_mod/__pycache__
 provider/__pycache__
 receiver/__pycache__ 
 statics/provider/postpics
+provider/migrations/__pycache__
+project/__pycache__

@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Pending</title>
+    <link rel="stylesheet" href="{% static 'admin/css/waitingpage.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <img src="{% static 'admin/media/clock.png' %}" alt="Clock" />
+
+      <h1>Order Placed</h1>
+      <p>
+        Congratulations! Your order has been successfully placed. Keep an eye on
+        its status in your order history, where you can see if it's accepted or
+        rejected by the provider.
+      </p>
+      <p>
+        You will be redirected to your orders page in
+        <span id="countdown">10</span> seconds.
+      </p>
+      <p id="go-home">
+        <a href="{%url 'order_history'%}">Click here</a> to go back to homepage
+        immediately.
+      </p>
+    </div>
+
+    <script>
+      let countdown = 15;
+      const countdownElement = document.getElementById("countdown");
+      function updateCountdown() {
+        countdown--;
+        countdownElement.textContent = countdown;
+
+        if (countdown === 0) {
+          window.location.href = "/receiver/order-history/";
+        }
+      }
+      setInterval(updateCountdown, 1000);
+    </script>
+  </body>
+</html>

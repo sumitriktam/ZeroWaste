@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaflet Map</title>
+    <!-- Include Leaflet CSS and JavaScript -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{%static 'receiver/css/trackOrder.css'%}" />
+    <script>
+      var address = "{{data.location}}"; // Updated address
+      var accessToken =
+        "pk.eyJ1IjoiY2hhbmRhbmFjaGFyaXRoYSIsImEiOiJjbHQzeHM5ZDMwMHB5Mmxsem1qMjdjczlyIn0.MQGCys-L_aAOQ3tbPCfiFQ"; // Update with your Mapbox access token
+
+      // Use Mapbox Geocoding API to get coordinates from the address
+      fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          address
+        )}.json?access_token=${accessToken}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.features && data.features.length > 0) {
+            var coordinates = data.features[0].center;
+            var lat = coordinates[1];
+            var lon = coordinates[0];
+
+            // Initialize the map
+            var map = L.map("map").setView([lat, lon], 13); // Centered at the coordinates, with zoom level 13
+
+            // Add a tile layer (base map) to the map
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution:
+                'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+              maxZoom: 18, // Maximum zoom level
+            }).addTo(map);
+
+            // Add a marker to the map
+            var marker = L.marker([lat, lon]).addTo(map); // Placed at the coordinates
+            marker.bindPopup("<b>" + address + "</b>").openPopup(); // Popup message with the address
+          } else {
+            console.error("No results found for the address:", address);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error fetching geocoding data:", error);
+        });
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container">
+        <!-- Company Name and Logo -->
+        <a class="navbar-brand" href="#">
+          <img src="{% static 'logo.png' %}" alt="Company Icon" />
+          <span class="company-name">ZeroWaste</span>
+        </a>
+        <!-- Navbar Toggler -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">History</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Feedback</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <p>{{ data.message }}</p>
+    <div class="container" style="margin-top: 10px">
+      <div class="horizontal">
+        <div class="one">
+          <p
+            style="
+              color: green;
+              font-weight: bold;
+              margin-top: 20px;
+              margin-left: 30px;
+            "
+          >
+            ORDER-IMAGE
+          </p>
+
+          <div class="vertical">
+            <div
+              style="
+                background-color: rgb(237, 237, 237);
+                border-radius: 10px;
+                width: 480px;
+                margin: 10px;
+                margin-top: 0px;
+              "
+            >
+              <div class="left">
+                <img src="{{data.image}}" alt="Zero Waste Logo" />
+                <p style="margin-left: 200px">&#9673; &#9673; &#9673;</p>
+              </div>
+            </div>
+            <div class="nav-con">
+              <div
+                style="
+                  border-radius: 20px;
+                  background-color: white;
+                  width: 170px;
+                  height: 20px;
+                  display: flex;
+                  padding: 10px;
+                  margin: 5px;
+                "
+              >
+                Contact
+              </div>
+            </div>
+            <br />
+            <div
+              style="
+                border-radius: 20px;
+                background-color: white;
+                width: 130px;
+                height: 20px;
+                display: inline;
+                padding: 10px;
+                margin-left: 20px;
+              "
+            >
+              Delivery type
+            </div>
+          </div>
+        </div>
+        <div class="two" style="margin-left: 50px">
+          <p
+            style="
+              color: green;
+              font-weight: bold;
+              margin-top: 20px;
+              margin-left: 30px;
+            "
+          >
+            LOCATION
+          </p>
+
+          <div class="verticals">
+            <div id="map"></div>
+            <hr />
+            <button class="button">CANCEL ORDER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</html>
