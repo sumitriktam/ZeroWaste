@@ -18,5 +18,6 @@ urlpatterns = [
     path('failed-to-verify/', views.failed_to_verify),
     path('forget-password/resend-email/', views.resend_email, name='resend_email'),
     path('invalid-token/', views.invalid_token, name='invalid_token'),
-
+    path('application-rejected', views.application_rejected, name= 'application_rejected'),
+    
 ]

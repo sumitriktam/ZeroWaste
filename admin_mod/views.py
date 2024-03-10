@@ -121,6 +121,8 @@ def login(request):
                 return redirect('email-verification-pending/')
             elif user.status == 'pending':
                 return  redirect("/wait")
+            elif user.status == 'rejected':
+                return redirect("/application-rejected")
             elif user.role=='admin':
                 return  redirect("/adminPanel")
             elif user.role=='provider':
@@ -301,3 +303,8 @@ def resend_email(request):
 
 def invalid_token(request):
     return render(request, 'admin/invalid_token.html')
+
+
+
+def application_rejected(request):
+    return render(request, 'admin/rejecteduser.html')
