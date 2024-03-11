@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zerosanskar',
+        'NAME': 'zerowaste',
         'USER': 'root',
         'PASSWORD': 'password',
         'HOST':'localhost',

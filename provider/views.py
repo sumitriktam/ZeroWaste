@@ -130,7 +130,8 @@ def feedback(request, post_id):
     except:
         messages.error(request, 'You need to login first.')
         return redirect('/login')
+    postdetails = post.objects.get(id=post_id)
     feedbacks = FeedbackTab.objects.filter(post_id=post_id)
-    return render(request, "provider/feedback.html", context={'feedbacks':feedbacks, "pid":post_id})
+    return render(request, "provider/feedback.html", context={'feedbacks':feedbacks, "pid":post_id,"postdetails":postdetails})
     
 

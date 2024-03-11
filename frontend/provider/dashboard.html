@@ -60,18 +60,23 @@
                 Donate</button>
             </a>
         </div>
-        <div class="custom-box-line line_position4"></div>
-        <div class="custom-box7">
+        <div class="outer-box">
+            <div class="custom-box-line line_position4"></div>
             <p class="faq">FAQs</p>
-            <div class="custom-box8"><p class="questions">What items can we donate?</p>
-                    <i class="fas fa-chevron-down down-arrow-icon" onclick="showText()"></i>
+            <div class="inner-box">
+                <div class="arrow" onclick="toggleExpand(this)"><i class="fas fa-chevron-down down-arrow-icon"></i></div>
+                <p class="questions">What items can we donate?</p>
+              <p class="hidden-paragraph">You can donate a variety of items, including food, gently used clothes, unbroken toys, groceries, and other essential items in good condition. If you have specific items in mind or questions about suitability, feel free to ask in the chat for assistance.</p>
             </div>
-            <div class="custom-box8 box8-pos"><p class="questions">Are there any special instructions we want to provide about the donation?</p>
-                <i class="fas fa-chevron-down down-arrow-icon"></i>
+            <div class="inner-box">
+               
+              <div class="arrow" onclick="toggleExpand(this)"><i class="fas fa-chevron-down down-arrow-icon"></i></div>
+              <p class="questions">Are there any restrictions on the quantity of food I can donate?</p>
+              <p class="hidden-paragraph">There are no strict restrictions on the quantity of food you can donate. We appreciate contributions of all sizes. However, we encourage donors to consider the practicality of handling larger quantities to ensure the freshness and quality of the donated items. </p>
             </div>
-            
-        </div>
-        <div class="custom-box-line line_position5"></div>
+            <!-- Add more inner boxes as needed -->
+            <div class="custom-box-line line_position4"></div>
+          </div>
     </div>
 
     {% for message in messages %}
@@ -89,6 +94,11 @@
 
 
     <script>
+
+        function toggleExpand(arrow) {
+        const innerBox = arrow.parentNode;
+        innerBox.classList.toggle('expanded');}
+  
         function closePopup() {
         document.querySelector('.overlay').style.display = 'none';
         }

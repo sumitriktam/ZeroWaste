@@ -432,75 +432,79 @@ body {
     top:9px;
 }
 .line_position4{
-    width:88%;
-    left:60px;
+    width:100%;
     border-bottom: 2px solid #CFCFCF;
-    top:133%;
-}
-.custom-box7{
-    position: absolute;
-    left: 4%; /* X-axis */
-    top: 135%; /* Y-axis */
-    width: 88%;
-    height:25%;
-    /* background-color: #f3cdcd; */
+    position: relative;
+    top:10%;
+    left:0%;
 }
 .faq{
     font-size: 24px;
     font-weight: bold;
     color: #333;
-    position: absolute;
-    left: 0px; /* X-axis */
-    top: -20px; /* Y-axis */
+    position: relative;
+    left: 1%; 
+    top: 5%; 
 }
-.custom-box8{
-    position: absolute;
-    left: 0px; /* X-axis */
-    top: 40px; /* Y-axis */
-    width:100%;
-    height:30%;
-    background-color: #D9D9D9;
-    border-radius: 10px;
-    font-size: 20px;
-}
-.questions{
-    position:absolute;
-    left:30px;
-    top:-10px;
-    font-size: 20px;
-    font-family: 'Inter', sans-serif;
-}
-.box8-pos{
-    top:120px;
-}
-.down-arrow-icon
-{
-    cursor: pointer;
-    position:absolute;
-    right:30px;
-    top:10px;
-
-}
-.line_position5{
-    width:88%;
-    left:60px;
-    border-bottom: 2px solid #CFCFCF;
-    /* top:135%; */
-    top:1150px;
-}
-
-.message-any {
-    background-color: #29791b; /* Red background color */
-      color: #041b08; /* Red text color */
-      border: 1px solid #132405; /* Red border color */
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
+.outer-box {
+    display: flex;
+    flex-direction: column;
+    width:90%;
+    position:relative;
+    top:128%;
+    left:2.5%;
+    
   }
 
-  .feedbox{
-      border: 1px solid #132405; 
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
+  .inner-box {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #D9D9D9;
+    margin: 8px;
+    overflow: hidden;
+    transition: height 0.3s;
+    height: 50px; /* Initial fixed height */
+
+  }
+
+  .expanded {
+    height: auto !important;
+  }
+
+  .arrow {
+    cursor: pointer;
+    text-align: center;
+    position:relative;
+    left:47%;
+    top:30%;
+    font-size: 140%;
+  }
+.questions{
+    position:relative;
+    top:-50%;
+    left:1%;
+    font-family: 'Inter', sans-serif;
+    font-size: 120%;
+    font-weight: 500;
+    color:#1D710F;
+}
+  .hidden-paragraph {
+    display: none;
+    padding: 5px;
+    line-height: 1.8;
+    position: relative;
+    left:0.5%;
+    top:-10px;
+  }
+
+  .expanded .hidden-paragraph {
+    display: block;
+  }
+  .expanded .questions {
+    top:-20px;
+  }
+  .expanded .arrow {
+    top:20px;
+    transform: rotate(180deg);
   }
