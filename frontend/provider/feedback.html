@@ -1,0 +1,19 @@
+{% extends "provider/provbase.html" %}
+{% block content %}
+
+            <h4 style="position: absolute; top: 20vh">Feedbacks for post id = {{pid}}</h4>
+            <div style="position: absolute; top: 30vh">
+                {% for feed in feedbacks %}
+                <div class="feedbox"  style="
+                    border: 1px solid #132405; 
+                    padding: 10px;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                ">
+                    <h4 style = "color: green;">{{feed.rating}} stars</h4>
+                    <p>{{feed.feedback}}</p> <br>
+                    <p>Given by: {{feed.given_by.username}}</p>
+                </div>{% endfor %}
+            </div>
+            
+{% endblock %}

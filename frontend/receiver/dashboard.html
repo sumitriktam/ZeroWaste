@@ -127,7 +127,7 @@
           </div>
           <form
             id="form_{{post.post_id}}"
-            action="{% url 'view_post' post_id=post.post_id %}"
+            action="{% url 'receiver:view_post' post_id=post.post_id %}"
             method="post"
           >
             {% csrf_token %}

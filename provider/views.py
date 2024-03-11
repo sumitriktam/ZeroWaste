@@ -1,18 +1,23 @@
 from django.shortcuts import render, redirect
-from admin_mod.models import User
-from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
+from admin_mod.models import User 
+from receiver.models import Order
+from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, FeedbackTab
 from django.contrib import messages
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 def homePage(request):
     uid = request.session['user_id']
-    try:
-        user = User.objects.get(id=uid)
+    try: 
+        user = get_object_or_404(User, pk=uid)
     except:
         messages.error(request, 'You need to login first.')
         return redirect('/login')
-    matching_posts = post.objects.filter(user_id=1).order_by('-created_at')
-    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts}
+    matching_posts = post.objects.filter(user=user).order_by('-created_at')
+
+    orders = Order.objects.filter(ordered_post__user=user)  #problem is here
+    
+    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders}
     return render(request, "provider/dashboard.html", context)
 
 def newPost(request):
@@ -81,21 +86,20 @@ def requestsViewAll(request):
     return render(request,"provider/requests.html" )
 
 def allPosts(request):
+    uid = request.session['user_id']
+    try:
+        user = User.objects.get(id=uid)
+    except:
+        messages.error(request, 'You need to login first.')
+        return redirect('/login')
     posts_with_descriptions = []
-
-    # Fetch all posts
-    posts = post.objects.filter(user_id=1).order_by('-created_at')
-
-    # Fetch descriptions for each post
+    posts = post.objects.filter(user_id=uid).order_by('-created_at')
     for single_post in posts:
-        # Initialize variables to hold descriptions
         toys_desc = None
         grocery_desc = None
         cloth_desc = None
         food_desc = None
         other_desc = None
-
-        # Retrieve descriptions for the current post if available
         if single_post.category == 'toys':
             toys_desc = toysDes.objects.filter(id=single_post.description_id).first()
         elif single_post.category == 'groceries':
@@ -106,8 +110,6 @@ def allPosts(request):
             food_desc = foodDes.objects.filter(id=single_post.description_id).first()
         elif single_post.category == 'others':
             other_desc = otherDes.objects.filter(id=single_post.description_id).first()
-
-        # Append the post and its descriptions to the list
         posts_with_descriptions.append({
             'post': single_post,
             'toys_desc': toys_desc,
@@ -116,8 +118,19 @@ def allPosts(request):
             'food_desc': food_desc,
             'other_desc': other_desc,
         })
-
     context = {
         'posts_with_descriptions': posts_with_descriptions,
     }
     return render(request, "provider/all_posts.html", context)
+
+def feedback(request, post_id):
+    uid = request.session['user_id']
+    try: 
+        user = get_object_or_404(User, pk=uid)
+    except:
+        messages.error(request, 'You need to login first.')
+        return redirect('/login')
+    feedbacks = FeedbackTab.objects.filter(post_id=post_id)
+    return render(request, "provider/feedback.html", context={'feedbacks':feedbacks, "pid":post_id})
+    
+

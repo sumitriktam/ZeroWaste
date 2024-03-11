@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = "receiver"
+
 urlpatterns = [
   path("", views.dashboard,name="receiver"),
   path("view_post/<int:post_id>/", views.view_post,name="view_post"),
