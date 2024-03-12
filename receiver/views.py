@@ -236,7 +236,7 @@ def order_history(request):
        if(order.status=='accepted'):
          accepted.append(order_details)
        elif(order.status=='pending'):
-         pending.append(order_details)
+         pending.append(order_details) #here
        elif(order.status=='rejected'):
          rejected.append(order_details)
        else:
