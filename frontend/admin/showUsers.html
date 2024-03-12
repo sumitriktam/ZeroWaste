@@ -1,21 +1,15 @@
-{% load static %}
+{% extends "admin/adminbase.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+{% block title %}Users{% endblock %}
+
+{% block css %}
+    {% load static %}
     <link rel="stylesheet" href="{% static 'admin/css/adminpanel.css' %}">
-    <script>
-       
-    </script>
-</head>
+{% endblock %}
+
+{% block content %}
+
 <body>
-    <div class="head">
-        <img src="{% static 'admin/media/simple-icons_overleaf.png' %}" alt="Overleaf Logo">
-        <h1>ZeroWaste</h1>
-    </div>
 
     <div class="stats">
         <div class="stats-card accepted">
@@ -318,4 +312,5 @@
         
     </script>
 </body>
-</html>
+
+{% endblock %}

@@ -5,7 +5,6 @@ urlpatterns = [
     path("", views.index),
     path("login", views.login),
     path("register", views.register),
-    path("adminPanel", views.adminPanel),
     path("wait", views.waitingPage),
     path('approve_user/<int:user_id>/', views.approve_user, name='approve_user'),
     path('reject_user/<int:user_id>/', views.reject_user, name='reject_user'),
@@ -19,4 +18,9 @@ urlpatterns = [
     path('forget-password/resend-email/', views.resend_email, name='resend_email'),
     path('invalid-token/', views.invalid_token, name='invalid_token'),
     path('application-rejected', views.application_rejected, name='application_rejected'),
+    path("showUsers", views.showUsers, name='showUsers'),
+    path('adminPanel', views.adminPanel, name='adminPanel'),
+    path('posts/', views.showPosts, name='showPosts'),
+    path('orders/', views.showOrders, name='showOrders'),
+    path('admins/', views.showAdmins, name='showAdmins'),
 ]

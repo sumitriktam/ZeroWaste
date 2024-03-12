@@ -145,6 +145,35 @@ textarea {
     box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0, rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
 }
 
+.modal {
+  display: none;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 50%;
+  align-items: center;
+  justify-content: center;
+  margin-top:5%;
+  margin-left:30%;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+  background-color: #1b78db;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 </style>
   </head>
   <body>
@@ -187,30 +216,53 @@ textarea {
         </div>
       </div>
     </nav>
+    <form action="{% url 'receiver:send_feedback' %}" method="post">
+    {% csrf_token %}
     <div class='cont'>
-            <div class="rate-box" required>
-                <input type="radio" name="star" id="star0"/>
-                <label class="star" for="star0"></label>
-                <input type="radio" name="star" id="star1"/>
-                <label class="star" for="star1"></label>
-                <input type="radio" name="star" id="star2"/>
-                <label class="star" for="star2"></label>
-                <input type="radio" name="star" id="star3"/>
-                <label class="star" for="star3"></label>
-                <input type="radio" name="star" id="star4"/>
-                <label class="star" for="star4"></label>
+            <div class="rate-box">
+              <input type="radio" name="star" id="star0" value="5"/>
+              <label class="star" for="star0"></label>
+              <input type="radio" name="star" id="star1" value="4"/>
+              <label class="star" for="star1"></label>
+              <input type="radio" name="star" id="star2" value="3"/>
+              <label class="star" for="star2"></label>
+              <input type="radio" name="star" id="star3" value="2"/>
+              <label class="star" for="star3"></label>
+              <input type="radio" name="star" id="star4" value="1"/>
+              <label class="star" for="star4"></label>          
               </div>
-              
-              <textarea></textarea>
-              <button class="button">SEND</button>
+              <textarea name="feedback"></textarea>
+              <input type="hidden" name="post_id" value="{{data.post_id}}"/>
+              <button class="button" onclick="Popup()">SEND</button>
       </div>
-
-      <script>
-        //send stars,feedback,postid,userid to feed back view
-        
-
-      </script>
+      </form>
+      <div id="notAvailableModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:green;">Feedback sent!</h2>
+            <p style="color:green">Thank you</p>
+            <img src="{% static '/provider/images/tick.jpeg' %}" alt="Tick Mark Image"style="width:20%;height:20%;margin-left:38%;">
+            <button
+              class="close-btn"
+              onclick="closePopup()"
+            >
+              Close
+            </button>
+        </div>
+      </div>
+      
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function Popup() {
+      var notAvailableModal = document.getElementById('notAvailableModal');
+      notAvailableModal.style.display = 'flex';
+  }
+  
+  function closePopup() {
+      var notAvailableModal = document.getElementById('notAvailableModal');
+      notAvailableModal.style.display = 'none';
+      window.location.href="{% url 'receiver:home' %}";
+  }
+  </script>
 </html>

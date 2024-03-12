@@ -69,7 +69,7 @@
         var modal = document.getElementById('myModal');
         var postId = "{{ data.post_id }}";
         window.location.href = `/receiver/feedback/id=${postId}`
-
+        
 
     }
     </script>
@@ -133,7 +133,7 @@
               <div class="left" style="height:400px;width:400px;">
                 <img src="{{data.image}}" style="border:15px solid lightgrey;border-radius:10px;">
                 <p style="margin-left: 180px">&#9673; &#9673; &#9673;</p>
-                <p>LOCATION : {{data.location}}</p>
+                <p>LOCATION : {{data.provider_location}}</p>
               </div>
           </div>
           <!-- Right column content -->
@@ -170,10 +170,9 @@
           attribution: 'Leaflet &copy; ' + mapLink + ', contribution',
           maxZoom: 18
       }).addTo(map);
-
-      var userAddress = "31-23-39/1, Road No. 9, Kurmannapalem, Visakhapatnam,Andhrapradesh, India,530046";
-      var restaurantAddress = "10-1-23, Gajuwaka, Visakhapatnam, India";
-
+      var data={{data|safe}}
+      var receiverAddress = data.provider_location
+      var providerAddress = data.receiver_location
       var userCoords;
       var restaurantCoords;
 
@@ -199,7 +198,7 @@
       }
 
       // Geocode user address
-      geocodeAddress(userAddress, function(coords) {
+      geocodeAddress(receiverAddress, function(coords) {
           if (coords) {
               userCoords = coords;
               if (restaurantCoords) {
@@ -211,7 +210,7 @@
       });
 
       // Geocode restaurant address
-      geocodeAddress(restaurantAddress, function(coords) {
+      geocodeAddress(providerAddress, function(coords) {
           if (coords) {
               restaurantCoords = coords;
               if (userCoords) {

@@ -24,7 +24,7 @@ def index(request):
     }
     return render(request, "admin/home.html", context)
 
-def adminPanel(request):
+def showUsers(request):
     accepted_users = User.objects.filter(status='accepted')
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
@@ -42,7 +42,7 @@ def adminPanel(request):
         'pending_count': pending_count,
         'rejected_count': rejected_count,
     }
-    return render(request, "admin/adminPanel.html", context)
+    return render(request, "admin/showUsers.html", context)
 
 
 
@@ -311,3 +311,15 @@ def invalid_token(request):
 
 def application_rejected(request):
     return render(request, 'admin/rejecteduser.html')
+
+def adminPanel(request):
+    return render(request, 'admin/adminHome.html')
+
+def showOrders(request):
+    return render(request, 'admin/showOrders.html')
+
+def showPosts(request):
+    return render(request, 'admin/showPosts.html')
+
+def showAdmins(request):
+    return render(request, 'admin/showAdmins.html')

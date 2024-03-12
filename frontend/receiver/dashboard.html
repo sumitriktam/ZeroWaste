@@ -23,7 +23,7 @@
           <img src="{% static 'receiver/logo.png' %}" alt="Company Icon" />
           <span class="company-name">ZeroWaste</span>
         </a>
-        <!-- Navbar Toggler --> 
+        <!-- Navbar Toggler -->
         <button
           class="navbar-toggler"
           type="button"
@@ -161,13 +161,12 @@
            <div class="card-body">
              <h4>${post.item_name}</h4>
              <p>${post.location}</p>
-             <p>${post.drop_pickup}</p>
+               <p>${post.drop_pickup}</p>
            </div>
           <form id="form_${post.post_id}" action="" method="post">
               {% csrf_token %}
           </form>
          `;
-
          // Append the post container to "restaurent-cards" class
          document.querySelector('.restaurant-cards').appendChild(postElement);
        });
