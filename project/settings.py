@@ -92,7 +92,6 @@ DATABASES = {
         'NAME': 'zerowaste',
         'USER': 'root',
         'PASSWORD': '',
-        'PASSWORD': 'password',
         'HOST':'localhost',
         'PORT':'3306',
     }
