@@ -36,6 +36,11 @@ class post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='live')
     quantity = models.CharField(max_length=25, default='1')
     created_at = models.DateTimeField(default=timezone.now)
+    MODE_CHOICES = [
+        ('active', 'Active'),
+        ('inactive', 'inactive')
+    ]
+    mode = models.CharField(max_length=20,choices=MODE_CHOICES, default="active")
 
 class toysDes(models.Model):
     age_group = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(30)])
@@ -97,3 +102,5 @@ class FeedbackTab(models.Model):
 
     rating = models.IntegerField(choices=RatingChoices.choices)
     feedback = models.CharField(max_length=500, default="")
+
+
