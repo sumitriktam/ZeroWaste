@@ -77,7 +77,7 @@
     overflow-y: auto;
 
     width: 80%; /* Adjust the width of the user list container */
-    margin: 10% auto; /* Center the container horizontally */
+    margin: 1% auto; /* Center the container horizontally */
 }
 /* 
 .users-list {
