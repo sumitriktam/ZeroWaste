@@ -9,7 +9,7 @@
         <p class="zerowastescore">100</p></div>
         <div class="custom-box-history ">
             <p class="history" >Posts History</p>
-            <a class="view-all" href="/provider/all_posts" style="text-decoration: none;">View all</a>  
+            <a class="view-all" href="/provider/all_posts" style="text-decoration: none;">View all -></a>  
             <div class="custom-box-line line_position1"></div>
             <div class=" custom-box-2">
                 {% for post in posts %}
@@ -32,21 +32,22 @@
 
         </div>
         <div class="custom-box3">
-            <p class="requests">Requests</p>
-            <a class="view-all" href="/provider/requests" style="text-decoration: none;">View all</a>
+            <p class="requests">Pending Requests</p>
+            <a class="view-all" href="/provider/requests" style="text-decoration: none;">View all requests -> </a>
 
+            <div class="custom-box-2">
             {% for or in orders %}
-                <div class="custom-box4">
-                    <div class="custom-box-line line_position3">
-                        <center><p style="font-family: 'Poppins', sans-serif;font-size:20px;"><span style="color:green;">User 
-                            {{ or }}
-                        </span> has requested for <span>food.</span></p></center>
-                    </div>
-                    <button class="request-button req-but-pos1">Accept</button>
-                    <br>
-                    <button class="request-button req-but-pos2">Reject</button>
-                </div>
+                
+                    <center>
+                        <p style="font-family: 'Poppins', sans-serif;font-size:20px;">
+                        <span style="color:green;">{{ or.receiver_user.email }}
+                    </span> requested for <span>{{or.ordered_post.name}}(post id = {{or.ordered_post.id}})
+                        approximately
+                        {{ or.date_time|timesince }} ago.
+                    </span></p></center>     
+                    <hr>
            {% endfor %}
+        </div>
         </div>
         <div class="custom-box5">
             <p class="performance">Your <span style="color:#1D710F">performance</span></p>

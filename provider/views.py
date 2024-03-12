@@ -1,39 +1,31 @@
 from django.shortcuts import render, redirect
-from admin_mod.models import User 
 from receiver.models import Order
 from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, FeedbackTab
 from django.contrib import messages
 from datetime import datetime
-from django.shortcuts import get_object_or_404
+from .prov_auth import auth 
 
 def homePage(request):
-    uid = request.session['user_id']
-    try: 
-        user = get_object_or_404(User, pk=uid)
-    except:
+    user = auth(request)
+    if not user:
         messages.error(request, 'You need to login first.')
-        return redirect('/login')
+        return redirect("/login")
     matching_posts = post.objects.filter(user=user).order_by('-created_at')
-
-    orders = Order.objects.filter(ordered_post__user=user)  #problem is here
-    
+    orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('-date_time')  
     context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders}
     return render(request, "provider/dashboard.html", context)
 
 def newPost(request):
-    uid = request.session['user_id']
-    try:
-        user = User.objects.get(id=uid)
-    except:
+    user = auth(request)
+    if not user:
         messages.error(request, 'You need to login first.')
-        return redirect('/login')
+        return redirect("/login")
+    uid = request.session['user_id']
     context = {}
-
     if request.method == 'POST':
         data = request.POST
         category = data.get('category')
 
-        #description storing for categories
         if category == 'toys':
             obj = toysDes(age_group=data.get('age-group'), condition=data.get('cond'), desc=data.get('desc'))
  
@@ -75,23 +67,27 @@ def newPost(request):
         #saving post
         post_here.save()
         messages.success(request, 'Post successfully added.')
-    
-        # Redirect to the dashboard or any other page with the success message as a parameter in the URL
         return redirect('/provider/home')
         
 
     return render(request, "provider/form_newpost.html", context)
 
 def requestsViewAll(request):
-    return render(request,"provider/requests.html" )
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
+    orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('date_time')
+    context = {'ords':orders}
+    return render(request,"provider/all_reqs.html", context)
 
 def allPosts(request):
-    uid = request.session['user_id']
-    try:
-        user = User.objects.get(id=uid)
-    except:
+    user = auth(request)
+    if not user:
         messages.error(request, 'You need to login first.')
-        return redirect('/login')
+        return redirect("/login")
+    uid = request.session['user_id']
     posts_with_descriptions = []
     posts = post.objects.filter(user_id=uid).order_by('-created_at')
     for single_post in posts:
@@ -124,14 +120,47 @@ def allPosts(request):
     return render(request, "provider/all_posts.html", context)
 
 def feedback(request, post_id):
-    uid = request.session['user_id']
-    try: 
-        user = get_object_or_404(User, pk=uid)
-    except:
+    user = auth(request)
+    if not user:
         messages.error(request, 'You need to login first.')
-        return redirect('/login')
+        return redirect("/login")
+    uid = request.session['user_id']
     postdetails = post.objects.get(id=post_id)
     feedbacks = FeedbackTab.objects.filter(post_id=post_id)
     return render(request, "provider/feedback.html", context={'feedbacks':feedbacks, "pid":post_id,"postdetails":postdetails})
+
+def accept(request, order_id):
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
+    try:
+        order = Order.objects.get(id=order_id)
+    except:
+        messages.error(request, 'No such order to accept.')
+        return redirect("provider:homepage")
+    order.status = "accepted"
+    order.save()
+    messages.error(request, f'Order accepted of user {order.receiver_user.email}.')
+    return redirect("provider:requests")
+
+def reject(request, order_id):
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
+    try:
+        order = Order.objects.get(id=order_id)
+    except:
+        messages.error(request, 'No such order to reject.')
+        return redirect("provider:homepage")
+    order.status = "rejected"
+    order.save()
+    messages.error(request, f'Order rejected of user {order.receiver_user.email}.')
+    return redirect("provider:requests")
+     
+
     
 
