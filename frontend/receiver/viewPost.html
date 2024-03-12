@@ -494,7 +494,7 @@
     <div id="myModal" class="modal">
       <div class="modal-content">
           <h2>Thank You!</h2>
-          <img src="{% static 'tick mark.jpg' %}" alt="Tick Mark Image">
+          <img src="{% static '/provider/images/tick.jpeg' %}" alt="Tick Mark Image" style="width:15%;height:auto;margin-left:40%;">
           <p>Your order has been placed successfully.</p>
           <form action="{% url 'order'%}" method="post" value="{{post_data.post_id}}">
           {% csrf_token %}

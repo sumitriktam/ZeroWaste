@@ -187,7 +187,6 @@ def track_order(request,post_id):
      receiver_user_id=request.session['user_id']
      receiver_user=User.objects.get(id=receiver_user_id)
      delivery_location=User.objects.get(id=receiver_user_id).location
-     quantity=20#it should be (request.POST.quantity)
      #create a new order in order table
      
      data = {
@@ -195,7 +194,7 @@ def track_order(request,post_id):
      }
      data['message']='Order successful'
      data['location']=provider_location
-    
+     data['post_id']=post_id    
    
      #render order tracking page with sucess message
      return render(request,"receiver/trackOrder.html",{'data':data})
@@ -247,6 +246,7 @@ def order_history(request):
        order_details['image']=user_post.photo.url
        order_details['item_name']=user_post.name
        order_details['location']=user_post.location
+       order_details['post_id']=order.ordered_post_id
      #take location from user table
       
    all_orders={
@@ -257,7 +257,12 @@ def order_history(request):
     }
    return render(request,'receiver/orderHistory.html',{'orders':all_orders})
            
-# def reports(request):
+def feedback(request,post_id):
+  data={'post_id':post_id}
+  return render(request,'receiver/feedback.html',{'data':data})
+
+# def send_feedback(request):
+  
   
      
      
