@@ -77,7 +77,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 #enter your email and password here
-EMAIL_HOST_USER = ''
+EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ''
 
 WSGI_APPLICATION = 'project.wsgi.application'
@@ -89,9 +89,10 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Zerowaste',
+        'NAME': 'zerowaste',
         'USER': 'root',
         'PASSWORD': '',
+        'PASSWORD': 'password',
         'HOST':'localhost',
         'PORT':'3306',
     }

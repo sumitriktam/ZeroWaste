@@ -1,0 +1,111 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>feedback page</title>
+    <link rel="stylesheet" href="/statics/provider/feedback.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <div class="container">
+        <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
+        <p class="top-left-text" >ZeroWaste</p>
+        <nav class="navbar">
+            <!-- Add your navbar content here -->
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+                <li><a href="#chatbox">Chat box</a></li>
+            </ul>
+        </nav>
+        <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
+        
+        <div class="req-name">
+            <p >
+                <a style ="color: #1D710F;text-decoration: none;" href="/provider/all_posts">
+                    <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+                </a>Feedbacks</p>
+        </div>
+        <div class="outerbox">
+        <div class="custom-box">
+            <div class="custom-box2 "> 
+                <div class="custom-box-line line_position1"></div>
+                <img src="/{{postdetails.photo}}" alt="Your Image" class="image2">
+                <div class="custom-box-line2 line2_position1"><b>ID: </b><span style="color:green">{{pid}}</span> <span style="position:absolute;right:0px">{{postdetails.created_at}}</span></div>
+                <div class="custom-box-line2 line2_position2"><b>Name: </b><span>{{postdetails.name}}</span></div>
+                <div class="custom-box-line2 line2_position3"><b>Quantity: </b><span>{{postdetails.quantity}}</span></div>
+                <div class="custom-box-line2 line2_position4"><b>Category: </b><span>{{postdetails.category}}</span></div>
+                <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold;font-size: 20px; position:absolute; bottom:40px;left:60%; font-family: 'poppins' Arial, Helvetica, sans-serif;">{{postdetails.status}}</span></center></div>
+            </div>
+            <div class="box2">
+                {% for feed in feedbacks %}
+                    <div class="custom-box4">
+                            <p style="font-family: 'Poppins', sans-serif;font-size:18px;" class="info_receiver"><span style="color:#1D710F;">FeedBack Given by </span><span style="font-weight: bold;" class="receiver_ans">{{feed.given_by.username}}</span></p>
+                        <!-- <p style="font-family: 'Poppins', sans-serif;font-size:16px;" class="info_receiver"> <span style="color:#1D710F;">Quantity</span> <span  class="receiver_ans">10 plates</span></p> -->
+                        <br>
+                        <p style="font-family: 'Poppins', sans-serif;font-size:18px;" class="info_receiver"><span style="color:#1D710F;">Rating </span><span style="font-weight: bold;" class="receiver_ans">{{feed.rating}} / 5</span>
+                            <!-- <div class="star-rating" data-rating="4">  Change the data-rating value as needed {{feed.rating}}-->
+                                <!-- Star icons will be dynamically generated here -->
+                            <!-- </div> --> 
+                        </p>
+                        <br>
+                        <p style="font-family: 'Poppins', sans-serif;font-size:18px;" class="info_receiver"><span style="color:#1D710F;">Comments </span></p>
+                            
+                        
+                        <div class="feedback"><p style="font-family: 'Poppins', sans-serif;font-size: 15px; position:relative;left:3%;top:-10%;">{{feed.feedback}}</p></div>
+                    </div>
+                    {% endfor %}
+                            
+            </div>
+        </div>
+    <i class="fas fa-comment chatbox-icon"></i>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var innerBoxes = document.querySelectorAll(".custom-box4");
+
+            function revealInnerBoxes() {
+                innerBoxes.forEach(function (innerBox) {
+                    var boxPosition = innerBox.getBoundingClientRect().top;
+                    var windowHeight = document.querySelector('.box2').clientHeight;
+                    if (boxPosition < windowHeight) {
+                        innerBox.style.opacity = 1;
+                        innerBox.style.transform = "translateY(0)";
+                    }
+                });
+            }
+
+            document.querySelector('.box2').addEventListener("scroll", revealInnerBoxes);
+            revealInnerBoxes(); // Initial check on page load
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+        // Function to create star icons based on the rating
+        function createStarIcons(starRatingElement, rating) {
+            for (let i = 1; i <= 5; i++) {
+                const starIcon = document.createElement('i');
+                starIcon.classList.add('fas', 'fa-star', i <= rating ? 'filled' : '');
+                starRatingElement.appendChild(starIcon);
+            }
+        }
+
+        // Iterate through each .custom-box4 element
+        const customBoxes = document.querySelectorAll('.custom-box4');
+        customBoxes.forEach(function (customBox) {
+            // Find the star-rating element within each .custom-box4
+            const starRatingElement = customBox.querySelector('.star-rating');
+
+            // Get the rating from the data-rating attribute
+            const rating = parseInt(starRatingElement.getAttribute('data-rating'), 10);
+
+            // Create star icons for each .custom-box4
+            createStarIcons(starRatingElement, rating);
+        });
+    });
+    </script>
+</body>
+</html>

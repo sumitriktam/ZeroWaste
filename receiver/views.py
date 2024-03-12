@@ -163,7 +163,7 @@ def order(request):
      data['location']=provider_location
    
      #render order tracking page with sucess message
-     return redirect('waiting_page')
+     return redirect('receiver:waiting_page')
      
     #if there is no such user_post
     except post.DoesNotExist:   

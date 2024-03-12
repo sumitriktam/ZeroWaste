@@ -9,7 +9,7 @@
         <p class="zerowastescore">100</p></div>
         <div class="custom-box-history ">
             <p class="history" >Posts History</p>
-            <a class="view-all" href="/provider/all_posts" style="text-decoration: none;">view all</a>  
+            <a class="view-all" href="/provider/all_posts" style="text-decoration: none;">View all -></a>  
             <div class="custom-box-line line_position1"></div>
             <div class=" custom-box-2">
                 {% for post in posts %}
@@ -32,16 +32,22 @@
 
         </div>
         <div class="custom-box3">
-            <p class="requests">Requests</p>
-            <a class="view-all" href="/provider/requests" style="text-decoration: none;">view all</a> 
-            <div class="custom-box4">
-                <div class="custom-box-line line_position3">
-                    <center><p style="font-family: 'Poppins', sans-serif;font-size:20px;"><span style="color:green;">User2</span> has requested for <span>food.</span></p></center>
-                </div>
-                <button class="request-button req-but-pos1">Accept</button>
-                <br>
-                <button class="request-button req-but-pos2">Reject</button>
-            </div>
+            <p class="requests">Pending Requests</p>
+            <a class="view-all" href="/provider/requests" style="text-decoration: none;">View all requests -> </a>
+
+            <div class="custom-box-2">
+            {% for or in orders %}
+                
+                    <center>
+                        <p style="font-family: 'Poppins', sans-serif;font-size:20px;">
+                        <span style="color:green;">{{ or.receiver_user.email }}
+                    </span> requested for <span>{{or.ordered_post.name}}(post id = {{or.ordered_post.id}})
+                        approximately
+                        {{ or.date_time|timesince }} ago.
+                    </span></p></center>     
+                    <hr>
+           {% endfor %}
+        </div>
         </div>
         <div class="custom-box5">
             <p class="performance">Your <span style="color:#1D710F">performance</span></p>
@@ -55,18 +61,23 @@
                 Donate</button>
             </a>
         </div>
-        <div class="custom-box-line line_position4"></div>
-        <div class="custom-box7">
+        <div class="outer-box">
+            <div class="custom-box-line line_position4"></div>
             <p class="faq">FAQs</p>
-            <div class="custom-box8"><p class="questions">What items can we donate?</p>
-                    <i class="fas fa-chevron-down down-arrow-icon" onclick="showText()"></i>
+            <div class="inner-box">
+                <div class="arrow" onclick="toggleExpand(this)"><i class="fas fa-chevron-down down-arrow-icon"></i></div>
+                <p class="questions">What items can we donate?</p>
+              <p class="hidden-paragraph">You can donate a variety of items, including food, gently used clothes, unbroken toys, groceries, and other essential items in good condition. If you have specific items in mind or questions about suitability, feel free to ask in the chat for assistance.</p>
             </div>
-            <div class="custom-box8 box8-pos"><p class="questions">Are there any special instructions we want to provide about the donation?</p>
-                <i class="fas fa-chevron-down down-arrow-icon"></i>
+            <div class="inner-box">
+               
+              <div class="arrow" onclick="toggleExpand(this)"><i class="fas fa-chevron-down down-arrow-icon"></i></div>
+              <p class="questions">Are there any restrictions on the quantity of food I can donate?</p>
+              <p class="hidden-paragraph">There are no strict restrictions on the quantity of food you can donate. We appreciate contributions of all sizes. However, we encourage donors to consider the practicality of handling larger quantities to ensure the freshness and quality of the donated items. </p>
             </div>
-            
-        </div>
-        <div class="custom-box-line line_position5"></div>
+            <!-- Add more inner boxes as needed -->
+            <div class="custom-box-line line_position4"></div>
+          </div>
     </div>
 
     {% for message in messages %}
@@ -84,6 +95,11 @@
 
 
     <script>
+
+        function toggleExpand(arrow) {
+        const innerBox = arrow.parentNode;
+        innerBox.classList.toggle('expanded');}
+  
         function closePopup() {
         document.querySelector('.overlay').style.display = 'none';
         }
