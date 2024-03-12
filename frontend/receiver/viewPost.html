@@ -499,6 +499,7 @@
           <form action="{% url 'receiver:order' %}" method="post" value="{{post_data.post_id}}">
           {% csrf_token %}
           <input type="hidden" name="post_id" value="{{ post_data.post_id }}">
+         
           <button
             class="close-btn"
           >
@@ -523,6 +524,8 @@
             // Quantity is available, proceed with the form submission or any other action
             // Show thank you popup
             showPopup();
+            //and place the order
+
         }
     }
 
