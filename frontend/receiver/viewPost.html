@@ -496,7 +496,7 @@
           <h2>Thank You!</h2>
           <img src="{% static '/provider/images/tick.jpeg' %}" alt="Tick Mark Image" style="width:15%;height:auto;margin-left:40%;">
           <p>Your order has been placed successfully.</p>
-          <form action="{% url 'order'%}" method="post" value="{{post_data.post_id}}">
+          <form action="{% url 'receiver:order' %}" method="post" value="{{post_data.post_id}}">
           {% csrf_token %}
           <input type="hidden" name="post_id" value="{{ post_data.post_id }}">
           <button
@@ -534,7 +534,7 @@
     function closePopup() {
         var modal = document.getElementById('myModal');
         var b=document.body;
-        window.location.href = "{% url 'order'%}"
+        window.location.href = "{% url 'receiver:order' %}"
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

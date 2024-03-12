@@ -83,3 +83,17 @@ class foodDes(models.Model):
 
 class otherDes(models.Model):
     desc = models.CharField(max_length=1000, default="")
+
+class FeedbackTab(models.Model):
+    post_id = models.ForeignKey(post, on_delete=models.CASCADE)  
+    given_by = models.ForeignKey(User, blank=True, on_delete=models.CASCADE)
+    
+    class RatingChoices(models.IntegerChoices):
+        ONE = 1, 'One'
+        TWO = 2, 'Two'
+        THREE = 3, 'Three'
+        FOUR = 4, 'Four'
+        FIVE = 5, 'Five'
+
+    rating = models.IntegerField(choices=RatingChoices.choices)
+    feedback = models.CharField(max_length=500, default="")
