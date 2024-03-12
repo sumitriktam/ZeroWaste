@@ -77,7 +77,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 #enter your email and password here
-EMAIL_HOST_USER = ""
+EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 
 WSGI_APPLICATION = 'project.wsgi.application'

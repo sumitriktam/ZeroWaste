@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Order(models.Model):
     ordered_post=models.ForeignKey(post,on_delete=models.CASCADE)
-    date_time= models.DateTimeField(default=timezone.now)
+    date_time= models.DateTimeField(default=timezone.localtime)
     receiver_user=models.ForeignKey(User,on_delete=models.CASCADE)
     STATUS_OPTIONS=(
         ('accept','Accept'),

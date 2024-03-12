@@ -4,57 +4,74 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leaflet Map</title>
-    <!-- Include Leaflet CSS and JavaScript -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <title>Track Order</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{%static 'receiver/css/trackOrder.css'%}" />
+    <link rel="stylesheet" href="{% static 'receiver/css/trackOrder.css'%}" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <style>
+          
+    #map {
+      width:600px;
+      height: 400px; /* Adjust height as needed */
+      margin-bottom: 20px; /* Add space below map */
+      margin-left:5%;
+    }
+    /* CSS code to adjust the size of the directions box */
+.leaflet-routing-container {
+  max-width:80%;
+  max-height: 300px; /* Adjust the max-height as needed */
+  overflow-y: auto; /* Add scrollbar if content overflows */
+}
+
+    .modal {
+      display: none;
+      top: 0;
+      left: 0;
+      width: 30%;
+      height: 50%;
+      align-items: center;
+      justify-content: center;
+      margin-top:5%;
+      margin-left:30%;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .close-btn {
+      background-color: #1b78db;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    </style>
     <script>
-      var address = "{{data.location}}"; // Updated address
-      var accessToken =
-        "pk.eyJ1IjoiY2hhbmRhbmFjaGFyaXRoYSIsImEiOiJjbHQzeHM5ZDMwMHB5Mmxsem1qMjdjczlyIn0.MQGCys-L_aAOQ3tbPCfiFQ"; // Update with your Mapbox access token
+    function showPopup() {
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'flex';
+    }
 
-      // Use Mapbox Geocoding API to get coordinates from the address
-      fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          address
-        )}.json?access_token=${accessToken}`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (data) {
-          if (data.features && data.features.length > 0) {
-            var coordinates = data.features[0].center;
-            var lat = coordinates[1];
-            var lon = coordinates[0];
+    function closePopup() {
+        var modal = document.getElementById('myModal');
+        var postId = "{{ data.post_id }}";
+        window.location.href = `/receiver/feedback/id=${postId}`
+        
 
-            // Initialize the map
-            var map = L.map("map").setView([lat, lon], 13); // Centered at the coordinates, with zoom level 13
-
-            // Add a tile layer (base map) to the map
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-              attribution:
-                'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-              maxZoom: 18, // Maximum zoom level
-            }).addTo(map);
-
-            // Add a marker to the map
-            var marker = L.marker([lat, lon]).addTo(map); // Placed at the coordinates
-            marker.bindPopup("<b>" + address + "</b>").openPopup(); // Popup message with the address
-          } else {
-            console.error("No results found for the address:", address);
-          }
-        })
-        .catch(function (error) {
-          console.error("Error fetching geocoding data:", error);
-        });
+    }
     </script>
   </head>
   <body>
@@ -62,7 +79,7 @@
       <div class="container">
         <!-- Company Name and Logo -->
         <a class="navbar-brand" href="#">
-          <img src="{% static 'logo.png' %}" alt="Company Icon" />
+          <img src="{% static 'receiver/logo.png' %}" alt="Company Icon" />
           <span class="company-name">ZeroWaste</span>
         </a>
         <!-- Navbar Toggler -->
@@ -97,8 +114,8 @@
         </div>
       </div>
     </nav>
-    <p>{{ data.message }}</p>
-    <div class="container" style="margin-top: 10px">
+
+    <div class="container" style="margin-top:2%;">
       <div class="horizontal">
         <div class="one">
           <p
@@ -111,79 +128,111 @@
           >
             ORDER-IMAGE
           </p>
-
-          <div class="vertical">
-            <div
-              style="
-                background-color: rgb(237, 237, 237);
-                border-radius: 10px;
-                width: 480px;
-                margin: 10px;
-                margin-top: 0px;
-              "
-            >
-              <div class="left">
-                <img src="{{data.image}}" alt="Zero Waste Logo" />
-                <p style="margin-left: 200px">&#9673; &#9673; &#9673;</p>
+          <div class="col-md-6" style="display:flex;">
+          <div class="vertical" style="width:max-content;margin-right:5%;height:20%;">
+              <div class="left" style="height:400px;width:400px;">
+                <img src="{{data.image}}" style="border:15px solid lightgrey;border-radius:10px;">
+                <p style="margin-left: 180px">&#9673; &#9673; &#9673;</p>
+                <p>LOCATION : {{data.provider_location}}</p>
               </div>
-            </div>
-            <div class="nav-con">
-              <div
-                style="
-                  border-radius: 20px;
-                  background-color: white;
-                  width: 170px;
-                  height: 20px;
-                  display: flex;
-                  padding: 10px;
-                  margin: 5px;
-                "
-              >
-                Contact
-              </div>
-            </div>
-            <br />
-            <div
-              style="
-                border-radius: 20px;
-                background-color: white;
-                width: 130px;
-                height: 20px;
-                display: inline;
-                padding: 10px;
-                margin-left: 20px;
-              "
-            >
-              Delivery type
-            </div>
           </div>
-        </div>
-        <div class="two" style="margin-left: 50px">
-          <p
-            style="
-              color: green;
-              font-weight: bold;
-              margin-top: 20px;
-              margin-left: 30px;
-            "
-          >
-            LOCATION
-          </p>
-
-          <div class="verticals">
-            <div id="map"></div>
+          <!-- Right column content -->
+          <div class="two">
+            <!-- Location map and buttons -->
+            <div id="map"></div> <!-- Map container -->
             <hr />
-            <button class="button">CANCEL ORDER</button>
+            <button class="button">CANCEL ORDER</button> <!-- Cancel order button -->
+            <button class="button" onclick="showPopup()">ORDER RECEIVED</button>
           </div>
         </div>
       </div>
     </div>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+          <h2>Thank You!</h2>
+          <img src="{% static '/provider/images/tick.jpeg' %}" alt="Tick Mark Image" style="width:20%;height:auto;margin-left:40%;">
+          <p>Your order is delivered.</p>
+          <button class="button" onclick="closePopup('{{data.post_id}}')">CLOSE</button>
+       
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Leaflet library scripts -->
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <!-- JavaScript code for initializing and showing map -->
+    <script>
+      var map = L.map('map').setView([17.6868, 83.2185], 13);
+      mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: 'Leaflet &copy; ' + mapLink + ', contribution',
+          maxZoom: 18
+      }).addTo(map);
+      var data={{data|safe}}
+      var receiverAddress = data.provider_location
+      var providerAddress = data.receiver_location
+      var userCoords;
+      var restaurantCoords;
+
+      // Function to geocode address using Mapbox Geocoding API
+      function geocodeAddress(address, callback) {
+          var accessToken = 'pk.eyJ1IjoiY2hhbmRhbmFjaGFyaXRoYSIsImEiOiJjbHRiOTNuNnowOTYwMmpxZGxtZHlmMWFlIn0.rqxO0fpVgA9Yw5elWA9ocQ';
+          var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + encodeURIComponent(address) + '.json?access_token=' + accessToken;
+
+          fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                  if (data.features && data.features.length > 0) {
+                      var coords = data.features[0].center;
+                      callback(coords);
+                  } else {
+                      callback(null);
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  callback(null);
+              });
+      }
+
+      // Geocode user address
+      geocodeAddress(receiverAddress, function(coords) {
+          if (coords) {
+              userCoords = coords;
+              if (restaurantCoords) {
+                  showMarkersAndPath();
+              }
+          } else {
+              console.error("Failed to geocode user address.");
+          }
+      });
+
+      // Geocode restaurant address
+      geocodeAddress(providerAddress, function(coords) {
+          if (coords) {
+              restaurantCoords = coords;
+              if (userCoords) {
+                  showMarkersAndPath();
+              }
+          } else {
+              console.error("Failed to geocode restaurant address.");
+          }
+      });
+
+      // Function to show markers and path between user and restaurant
+      function showMarkersAndPath() {
+          var userMarker = L.marker(userCoords).addTo(map);
+          var restaurantMarker = L.marker(restaurantCoords).addTo(map);
+
+          L.Routing.control({
+              waypoints: [
+                  L.latLng(userCoords[1], userCoords[0]), // Starting point (user location)
+                  L.latLng(restaurantCoords[1], restaurantCoords[0]) // Ending point (restaurant location)
+              ]
+          }).addTo(map);
+      }
+  </script>
   </body>
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </html>

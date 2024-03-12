@@ -145,7 +145,8 @@
     </nav>
 
     <div class="tabels">
-      <!-- (click to track the order) not yet implemeted -->
+      
+
       <h1>Active Orders (click to track the order)</h1>
       <table class="non-empty-accepted">
         <thead>
@@ -155,11 +156,13 @@
             <th>Order Details</th>
             <th>Date & Time</th>
             <th>Order status</th>
+            <th>Track order</th>
           </tr>
         </thead>
         <tbody>
+          <!-- {{orders}} -->
           {% for order in orders.accepted %}
-          <tr style="cursor: pointer">
+          <tr style="cursor: pointer" onclick="trackOrder('{{order.post_id}}')">
               <td style="text-align:center">{{ order.order_id }}</td>
               <td style="text-align:center"><img src="{{ order.image }}" alt="Product Image" /></td>
               <td style="text-align:center">
@@ -174,6 +177,9 @@
                <td class="{{ order.status }}" style="font-size: 18px; font-weight: 600;text-align:center">
                   {{ order.status }}
                 </td>
+              </td>
+              <td style="text-align:center">
+                <button>Track</button>
               </td>
           </tr>
           {% endfor %}
@@ -296,6 +302,14 @@
       document.querySelector(".empty-all-orders").style.display = "none";
     }
     filterPosts('all')
+    function trackOrder(postId){
+      //send to track order page
+      
+      window.location.href = `/receiver/track-order/id=${postId}/`;
+
+
+    }
+
     function filterPosts(status) {
       //change dropdoen link name based on selected category
     let dropdownToggle = document.getElementById('dropdownMenuLink');
@@ -365,7 +379,7 @@
             "block";
         }
         // display text and hide table
-        else {
+        else {   
           document.querySelector(".dropdown-table").style.display = "table";
           document.querySelector(".empty-accepted-orders").style.display =
             "none";

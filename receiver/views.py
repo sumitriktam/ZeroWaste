@@ -1,11 +1,15 @@
 from django.shortcuts import render, redirect
 from admin_mod.models import User
-from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
+from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes,FeedbackTab
 from receiver.models import Order
 from django.contrib import messages
 from datetime import datetime
 from admin_mod import views
 from django.urls import reverse
+from django.http import JsonResponse
+from django.http import HttpResponse
+
+
 
 
 def check_user_login_status(request):
@@ -49,8 +53,7 @@ def give_all_posts():
   data={'posts':combined_posts}
   return data
 
-
-def dashboard(request):
+def home(request):
    #check wether the user is logged in or not
    try:
     user_id=request.session['user_id']
@@ -137,11 +140,13 @@ def view_post(request,post_id):
         #clear previous error messages
           
         messages.error(request, 'Sorry, the user_post does not exist')
-        return redirect('/receiver')
+        return redirect('/receiver/home')
         
 
 def order(request):
+    print('gotcha')
     check_user_login_status(request)
+    #take post_id from the submitted form
     post_id = request.POST.get('post_id')
     print(post_id)
     try:
@@ -150,7 +155,9 @@ def order(request):
      receiver_user_id=request.session['user_id']
      receiver_user=User.objects.get(id=receiver_user_id)
      delivery_location=User.objects.get(id=receiver_user_id).location
-     quantity=20#it should be (request.POST.quantity)
+     #take quantity from the submitted form
+     quantity=request.POST.get('quantity')
+     
      #create a new order in order table
      new_order=Order.objects.create(
        ordered_post=ordered_post, receiver_user=receiver_user,receiver_location=delivery_location,
@@ -163,15 +170,15 @@ def order(request):
      data['location']=provider_location
    
      #render order tracking page with sucess message
-     return redirect('receiver:waiting_page')
-     
+     return HttpResponse(status=204)  # Return a 204 No Content response
+      
     #if there is no such user_post
     except post.DoesNotExist:   
       #clear previous error messages
         
       #render the page with the specific error(not implemented)
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
-      return redirect('/receiver')
+      return redirect('/receiver/home')
     
 def track_order(request,post_id):
     try:
@@ -182,20 +189,17 @@ def track_order(request,post_id):
      return redirect('/login')
     #user can only track his active order(not yet implemeted)
     try:
+     receiver_location=User.objects.get(id=user_id).location
      ordered_post=post.objects.get(id=post_id)
      provider_location=ordered_post.location
-     receiver_user_id=request.session['user_id']
-     receiver_user=User.objects.get(id=receiver_user_id)
-     delivery_location=User.objects.get(id=receiver_user_id).location
-     quantity=20#it should be (request.POST.quantity)
-     #create a new order in order table
-     
+
      data = {
        'image':ordered_post.photo.url,
      }
      data['message']='Order successful'
-     data['location']=provider_location
-    
+     data['provider_location']=provider_location
+     data['receiver_location']=receiver_location
+     data['post_id']=post_id    
    
      #render order tracking page with sucess message
      return render(request,"receiver/trackOrder.html",{'data':data})
@@ -206,7 +210,7 @@ def track_order(request,post_id):
       #clear previous error messages
         
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
-      return redirect('/receiver')
+      return redirect('/receiver/home')
 
 
 def waiting_page(request):
@@ -247,6 +251,7 @@ def order_history(request):
        order_details['image']=user_post.photo.url
        order_details['item_name']=user_post.name
        order_details['location']=user_post.location
+       order_details['post_id']=order.ordered_post_id
      #take location from user table
       
    all_orders={
@@ -257,7 +262,34 @@ def order_history(request):
     }
    return render(request,'receiver/orderHistory.html',{'orders':all_orders})
            
-# def reports(request):
+def feedback(request,post_id):
+  data={'post_id':post_id}
+  return render(request,'receiver/feedback.html',{'data':data})
+
+def send_feedback(request):
+   if request.method == 'POST':
+    # Extract data from the form
+    rating = request.POST.get('star')
+    feedback_text = request.POST.get('feedback')
+    post_id=request.POST.get('post_id')
+    user_id=request.session.get('user_id')
+    
+    user_post=post.objects.get(id=post_id)
+    user=User.objects.get(id=user_id)
+    #create a new feedback
+    feedback = FeedbackTab.objects.create(
+            post_id=user_post,
+            given_by=user,
+            rating=rating,
+            feedback=feedback_text
+        )
+    print("success")
+    return HttpResponse(status=204)
+  #  else:
+  #   data=give_all_posts()
+  #   messages.error(request, "Can't access")
+  #   return redirect('/receiver/home')
+  
   
      
      
