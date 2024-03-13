@@ -2,8 +2,257 @@
 
 {% block title %}Posts{% endblock %}
 
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/css/showposts.css' %}">
+{% endblock %}
+
 {% block content %}
+<h1>All Posts</h1>
+<ul>
+  {% for post_with_description in posts_with_descriptions %}
+  <div class="post-container">
+    <div class="image-container">
+        <img src="/{{ post_with_description.post.photo }}" alt="Your Image" class="post-image">
+     </div>
+     <div class="post-body">
 
-<h1>posts page</h1>
+    <h4><strong>Name</strong>: {{ post_with_description.post.name }}</h4>
+    <p><strong>Category</strong>: {{ post_with_description.post.get_category_display }}</p>
+    <p><strong>Drop/Pickup</strong>: {{ post_with_description.post.get_drop_pickup_display }}</p>
+    <p><strong>Location</strong>: {{ post_with_description.post.location }}</p>
+    <p><strong>Will Expire</strong>: {{ post_with_description.post.get_will_expire_display }}</p>
+    <p><strong>Status</strong>: {{ post_with_description.post.get_status_display }}</p>
+    {% if post_with_description.toys_desc %}
+    <p><strong>Description</strong>: {{ post_with_description.toys_desc.desc}}</p>
+    <p><strong>Toys Details</strong>: </p>
+    <p>Age Group - {{ post_with_description.toys_desc.age_group }}</p>
+    <p> Condition - {{ post_with_description.toys_desc.get_condition_display }}</p>
+    {% endif %}
+    {% if post_with_description.grocery_desc %}
+    <p><strong>Description</strong>: {{ post_with_description.grocery_desc.desc}}</p>
+    <p><strong>Grocery Details</strong>:</p>
+    <p> Expiry Date - {{ post_with_description.grocery_desc.expiry_date }}</p>
+    <p> Expiry Time - {{ post_with_description.grocery_desc.expiry_time }}</p>
+    {% endif %}
+    {% if post_with_description.cloth_desc %}
+    <p><strong>Description</strong>: {{ post_with_description.cloth_desc.desc}}</p>
+    <p><strong>Cloth Details: </strong></p>
+    <p>Gender - {{ post_with_description.cloth_desc.get_gender_display }}</p>
+    <p> Condition - {{ post_with_description.cloth_desc.get_condition_display }}</p>
+    <p> Size - {{ post_with_description.cloth_desc.get_size_display }}</p>
+    {% endif %}
+    {% if post_with_description.food_desc %}
+    <p><strong>Description</strong>: {{ post_with_description.food_desc.desc}}</p>
+    <p><strong>Food Details: </strong></p>
+    <p>Expiry Date - {{ post_with_description.food_desc.expiry_date }}</p> 
+    <p>Expiry Time - {{ post_with_description.food_desc.expiry_time }}</p>
+    {% endif %}
+    {% if post_with_description.other_desc %}
+    <p><strong>Description</strong>: {{ post_with_description.other_desc.desc}}</p>
+    <p><strong>Other Details: </strong>{{ post_with_description.other_desc.desc }}</p>
+    {% endif %}
+    <input type="hidden" id="toysDescValue" value="{{ post_with_description.toys_desc.desc }}">
+    <input type="hidden" id="toysAgeGroupValue" value="{{ post_with_description.toys_desc.age_group }}">
+    <input type="hidden" id="toysConditionValue" value="{{ post_with_description.toys_desc.condition }}">
+    <div class="post-buttons">
+        <a href="#" class="btn btn-primary" onclick="openEditModal('{{ post_with_description.post.id }}', '{{ post_with_description.post.name }}', '{{ post_with_description.post.category }}', '{{ post_with_description.post.drop_pickup }}', '{{ post_with_description.post.location }}', '{{ post_with_description.post.will_expire }}', '{{ post_with_description.post.status }}')">Edit</a>
+        <button type="button" class="btn btn-danger" onclick="openDeleteModal({{ post_with_description.post.id }})">Delete</button>
+    </div>
+</div>
+</div>
+{% endfor %}
+</ul>
+<div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="editPostForm" method="post" action="{% url 'save_post_changes' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="editName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="editName" name="editName" value="">
 
+               <label for="editCategory" class="form-label">Category</label>
+              <input type="text" class="form-control" id="editCategory" name="editCategory" value="">
+
+              <label for="editdropPickup" class="form-label">Drop/Pickup</label>
+              <input type="text" class="form-control" id="editdropPickup" name="editdropPickup" value="">
+
+              <label for="editLocation" class="form-label">Location</label>
+              <input type="text" class="form-control" id="editLocation" name="editLocation" value="">
+
+              <label for="editwillExpire" class="form-label">willExpire</label>
+              <input type="text" class="form-control" id="editwillExpire" name="editwillExpire" value="">
+
+              <label for="editStatus" class="form-label">Status</label>
+              <input type="text" class="form-control" id="editStatus" name="editStatus" value="">
+              
+            </div>
+            <div id="toysDesc" style="display: none;">
+                <label for="editToysDesc" class="form-label">Toys Description</label>
+                <input type="text" class="form-control" id="editToysDesc" name="editToysDesc" value="">
+            
+                <label for="editAgeGroup" class="form-label">Age Group</label>
+                <input type="text" class="form-control" id="editAgeGroup" name="editAgeGroup" value="">
+            
+                <label for="editConditionToys" class="form-label">Condition</label>
+                <input type="text" class="form-control" id="editConditionToys" name="editConditionToys" value="">
+
+            </div>
+            
+            <div id="groceryDesc" style="display: none;">
+                <label for="editGroceryDesc" class="form-label">Grocery Description</label>
+                <input type="text" class="form-control" id="editGroceryDesc" name="editGroceryDesc" value="">
+            
+                <label for="editExpiryDate" class="form-label">Expiry Date</label>
+                <input type="text" class="form-control" id="editExpiryDate" name="editExpiryDate" value="">
+            
+                <label for="editExpiryTime" class="form-label">Expiry Time</label>
+                <input type="text" class="form-control" id="editExpiryTime" name="editExpiryTime" value="">
+            </div>
+            
+            <div id="clothDesc" style="display: none;">
+                <label for="editClothDesc" class="form-label">Cloth Description</label>
+                <input type="text" class="form-control" id="editClothDesc" name="editClothDesc" value="">
+            
+                <label for="editGender" class="form-label">Gender</label>
+                <input type="text" class="form-control" id="editGender" name="editGender" value="">
+            
+                <label for="editConditionCloth" class="form-label">Condition</label>
+                <input type="text" class="form-control" id="editConditionCloth" name="editConditionCloth" value="">
+            
+                <label for="editSize" class="form-label">Size</label>
+                <input type="text" class="form-control" id="editSize" name="editSize" value="">
+            </div>
+            
+            <div id="foodDesc" style="display: none;">
+                <label for="editFoodDesc" class="form-label">Food Description</label>
+                <input type="text" class="form-control" id="editFoodDesc" name="editFoodDesc" value="">
+            
+                <label for="editExpiryDateFood" class="form-label">Expiry Date</label>
+                <input type="text" class="form-control" id="editExpiryDateFood" name="editExpiryDateFood" value="">
+            
+                <label for="editExpiryTimeFood" class="form-label">Expiry Time</label>
+                <input type="text" class="form-control" id="editExpiryTimeFood" name="editExpiryTimeFood" value="">
+            </div>
+            
+            <div id="otherDesc" style="display: none;">
+                <label for="editOtherDesc" class="form-label">Other Description</label>
+                <input type="text" class="form-control" id="editOtherDesc" name="editOtherDesc" value="">
+            </div>
+            
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="savePostChanges()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function openEditModal(postId, name, category, dropPickup, location, willExpire, status) {
+        document.getElementById('editName').value = name;
+        document.getElementById('editCategory').value = category;
+        document.getElementById('editdropPickup').value = dropPickup;
+        document.getElementById('editLocation').value = location;
+        document.getElementById('editwillExpire').value = willExpire;
+        document.getElementById('editStatus').value = status;
+        console.log(category);
+    
+        var toysDesc = document.getElementById('toysDesc');
+        var groceryDesc = document.getElementById('groceryDesc');
+        var clothDesc = document.getElementById('clothDesc');
+        var foodDesc = document.getElementById('foodDesc');
+        var otherDesc = document.getElementById('otherDesc');
+    
+        toysDesc.style.display = category === 'toys' ? 'block' : 'none';
+        groceryDesc.style.display = category === 'groceries' ? 'block' : 'none';
+        clothDesc.style.display = category === 'clothes' ? 'block' : 'none';
+        foodDesc.style.display = category === 'food' ? 'block' : 'none';
+        otherDesc.style.display = category === 'others' ? 'block' : 'none';
+
+        if (category === 'toys') {
+            document.getElementById('editToysDesc').value = document.getElementById('toysDescValue').value;
+            document.getElementById('editAgeGroup').value = document.getElementById('toysAgeGroupValue').value;
+            document.getElementById('editConditionToys').value = document.getElementById('toysConditionValue').value;
+        } 
+        else if (category === 'groceries') {
+            document.getElementById('editGroceryDesc').value = document.getElementById('groceryDescValue').value;
+            document.getElementById('editExpiryDate').value = document.getElementById('groceryExpiryDateValue').value;
+            document.getElementById('editExpiryTime').value = document.getElementById('groceryExpiryTimeValue').value;
+        } 
+        else if (category === 'clothes') {
+            document.getElementById('editClothDesc').value = document.getElementById('clothDescValue').value;
+            document.getElementById('editGender').value = document.getElementById('clothGenderValue').value;
+            document.getElementById('editConditionCloth').value = document.getElementById('clothConditionValue').value;
+            document.getElementById('editSize').value = document.getElementById('clothSizeValue').value;
+        } 
+        else if (category === 'food') {
+            document.getElementById('editFoodDesc').value = document.getElementById('foodDescValue').value;
+            document.getElementById('editExpiryDateFood').value = document.getElementById('foodExpiryDateValue').value;
+            document.getElementById('editExpiryTimeFood').value = document.getElementById('foodExpiryTimeValue').value;
+        } 
+        else if (category === 'others') {
+            document.getElementById('editOtherDesc').value = document.getElementById('otherDescValue').value;
+        }
+    
+        var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+        editPostModal.show();
+    }
+    
+    function savePostChanges() {
+        var editedName = document.getElementById('editName').value;
+        var editedCategory = document.getElementById('editCategory').value;
+        var editedDropPickup = document.getElementById('editdropPickup').value;
+        var editedLocation = document.getElementById('editLocation').value;
+        var editedWillExpire = document.getElementById('editwillExpire').value;
+        var editedStatus = document.getElementById('editStatus').value;
+    
+        // Get the rest of the fields based on the category
+        var editedDesc = '';
+        var editedAgeGroup = '';
+        var editedCondition = '';
+        var editedExpiryDate = '';
+        var editedExpiryTime = '';
+    
+        switch (editedCategory) {
+            case 'toys':
+                editedDesc = document.getElementById('editToysDesc').value;
+                editedAgeGroup = document.getElementById('editAgeGroup').value;
+                editedCondition = document.getElementById('editConditionToys').value;
+                break;
+            case 'groceries':
+                editedDesc = document.getElementById('editGroceryDesc').value;
+                editedExpiryDate = document.getElementById('editExpiryDate').value;
+                editedExpiryTime = document.getElementById('editExpiryTime').value;
+                break;
+            case 'clothes':
+                editedDesc = document.getElementById('editClothDesc').value;
+                editedGender = document.getElementById('editGender').value;
+                editedCondition = document.getElementById('editConditionCloth').value;
+                editedSize = document.getElementById('editSize').value;
+                break;
+            case 'food':
+                editedDesc = document.getElementById('editFoodDesc').value;
+                editedExpiryDate = document.getElementById('editExpiryDateFood').value;
+                editedExpiryTime = document.getElementById('editExpiryTimeFood').value;
+                break;
+            case 'others':
+                editedDesc = document.getElementById('editOtherDesc').value;
+                break;
+            default:
+                break;
+        }
+    
+        // Use the values to update the post
+    }
+    </script>
+    
+  
 {% endblock %}

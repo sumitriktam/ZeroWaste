@@ -1,0 +1,32 @@
+.post-container {
+    background-color: #adadad63;
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    margin: 4%;
+}
+
+.image-container img {
+    width: 400px;
+    height: 400px;
+    padding: 2%;
+    margin:auto;
+}
+
+.post-container h2 {
+    margin-top: 0;
+}
+
+.post-buttons {
+    margin-top: 10px;
+}
+
+.post-buttons button {
+    margin-right: 10px;
+}
