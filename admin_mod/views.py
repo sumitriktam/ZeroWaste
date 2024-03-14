@@ -11,7 +11,7 @@ from django.db.models import Count
 import uuid
 from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
 
 def index(request):
@@ -354,16 +354,12 @@ def showPosts(request):
 def showAdmins(request):
     return render(request, 'admin/showAdmins.html')
 
-def delete_post(request, post_id):
-    post_instance = get_object_or_404(post, id=post_id)
-    post_instance.delete()
-    return redirect('/posts/')
-
 
 def save_post_changes(request):
-    print("It reached function")
+    # print("It reached function")
     if request.method == 'POST':
-        post_id = request.POST.get('post_id')
+        post_id = request.POST.get('editPostId')
+        print("post Id is : ", post_id)
         post_obj = post.objects.get(pk=post_id)
         post_obj.name = request.POST.get('editName')
         post_obj.category = request.POST.get('editCategory')
@@ -373,21 +369,24 @@ def save_post_changes(request):
         post_obj.status = request.POST.get('editStatus')
 
         if post_obj.category == 'toys':
-            toys_desc, created = toysDes.objects.get_or_create(post=post_obj)
+            toys_desc, created = toysDes.objects.get_or_create(id=post_obj.description_id)
             toys_desc.desc = request.POST.get('editToysDesc', '')
             toys_desc.age_group = request.POST.get('editAgeGroup', 0)
             toys_desc.condition = request.POST.get('editConditionToys', '')
             toys_desc.save()
 
         elif post_obj.category == 'groceries':
-            grocery_desc, created = groceryDes.objects.get_or_create(post=post_obj)
+            grocery_desc, created = groceryDes.objects.get_or_create(id=post_obj.description_id)
             grocery_desc.desc = request.POST.get('editGroceryDesc', '')
-            grocery_desc.expiry_date = request.POST.get('editExpiryDate', '')
-            grocery_desc.expiry_time = request.POST.get('editExpiryTime', '')
+            grocery_desc.expiry_date = datetime.strptime(request.POST.get('editExpiryDate', ''), "%B %d, %Y").strftime("%Y-%m-%d")
+            print(grocery_desc.expiry_date)
+            # exp_time = datetime.strptime(request.POST.get('editExpiryTime', ''), '%H:%M:%S.%f').strftime('%H:%M:%S.%f')
+            # print(exp_time)
+            grocery_desc.expiry_time = datetime.strptime(request.POST.get('editExpiryTime', ''), '%H:%M:%S.%f').strftime('%H:%M:%S')
             grocery_desc.save()
 
         elif post_obj.category == 'clothes':
-            cloth_desc, created = clothDes.objects.get_or_create(post=post_obj)
+            cloth_desc, created = clothDes.objects.get_or_create(id=post_obj.description_id)
             cloth_desc.desc = request.POST.get('editClothDesc', '')
             cloth_desc.gender = request.POST.get('editGender', '')
             cloth_desc.condition = request.POST.get('editConditionCloth', '')
@@ -395,17 +394,24 @@ def save_post_changes(request):
             cloth_desc.save()
 
         elif post_obj.category == 'food':
-            food_desc, created = foodDes.objects.get_or_create(post=post_obj)
+            food_desc, created = foodDes.objects.get_or_create(id=post_obj.description_id)
             food_desc.desc = request.POST.get('editFoodDesc', '')
             food_desc.expiry_date = request.POST.get('editExpiryDateFood', '')
             food_desc.expiry_time = request.POST.get('editExpiryTimeFood', '')
             food_desc.save()
 
         elif post_obj.category == 'others':
-            other_desc, created = otherDes.objects.get_or_create(post=post_obj)
+            other_desc, created = otherDes.objects.get_or_create(id=post_obj.description_id)
             other_desc.desc = request.POST.get('editOtherDesc', '')
             other_desc.save()
 
         post_obj.save()
         return redirect('/posts/')
     return redirect('/posts/')
+
+def delete_post(request):
+    if request.method == 'GET':
+        post_id = request.GET.get('post_id')
+        post_del = post.objects.get(id=post_id)
+        post_del.delete()
+        return redirect('/posts/')

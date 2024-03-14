@@ -36,6 +36,19 @@ class post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='live')
     quantity = models.CharField(max_length=25, default='1')
     created_at = models.DateTimeField(default=timezone.now)
+    def delete(self, *args, **kwargs):
+        if self.category == 'toys':
+            toysDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'groceries':
+            groceryDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'clothes':
+            clothDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'food':
+            foodDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'others':
+            otherDes.objects.filter(id=self.description_id).delete()
+        
+        super(post, self).delete(*args, **kwargs)
 
 class toysDes(models.Model):
     age_group = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(30)])
@@ -83,6 +96,7 @@ class foodDes(models.Model):
 
 class otherDes(models.Model):
     desc = models.CharField(max_length=1000, default="")
+
 
 class FeedbackTab(models.Model):
     post_id = models.ForeignKey(post, on_delete=models.CASCADE)  
