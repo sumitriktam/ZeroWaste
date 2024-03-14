@@ -357,6 +357,32 @@ def showAdmins(request):
 
 def save_post_changes(request):
     # print("It reached function")
+    def convert_time_to_duration(time_str):
+        time_mapping = {
+            "midnight": "00:00:00:000000",
+            "noon": "12:00:00:000000",
+            "a.m": "00:00:00",
+            "p.m": "12:00:00"
+        }
+
+        if time_str.lower() in time_mapping:
+            return time_mapping[time_str.lower()]
+
+        parts = time_str.strip().lower().split()
+        if len(parts) != 2:
+            raise ValueError("Invalid time format")
+
+        hour, minute = parts[0].split(':')
+        if parts[1] == 'a.m':
+            if hour == '12':
+                hour = '00'
+        elif parts[1] == 'p.m':
+            if hour != '12':
+                hour = str(int(hour) + 12)
+        else:
+            raise ValueError("Invalid time format")
+
+        return f"{hour.zfill(2)}:{minute.zfill(2)}:00:000000"
     if request.method == 'POST':
         post_id = request.POST.get('editPostId')
         print("post Id is : ", post_id)
@@ -379,10 +405,10 @@ def save_post_changes(request):
             grocery_desc, created = groceryDes.objects.get_or_create(id=post_obj.description_id)
             grocery_desc.desc = request.POST.get('editGroceryDesc', '')
             grocery_desc.expiry_date = datetime.strptime(request.POST.get('editExpiryDate', ''), "%B %d, %Y").strftime("%Y-%m-%d")
-            print(grocery_desc.expiry_date)
-            # exp_time = datetime.strptime(request.POST.get('editExpiryTime', ''), '%H:%M:%S.%f').strftime('%H:%M:%S.%f')
-            # print(exp_time)
-            grocery_desc.expiry_time = datetime.strptime(request.POST.get('editExpiryTime', ''), '%H:%M:%S.%f').strftime('%H:%M:%S')
+            ins_time = request.POST.get('editExpiryTime', '')
+            data_time = convert_time_to_duration(ins_time)
+            print(data_time)
+            grocery_desc.expiry_time = data_time
             grocery_desc.save()
 
         elif post_obj.category == 'clothes':
