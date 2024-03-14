@@ -3,14 +3,14 @@ from receiver.models import Order
 from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, FeedbackTab
 from django.contrib import messages
 from datetime import datetime
-from .prov_auth import auth 
+from .prov_auth import auth, post_auth
 
 def homePage(request):
     user = auth(request)
     if not user:
         messages.error(request, 'You need to login first.')
         return redirect("/login")
-    matching_posts = post.objects.filter(user=user).order_by('-created_at')
+    matching_posts = post.objects.filter(user=user).filter(mode='active').order_by('-created_at')
     orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('-date_time')  
     context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders}
     return render(request, "provider/dashboard.html", context)
@@ -89,7 +89,7 @@ def allPosts(request):
         return redirect("/login")
     uid = request.session['user_id']
     posts_with_descriptions = []
-    posts = post.objects.filter(user_id=uid).order_by('-created_at')
+    posts = post.objects.filter(user_id=uid).filter(mode='active').order_by('-created_at')
     for single_post in posts:
         toys_desc = None
         grocery_desc = None
@@ -160,6 +160,23 @@ def reject(request, order_id):
     order.save()
     messages.error(request, f'Order rejected of user {order.receiver_user.email}.')
     return redirect("provider:requests")
+
+def delete_post(request, post_id):
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login") 
+    p = post_auth(request, post_id, user)
+    if not p:
+        messages.error(request, 'Delete your own post.')
+        return redirect("/login")
+    p.mode = 'inative'
+    p.save()
+    messages.error(request, f'Post {p.name} id = {p.id} deleted.')
+    return redirect("provider:homepage")  
+  
+    
+
      
 
     

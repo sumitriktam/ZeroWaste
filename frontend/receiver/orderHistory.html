@@ -1,151 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order History</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
-      .navbar-brand {
-        color: #1a1a1a;
-        font-family: "Lexend Deca", sans-serif;
-        font-weight: bold;
-        font-size: 24;
-      }
-      .nav-item {
-        font-family: "Lexend Deca", sans-serif;
-        font-weight: regular;
-        font-size: 24;
-        padding-left: 15px;
-      }
-      .navbar .container {
-        padding: 10px 0; /* Adjust the padding as needed */
-      }
-      .navbar {
-        position: sticky;
-        top: 0;
-        z-index: 3;
-        background-color: #e9e9e9;
-      }
-      .navbar-nav {
-        border-radius: 5px;
-      }
-     
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f0f0f0;
-      }
-      h1 {
-        font-size: 24px;
-        color: #333;
-        margin-bottom: 16px;
-      }
-      h3 {
-        font-size: 20px;
-        color: #666;
-        margin-top: 16px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 50px;
-        margin-top: 15px;
-      }
-      th,
-      td {
-        border: 1px solid #bababa;
-        padding: 12px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-        text-align: center;
-      }
-      tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
+{%extends 'receiver/base.html' %}
+{%block title%}Order History{%endblock%}
+{%block extra_css_link%}{%load static%}
+<link rel="stylesheet" href="{%static 'receiver/css/orderHistory.css'%}">
+{%endblock%}
+{%block body%}
 
-      img {
-        max-width: 140px;
-        max-height: 100px;
-        border-radius: 8px;
-      }
-      .no-orders {
-        font-style: italic;
-        color: #999;
-      }
-      .dropdown-item:active{
-       background-color: white;
-       color: black;
-      }
-      .accepted {
-        color: rgba(0, 163, 0, 0.833);
-      }
-      .rejected {
-        color: rgb(255, 10, 10);
-      }
-      .pending {
-        color: rgb(255, 132, 0);
-      }
+<div class="tabels">
       
-      .tabels {
-        margin-left: 30px;
-      }
-      
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <div class="container">
-        <!-- Company Name and Logo -->
-        <a class="navbar-brand" href="#">
-          <img src="{% static 'receiver/logo.png' %}" alt="Company Icon" />
-          <span class="company-name">ZeroWaste</span>
-        </a>
-        <!-- Navbar Toggler -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <!-- Navbar Links -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">History</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Feedback</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div class="tabels">
-      <!-- (click to track the order) not yet implemeted -->
       <h1>Active Orders (click to track the order)</h1>
       <table class="non-empty-accepted">
         <thead>
@@ -155,11 +17,13 @@
             <th>Order Details</th>
             <th>Date & Time</th>
             <th>Order status</th>
+            <th>Track order</th>
           </tr>
         </thead>
         <tbody>
+          <!-- {{orders}} -->
           {% for order in orders.accepted %}
-          <tr style="cursor: pointer">
+          <tr style="cursor: pointer" onclick="trackOrder('{{order.post_id}}')">
               <td style="text-align:center">{{ order.order_id }}</td>
               <td style="text-align:center"><img src="{{ order.image }}" alt="Product Image" /></td>
               <td style="text-align:center">
@@ -174,6 +38,9 @@
                <td class="{{ order.status }}" style="font-size: 18px; font-weight: 600;text-align:center">
                   {{ order.status }}
                 </td>
+              </td>
+              <td style="text-align:center">
+                <button>Track</button>
               </td>
           </tr>
           {% endfor %}
@@ -266,10 +133,12 @@
         Delivered orders will be displayed here
       </h3>
     </div>
-  </body>
-  <script>
+{%endblock%}
+{%block extra_js%}
 
-    allOrders={{ orders | safe }};
+
+<script>
+   allOrders={{ orders | safe }};
     if (allOrders.accepted.length === 0) {
       document.querySelector(".non-empty-accepted").style.display = "none";
       document.querySelector(".empty-accepted").style.display = "block";
@@ -296,6 +165,14 @@
       document.querySelector(".empty-all-orders").style.display = "none";
     }
     filterPosts('all')
+    function trackOrder(postId){
+      //send to track order page
+      
+      window.location.href = `/receiver/track-order/id=${postId}/`;
+
+
+    }
+
     function filterPosts(status) {
       //change dropdoen link name based on selected category
     let dropdownToggle = document.getElementById('dropdownMenuLink');
@@ -365,7 +242,7 @@
             "block";
         }
         // display text and hide table
-        else {
+        else {   
           document.querySelector(".dropdown-table").style.display = "table";
           document.querySelector(".empty-accepted-orders").style.display =
             "none";
@@ -421,12 +298,5 @@
       });
       console.log( document.querySelector(".dropdown-table"));
     }
-  </script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-</html>
+</script>
+{%endblock%}

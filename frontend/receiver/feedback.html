@@ -1,0 +1,254 @@
+{%extends 'receiver/base.html'%} {%block title%}Feedback{%endblock%} {% block extra_css_link %} {%load static%}
+<link rel="stylesheet" href="{%static 'receiver/css/feedback.css' %}" />
+{%endblock%} {%block extra_css%}
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
+  .navbar-brand {
+    color: #1a1a1a;
+    font-family: "Lexend Deca", sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .nav-item {
+    font-family: "Lexend Deca", sans-serif;
+    font-weight: regular;
+    font-size: 16px;
+    padding-left: 15px;
+  }
+  .navbar .container {
+    padding: 10px 0; /* Adjust the padding as needed */
+  }
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: #e9e9e9;
+  }
+  .navbar-nav {
+    border-radius: 5px;
+  }
+
+  .dropdown {
+    position: fixed;
+    right: 0px;
+  }
+
+  .button {
+    align-items: center;
+    appearance: none;
+    background-color: #fff;
+    border-radius: 24px;
+    border-style: none;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px -1px,
+      rgba(0, 0, 0, 0.14) 0 6px 10px 0, rgba(0, 0, 0, 0.12) 0 1px 18px 0;
+    box-sizing: border-box;
+    color: #3c4043;
+    cursor: pointer;
+    display: inline-flex;
+    fill: currentcolor;
+    font-family: "Google Sans", Roboto, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    height: 48px;
+    justify-content: center;
+    letter-spacing: 0.25px;
+    line-height: normal;
+    max-width: 100%;
+    overflow: visible;
+    padding: 2px 24px;
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+    will-change: transform, opacity;
+    z-index: 0;
+  }
+
+  .cont {
+    width: 50%;
+    margin-top: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3),
+      inset -2px -2px 8px rgba(255, 255, 255, 0.8);
+    margin-top: 5%;
+    margin-left: 25%;
+    padding: 3%;
+    background-color: white;
+    border-radius: 50px;
+  }
+
+  textarea {
+    width: 50%;
+    height: 100px;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.3),
+      inset -2px -2px 8px rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 24px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px -1px,
+      rgba(0, 0, 0, 0.14) 0 6px 10px 0, rgba(0, 0, 0, 0.12) 0 1px 18px 0;
+    background-color: #f6f9fe;
+    color: green;
+    cursor: pointer;
+    font-family: "Google Sans", Roboto, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  }
+
+  .button:active {
+    box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%),
+      0 8px 12px 6px rgb(60 64 67 / 15%);
+    outline: none;
+  }
+
+  .button:focus {
+    outline: none;
+    border: 2px solid #4285f4;
+  }
+
+  .button:not(:disabled) {
+    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+      rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+  }
+
+  .button:not(:disabled):hover {
+    box-shadow: rgba(60, 64, 67, 0.3) 0 2px 3px 0,
+      rgba(60, 64, 67, 0.15) 0 6px 10px 4px;
+  }
+
+  .button:not(:disabled):focus {
+    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+      rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+  }
+
+  .button:not(:disabled):active {
+    box-shadow: rgba(60, 64, 67, 0.3) 0 4px 4px 0,
+      rgba(60, 64, 67, 0.15) 0 8px 12px 6px;
+  }
+
+  .button:disabled {
+    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+      rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+  }
+
+  .modal {
+    display: none;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 50%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5%;
+    margin-left: 30%;
+  }
+
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .close-btn {
+    background-color: #1b78db;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+{%endblock%} {%block body %}
+<form
+  id="feedbackForm"
+  action="{% url 'receiver:send_feedback' %}"
+  method="post"
+>
+  {% csrf_token %}
+  <div class="cont">
+    <div class="rate-box">
+      <input type="radio" name="star" id="star0" value="5" required />
+      <label class="star" for="star0"></label>
+      <input type="radio" name="star" id="star1" value="4" required />
+      <label class="star" for="star1"></label>
+      <input type="radio" name="star" id="star2" value="3" required />
+      <label class="star" for="star2"></label>
+      <input type="radio" name="star" id="star3" value="2" required />
+      <label class="star" for="star3"></label>
+      <input type="radio" name="star" id="star4" value="1" required />
+      <label class="star" for="star4"></label>
+    </div>
+    <textarea id="feedbackText" name="feedback" required></textarea>
+    <span id="ratingError" style="color: red"></span>
+    <span id="feedbackError" style="color: red"></span>
+    <input type="hidden" name="post_id" value="{{ data.post_id }}" />
+    <button class="button" onclick="validateForm()">SEND</button>
+  </div>
+</form>
+<!-- modal -->
+<div id="notAvailableModal" class="modal">
+  <div class="modal-content">
+    <h2 style="color: green">Feedback sent!</h2>
+    <p style="color: green">Thank you</p>
+    <img
+      src="{% static '/provider/images/tick.jpeg' %}"
+      alt="Tick Mark Image"
+      style="width: 20%; height: 20%; margin-left: 38%"
+    />
+    <button class="close-btn" onclick="closePopup()">Close</button>
+  </div>
+</div>
+{% endblock %} {%block extra_js%}
+<script>
+  function validateForm() {
+    var rating = document.querySelector('input[name="star"]:checked');
+    var feedback = document.getElementById("feedbackText");
+
+    if (!rating) {
+      document.getElementById("ratingError").innerText = "Rating is required.";
+    } else {
+      document.getElementById("ratingError").innerText = "";
+    }
+
+    if (feedback.value.trim() === "") {
+      document.getElementById("feedbackError").innerText =
+        "Feedback is required.";
+    } else {
+      document.getElementById("feedbackError").innerText = "";
+    }
+
+    if (rating && feedback.value.trim() !== "") {
+      // If both fields are filled, submit the form
+      document.getElementById("feedbackForm").submit();
+      Popup();
+    }
+  }
+  function Popup() {
+    var notAvailableModal = document.getElementById("notAvailableModal");
+    notAvailableModal.style.display = "flex";
+  }
+
+  function closePopup() {
+    var notAvailableModal = document.getElementById("notAvailableModal");
+    notAvailableModal.style.display = "none";
+    window.location.href = "{% url 'receiver:home' %}";
+  }
+</script>
+{%endblock%}

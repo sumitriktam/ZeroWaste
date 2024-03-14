@@ -6,6 +6,7 @@
     <title>Your Webpage Title</title>
     <link rel="stylesheet" href="/statics/provider/all_posts.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -79,6 +80,8 @@
             {% endif %}
 
             <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:1100px;">
+                <a href="{% url 'provider:deletion' item.post.id %}" style="color:#ab2b0b;"><i class="material-icons" style="font-size:40px;color:red; padding-left: 90px;">delete</i></a>
+                <br>
                 <a href="{% url 'receiver:view_post' item.post.id %}" style="color:#1D710F;">View Post -></a> 
                 <a href="{% url 'provider:feedback' item.post.id %}" style="color:#1D710F; margin-left: 8px;">Feedback -></a>
             </span></center></div>
