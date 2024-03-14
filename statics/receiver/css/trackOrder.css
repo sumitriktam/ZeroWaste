@@ -69,12 +69,6 @@
   margin-left: 20px;
 }
 
-#map {
-  width: 100%; /* Added */
-  height: 450px; /* Added */
-  border-radius: 10px; /* Added */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Added */
-}
 
 .button {
   align-items: center;

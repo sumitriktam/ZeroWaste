@@ -131,7 +131,8 @@ def login(request):
             elif user.role=='provider':
                 return  redirect("provider/home")
             elif user.role=='receiver':
-                return  redirect("/receiver")
+                request.session['role']='receiver'
+                return  redirect("/receiver/home")
             else:
                 return redirect('/register')
         else:
