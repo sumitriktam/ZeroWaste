@@ -4,7 +4,6 @@ from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, Feed
 from django.contrib import messages
 from datetime import datetime
 from .prov_auth import auth, post_auth
-
 def homePage(request):
     user = auth(request)
     if not user:
@@ -61,6 +60,7 @@ def newPost(request):
             description_id = obj.id,
             name = data.get('name'),
             location = data.get('location'),
+            latlong =data.get('latlong'),
             will_expire = data.get('will_expire'),
             quantity = data.get('quantity'),
         )
@@ -118,7 +118,6 @@ def allPosts(request):
         'posts_with_descriptions': posts_with_descriptions,
     }
     return render(request, "provider/all_posts.html", context)
-
 def feedback(request, post_id):
     user = auth(request)
     if not user:

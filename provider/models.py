@@ -24,6 +24,7 @@ class post(models.Model):
     description_id = models.CharField(max_length=100)  
     name = models.CharField(max_length=1000)
     location = models.CharField(max_length = 100)
+    latlong = models.CharField(max_length = 100, blank=True, null=True)
     EXPIRY_CHOICES = (
         ('expirable', 'Expirable or Perishable'),
         ('non_expirable', 'Not Expirable or Non Perishable'),
@@ -88,7 +89,6 @@ class foodDes(models.Model):
 
 class otherDes(models.Model):
     desc = models.CharField(max_length=1000, default="")
-
 class FeedbackTab(models.Model):
     post_id = models.ForeignKey(post, on_delete=models.CASCADE)  
     given_by = models.ForeignKey(User, blank=True, on_delete=models.CASCADE)

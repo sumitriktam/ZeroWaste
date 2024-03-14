@@ -6,22 +6,22 @@ function generateFormFields(category) {
     switch(category) {
         case 'food':
             formFieldsDiv.innerHTML = `
-            <label for="expiry-date">Expiry Date:</label>
-            <input type="date" name="expiry-date" style="width: 100%;padding: 8px;margin-bottom: 12px;border: 1px solid #ccc;border-radius: 5px;box-sizing: border-box;">
+            <label for="expiry-date">Expiry Date:</label> <br><br>
+            <input type="date" name="expiry-date" style="width: 100%;padding: 8px;margin-bottom: 10%;border: 1px solid #ccc;border-radius: 5px;box-sizing: border-box;">
             
             
-            <label for="expiry-time">Expiry Time:</label>
-            <input type="time" id="expiry-time" name="expiry-time" class="form-input">
-            <label for="desc">Description:</label>
+            <label for="expiry-time">Expiry Time:</label> <br><br>
+            <input type="time" id="expiry-time" name="expiry-time" class="form-input" style="margin-bottom: 10%;">
+            <label for="desc">Description:</label> <br><br>
             <textarea id="desc" name="desc" placeholder="Description" class="form-textarea"></textarea>
             `;
             break;
         case 'clothes':
             formFieldsDiv.innerHTML = `
-            <label for="gender">Gender:</label>
-            <input type="text" id="gender" name="gender" placeholder="Gender" class="form-input">
-            <label for="size">Clothing Size:</label>
-            <select id="size" name="size" class="form-input" required>
+            <label for="gender">Gender:</label><br><br>
+            <input type="text" id="gender" name="gender" placeholder="Gender" class="form-input" style="margin-bottom: 10%;">
+            <label for="size">Clothing Size:</label><br><br>
+            <select id="size" name="size" class="form-input" style="margin-bottom: 10%;" required>
                 <option value="s">S(Small)</option>
                 <option value="m">M(Medium)</option>
                 <option value="l">L(Large)</option>
@@ -31,47 +31,47 @@ function generateFormFields(category) {
             
             </select>
             
-            <label for="cond">Condition:</label>
-            <select id="cond" name="cond" class="form-input" required>
+            <label for="cond">Condition:</label> <br><br>
+            <select id="cond" name="cond" class="form-input" style="margin-bottom: 10%;" required>
                             <option value="new">New</option>
                             <option value="mint">Mint</option>
                             <option value="old">Old</option>
                             
             </select><br>
             
-            <label for="desc">Description:</label>
+            <label for="desc">Description:</label> <br><br>
             <textarea id="desc" name="desc" placeholder="Description" class="form-textarea"></textarea>
             `;
             break;
         case 'toys':
             formFieldsDiv.innerHTML = `
-            <label for="age-group">Age Group:</label>
-            <input type="text" id="age-group" name="age-group" placeholder="Age Group" class="form-input">
-            <label for="cond">Condition:</label>
-            <select id="cond" name="cond" class="form-input" required>
+            <label for="age-group">Age Group:</label> <br><br>
+            <input type="text" id="age-group" name="age-group" placeholder="Age Group" class="form-input" style="margin-bottom: 10%;">
+            <label for="cond">Condition:</label> <br><br>
+            <select id="cond" name="cond" class="form-input" style="margin-bottom: 10%;" required>
                             <option value="new">New</option>
                             <option value="mint">Mint</option>
                             <option value="old">Old</option>
                             
             </select>
             
-            <label for="desc">Description:</label>
+            <label for="desc">Description:</label> <br><br>
             <textarea id="desc" name="desc" placeholder="Description" class="form-textarea"></textarea>
             `;
             break;
         case 'groceries':
             formFieldsDiv.innerHTML = `
-            <label for="expiry-date">Expiry Date:</label>
-            <input type="date" id="expiry-date" name="expiry-date" class="form-input">
-            <label for="expiry-time">Expiry Time:</label>
-            <input type="time" id="expiry-time" name="expiry-time" class="form-input">
-            <label for="desc">Description:</label>
+            <label for="expiry-date">Expiry Date:</label> <br><br>
+            <input type="date" id="expiry-date" name="expiry-date" class="form-input" style="margin-bottom: 10%;">
+            <label for="expiry-time">Expiry Time:</label> <br><br>
+            <input type="time" id="expiry-time" name="expiry-time" class="form-input" style="margin-bottom: 10%;">
+            <label for="desc">Description:</label> <br><br>
             <textarea id="desc" name="desc" placeholder="Description" class="form-textarea"></textarea>
             `;
             break;
         case 'others':
             formFieldsDiv.innerHTML = `
-            <label for="desc">Description:</label>
+            <label for="desc">Description:</label> <br><br>
             <textarea id="desc" name="desc" placeholder="Description" class="form-textarea"></textarea>
             `;
             break;
