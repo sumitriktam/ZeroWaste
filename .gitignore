@@ -9,3 +9,4 @@ receiver/__pycache__
 receiver/migrations/__pycache__ 
 statics/provider/postpics
 project/__pycache__
+venv/
