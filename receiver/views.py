@@ -10,14 +10,10 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 
 
-
-
 def check_user_login_status(request):
    try:
     user_id=request.session['user_id']
    except KeyError:
-    #clear previous error messages
-      
     messages.error(request,"Please login before acessing the page")
     return redirect('/login')
 def is_receiver(request):
@@ -144,11 +140,10 @@ def view_post(request,post_id):
         
 
 def order(request):
-    print('gotcha')
     check_user_login_status(request)
     #take post_id from the submitted form
+    # if(request.method == 'POST'):
     post_id = request.POST.get('post_id')
-    print(post_id)
     try:
      ordered_post=post.objects.get(id=post_id)
      provider_location=ordered_post.location

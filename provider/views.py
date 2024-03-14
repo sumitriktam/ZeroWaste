@@ -173,7 +173,8 @@ def delete_post(request, post_id):
     p.mode = 'inative'
     p.save()
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
-    return redirect("provider:homepage")    
+    return redirect("provider:homepage")  
+  
     
 
      
