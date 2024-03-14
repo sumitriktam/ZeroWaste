@@ -36,7 +36,6 @@ class post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='live')
     quantity = models.CharField(max_length=25, default='1')
     created_at = models.DateTimeField(default=timezone.now)
-<<<<<<< HEAD
     def delete(self, *args, **kwargs):
         if self.category == 'toys':
             toysDes.objects.filter(id=self.description_id).delete()
@@ -50,13 +49,11 @@ class post(models.Model):
             otherDes.objects.filter(id=self.description_id).delete()
         
         super(post, self).delete(*args, **kwargs)
-=======
     MODE_CHOICES = [
         ('active', 'Active'),
         ('inactive', 'inactive')
     ]
     mode = models.CharField(max_length=20,choices=MODE_CHOICES, default="active")
->>>>>>> 3b3a56f54d07c9ac13df0f340b1cb0548ec5aa4b
 
 class toysDes(models.Model):
     age_group = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(30)])
@@ -118,10 +115,6 @@ class FeedbackTab(models.Model):
         FIVE = 5, 'Five'
 
     rating = models.IntegerField(choices=RatingChoices.choices)
-<<<<<<< HEAD
-    feedback = models.CharField(max_length=500, default="")
-=======
     feedback = models.CharField(max_length=500, default="")
 
 
->>>>>>> 3b3a56f54d07c9ac13df0f340b1cb0548ec5aa4b
