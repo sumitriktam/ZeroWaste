@@ -61,6 +61,7 @@ def newPost(request):
             description_id = obj.id,
             name = data.get('name'),
             location = data.get('location'),
+            latlong =data.get('latlong'),
             will_expire = data.get('will_expire'),
             quantity = data.get('quantity'),
         )
