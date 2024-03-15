@@ -21,13 +21,13 @@ body {
   }
 
   .header img {
-    width: 100px; /* Adjust the width of your logo */
+    width: 100px; 
     height: 100px;
   }
 
 .form-container {
   margin-top: 6%;
-    background-color: #fffa6e;
+    background-color: #eaffd6;
     /* margin-top: 100px; */
     width: 40%;
     height: 70%;

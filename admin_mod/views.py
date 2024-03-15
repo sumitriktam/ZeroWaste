@@ -9,11 +9,10 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 import uuid
-import hashlib
 from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
-from datetime import timedelta
-import base64
+from datetime import timedelta, datetime
+from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
 
 def index(request):
     #only get users who ate providers and whose status is accepted
@@ -320,7 +319,126 @@ def showOrders(request):
     return render(request, 'admin/showOrders.html')
 
 def showPosts(request):
-    return render(request, 'admin/showPosts.html')
+    posts_with_descriptions = []
+    posts = post.objects.all().order_by('-created_at')
+    for single_post in posts:
+        toys_desc = None
+        grocery_desc = None
+        cloth_desc = None
+        food_desc = None
+        other_desc = None
+        if single_post.category == 'toys':
+            toys_desc = toysDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'groceries':
+            grocery_desc = groceryDes.objects.filter(id=single_post.description_id).first()
+            print(grocery_desc)
+
+        elif single_post.category == 'clothes':
+            cloth_desc = clothDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'food':
+            food_desc = foodDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'others':
+            other_desc = otherDes.objects.filter(id=single_post.description_id).first()
+        posts_with_descriptions.append({
+            'post': single_post,
+            'toys_desc': toys_desc,
+            'grocery_desc': grocery_desc,
+            'cloth_desc': cloth_desc,
+            'food_desc': food_desc,
+            'other_desc': other_desc,
+        })
+    context = {
+        'posts_with_descriptions': posts_with_descriptions,
+    }
+    return render(request, 'admin/showPosts.html', context)
 
 def showAdmins(request):
     return render(request, 'admin/showAdmins.html')
+
+
+def save_post_changes(request):
+    # print("It reached function")
+    def convert_time_to_duration(time_str):
+        time_mapping = {
+            "midnight": "00:00:00:000000",
+            "noon": "12:00:00:000000",
+            "a.m": "00:00:00",
+            "p.m": "12:00:00"
+        }
+
+        if time_str.lower() in time_mapping:
+            return time_mapping[time_str.lower()]
+
+        parts = time_str.strip().lower().split()
+        if len(parts) != 2:
+            raise ValueError("Invalid time format")
+
+        hour, minute = parts[0].split(':')
+        if parts[1] == 'a.m':
+            if hour == '12':
+                hour = '00'
+        elif parts[1] == 'p.m':
+            if hour != '12':
+                hour = str(int(hour) + 12)
+        else:
+            raise ValueError("Invalid time format")
+
+        return f"{hour.zfill(2)}:{minute.zfill(2)}:00:000000"
+    if request.method == 'POST':
+        post_id = request.POST.get('editPostId')
+        print("post Id is : ", post_id)
+        post_obj = post.objects.get(pk=post_id)
+        post_obj.name = request.POST.get('editName')
+        post_obj.category = request.POST.get('editCategory')
+        post_obj.drop_pickup = request.POST.get('editdropPickup')
+        post_obj.location = request.POST.get('editLocation')
+        post_obj.will_expire = request.POST.get('editwillExpire')
+        post_obj.status = request.POST.get('editStatus')
+
+        if post_obj.category == 'toys':
+            toys_desc, created = toysDes.objects.get_or_create(id=post_obj.description_id)
+            toys_desc.desc = request.POST.get('editToysDesc', '')
+            toys_desc.age_group = request.POST.get('editAgeGroup', 0)
+            toys_desc.condition = request.POST.get('editConditionToys', '')
+            toys_desc.save()
+
+        elif post_obj.category == 'groceries':
+            grocery_desc, created = groceryDes.objects.get_or_create(id=post_obj.description_id)
+            grocery_desc.desc = request.POST.get('editGroceryDesc', '')
+            grocery_desc.expiry_date = datetime.strptime(request.POST.get('editExpiryDate', ''), "%B %d, %Y").strftime("%Y-%m-%d")
+            ins_time = request.POST.get('editExpiryTime', '')
+            data_time = convert_time_to_duration(ins_time)
+            print(data_time)
+            grocery_desc.expiry_time = data_time
+            grocery_desc.save()
+
+        elif post_obj.category == 'clothes':
+            cloth_desc, created = clothDes.objects.get_or_create(id=post_obj.description_id)
+            cloth_desc.desc = request.POST.get('editClothDesc', '')
+            cloth_desc.gender = request.POST.get('editGender', '')
+            cloth_desc.condition = request.POST.get('editConditionCloth', '')
+            cloth_desc.size = request.POST.get('editSize', '')
+            cloth_desc.save()
+
+        elif post_obj.category == 'food':
+            food_desc, created = foodDes.objects.get_or_create(id=post_obj.description_id)
+            food_desc.desc = request.POST.get('editFoodDesc', '')
+            food_desc.expiry_date = request.POST.get('editExpiryDateFood', '')
+            food_desc.expiry_time = request.POST.get('editExpiryTimeFood', '')
+            food_desc.save()
+
+        elif post_obj.category == 'others':
+            other_desc, created = otherDes.objects.get_or_create(id=post_obj.description_id)
+            other_desc.desc = request.POST.get('editOtherDesc', '')
+            other_desc.save()
+
+        post_obj.save()
+        return redirect('/posts/')
+    return redirect('/posts/')
+
+def delete_post(request):
+    if request.method == 'GET':
+        post_id = request.GET.get('post_id')
+        post_del = post.objects.get(id=post_id)
+        post_del.delete()
+        return redirect('/posts/')
