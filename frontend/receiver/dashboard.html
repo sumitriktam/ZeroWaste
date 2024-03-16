@@ -7,6 +7,7 @@
 {% endblock %} {%block extra_css%}
 <style>
   @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
+
   .navbar-brand {
     color: #1a1a1a;
     font-family: "Lexend Deca", sans-serif;
@@ -100,6 +101,8 @@
     margin-left: 30px;
     margin-right: 30px;
     margin-bottom: 20px;
+    position: relative;
+    top: 100px;
   }
 </style>
 
@@ -158,12 +161,7 @@
 <div id="post-container">
   <div
     class="restaurant-cards"
-    style="
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      margin-left: 5%;
-    "
+    style="display: flex; flex-wrap: wrap; margin-left: 5%"
   >
     {% for post in data.posts %}
     <div class="restaurant-card" onclick="sendRequest('{{ post.post_id }}')">
@@ -186,6 +184,7 @@
 </div>
 <div class="faq">
   <h2>FAQ'S</h2>
+  <hr />
   <div class="accordion accordion-flush" id="accordionFlushExample">
     <div class="accordion-item">
       <h2 class="accordion-header" id="flush-headingOne">
@@ -259,7 +258,7 @@
    filteredPosts=all_posts.filter((post)=>post.category===category)
    if(category==='all')filteredPosts=all_posts
    document.querySelector('.restaurant-cards').innerHTML=''
-   if(filteredPosts.length===0)document.querySelector('.restaurant-cards').innerHTML="<h6>Sorry no posts available</h6>"
+   if(filteredPosts.length===0)document.querySelector('.restaurant-cards').innerHTML="<h2>Sorry no posts available</h2>"
    filteredPosts.forEach(function(post) { let postElement =
    document.createElement('div'); postElement.className = 'restaurant-card';
    postElement.onclick = function() { sendRequest(post.post_id); };

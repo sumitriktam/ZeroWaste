@@ -39,21 +39,7 @@ def give_all_posts():
   data={'posts':combined_posts}
   return data
 
-def home(request):
-   #check wether the user is logged in or not
-   try:
-    user_id=request.session['user_id']
-   except KeyError:
-    #clear previous error messages
-      
-    messages.error(request,"Please login before acessing the page")
-    return redirect('/login')
-  #if the user is not receiver redirect to login
-   if(not is_receiver(request)):
-    #clear previous error messages
-      
-    messages.error(request,"Sorry,you dont have permission")
-    return redirect('/login')
+def home(request):    
    #take all posts into 'data' dictionary
    data=give_all_posts()
    return render(request, "receiver/dashboard.html", {'data':data}) 
