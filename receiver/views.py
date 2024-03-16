@@ -3,23 +3,13 @@ from admin_mod.models import User
 from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes,FeedbackTab
 from receiver.models import Order
 from django.contrib import messages
+from django.http import HttpResponse
 from datetime import datetime
 from admin_mod import views
 from django.urls import reverse
 from django.http import JsonResponse
-from django.http import HttpResponse
 
-
-def check_user_login_status(request):
-   try:
-    user_id=request.session['user_id']
-   except KeyError:
-    messages.error(request,"Please login before acessing the page")
-    return redirect('/login')
-def is_receiver(request):
-  user_id=request.session['user_id']
-  user_role=User.objects.get(id=user_id).role
-  return user_role=='receiver'  
+  
 
 def give_all_posts():
   #send all the posts as list of dictionaries 
@@ -71,16 +61,7 @@ def home(request):
   
 
 def view_post(request,post_id):
-  #check if user is logged in or not
-  try:
-    user_id=request.session['user_id']
-  except KeyError:
-    #clear previous error messages
-      
-    messages.error(request,"Please login before acessing the page")
-    return redirect('/login') 
-  #check wether the user_post id is valid
-  
+ #check wether the post exist
   try:
       user_post = post.objects.get(id=post_id)
       post_data={
@@ -140,7 +121,6 @@ def view_post(request,post_id):
         
 
 def order(request):
-    check_user_login_status(request)
     #take post_id from the submitted form
     # if(request.method == 'POST'):
     post_id = request.POST.get('post_id')
@@ -176,13 +156,9 @@ def order(request):
       return redirect('/receiver/home')
     
 def track_order(request,post_id):
-    try:
-     user_id=request.session['user_id']
-    except KeyError:
-    #clear previous error messages
-     messages.error(request,"Please login before acessing the page")
-     return redirect('/login')
-    #user can only track his active order(not yet implemeted)
+   
+    user_id=request.session['user_id']
+    #user can only track his active order(not implemeted)
     try:
      receiver_location=User.objects.get(id=user_id).location
      ordered_post=post.objects.get(id=post_id)
@@ -209,7 +185,6 @@ def track_order(request,post_id):
 
 
 def waiting_page(request):
-  check_user_login_status(request)
   return render(request,'receiver/waitingPage.html')
     
 
@@ -278,14 +253,16 @@ def send_feedback(request):
             rating=rating,
             feedback=feedback_text
         )
-    print("success")
     return HttpResponse(status=204)
   #  else:
   #   data=give_all_posts()
   #   messages.error(request, "Can't access")
   #   return redirect('/receiver/home')
   
-  
+def logout(request):
+  request.session['user_id']=None
+  request.session['role']=None
+  return redirect('/')
      
      
      
