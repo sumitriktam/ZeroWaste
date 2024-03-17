@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All requests </title>
+    <link rel="stylesheet" href="/statics/provider/requests.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <div class="container">
+        <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
+        <p class="top-left-text" >ZeroWaste</p>
+        <nav class="navbar">
+            <!-- Add your navbar content here -->
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+                <li><a href="#chatbox">Chat box</a></li>
+            </ul>
+        </nav>
+        <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
+        
+        <div class="" style="
+        position: absolute;
+        top: 150px;">
+            <p>
+                <a style ="color: #1D710F;text-decoration: none;" href="/provider/home">
+                    <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+                </a>
+                All Requests   <a href="{% url 'provider:requests' %}">View Active</a></p>
+        </div>
+
+        {% for message in messages %}
+        <div style="
+            background-color: #f7a9af;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            position: absolute;
+            top: 95px;
+            ">
+            <ul>    
+                <li>{{ message }}</li>
+            </ul>
+        </div>
+        {% endfor %}
+
+        <link rel="stylesheet" href="/statics/provider/reqs.css">
+
+
+
+        <div class="outer-outer">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Ordered Post</th>
+                        <th>Ordered Time</th>
+                        <th>Ordered By</th>
+                        <th>Receiver Location</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                {% for order in ords %}
+                    <tbody>
+                        <tr>
+                            <td>{{ order.ordered_post.name }} (post id={{order.ordered_post.id}})</td>
+                            <td>{{ order.date_time }}</td>
+                            <td>{{ order.receiver_user.email }}</td>
+                            <td>{{ order.receiver_location }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>
+                                {{order.status}}
+                            </td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+
+</body>
+
+

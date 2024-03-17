@@ -6,6 +6,8 @@
     <title>Zero Waste Page</title>
     <link rel="stylesheet" href="/statics/provider/newpost.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 </head>
 <body>
     <div class="container">
@@ -76,8 +78,30 @@
                         <input type="text" id="name" name="name" required><br><br>
 
                         <label for="location">Location:</label><br>
-                        <input type="text" id="location" name="location" required><br><br>
-
+                        <button class="button_maps" id="button_maps" onclick="mapspopup()"><span class="loc-text" id="loc-text">Select location on map</span></button><br><br>
+                        <div class="background_popup" id="background_popup">
+                            <div class="popup" id="popup">
+                                <div id="map"></div> <!-- Map container -->
+                                <div class="addressinput">
+                                <label for="addressInput">Add your current address:</label>
+                                <br> <br>
+                                <input type="text" id="addressInput" placeholder="Enter address to search"  class="text_popup">
+                                <button onclick="showSearchedLocation()" class="search"> <i class="fas fa-search"></i>Search</button>
+                                <br><br>
+                                <label for="other_details">Other details:</label>
+                                <br> <br>
+                                <input type="text" id="other_details" placeholder="Enter Your House no,street name"  class="text_popup">
+                                
+                <button onclick="saveLocation()" class="savelocation">Save Location</button> <!-- Save location button -->
+            </div>
+                                <button onclick="mapspopup()" style="background-color:red" class="closepopup"><i class="fas fa-times"></i> </button>
+                            
+                            </div>
+                        </div>
+                        <!-- type="hidden" -->
+                        <input type="hidden" id="latlong" name="latlong">
+                        <!-- <input type="hidden" id="longitude" name="longitude"> -->
+                        <input  id="location" name="location" class="location" readonly required>
                         <label for="will_expire">Will Expire:</label><br>
                         <select id="will_expire" name="will_expire" required>
                             <option value="expirable">Expirable or Perishable</option>
@@ -97,8 +121,104 @@
     </div>
     
       
-
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/statics/provider/ind.js"></script>
+    <script>
+        var map;
+        var marker;
+        var buttonClicked = false;
+        function mapspopup() {
+        // document.querySelector('.background_popup').style.display = 'none';
+        var popup = document.getElementById("background_popup");
+      popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+      setTimeout(function() {
+        map.invalidateSize();
+    }, 200); // Adjust the delay as needed
+    buttonClicked = true;
+        }
+        function closePopup() {
+        document.querySelector('.overlay').style.display = 'none';
+        }
+        function initializeMap() {
+            // Initialize the map
+            map = L.map('map').setView([17.6868, 83.2185], 13);
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: 'OpenStreetMap',
+                maxZoom: 18
+            }).addTo(map);
+
+            // Add a marker to the map
+            marker = L.marker([17.6868, 83.2185], { draggable: true }).addTo(map);
+        }
+
+        // Function to geocode address using Mapbox Geocoding API
+        function geocodeAddress(address, callback) {
+            var accessToken = 'pk.eyJ1IjoiY2hhbmRhbmFjaGFyaXRoYSIsImEiOiJjbHRiOTNuNnowOTYwMmpxZGxtZHlmMWFlIn0.rqxO0fpVgA9Yw5elWA9ocQ';
+            var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + encodeURIComponent(address) + '.json?access_token=' + accessToken;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.features && data.features.length > 0) {
+                        var coords = data.features[0].center;
+                        callback(coords);
+                    } else {
+                        callback(null);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    callback(null);
+                });
+        }
+
+        // Function to show the searched location on the map
+        function showSearchedLocation() {
+            var address = document.getElementById('addressInput').value;
+
+            geocodeAddress(address, function(coords) {
+                if (coords) {
+                    // console.log('Geocoded Coordinates:', coords);
+                    var flippedCoords = [coords[1], coords[0]];
+                    map.setView(flippedCoords, 13);
+                    marker.setLatLng(flippedCoords);
+                    // console.log('Marker Latitude:', marker.getLatLng().lat);
+                    // console.log('Marker Longitude:', marker.getLatLng().lng);
+                } else {
+                    console.error("Failed to geocode the address.");
+                }
+            });
+        }
+
+        // Function to save the location to the database
+        function saveLocation() {
+            var latitude = marker.getLatLng().lat;
+            var longitude = marker.getLatLng().lng;
+            var address = document.getElementById('addressInput').value;
+            var other_details=document.getElementById('other_details').value;
+            //send data to the form 
+            var combined_details = other_details + ', ' + address;
+
+            // Update hidden input field with the concatenated value
+            var locationArray = [latitude, longitude];
+            var locationString = locationArray.join(',');// Convert the array to a string format (comma-separated)
+            document.getElementById('latlong').value = locationString;
+            document.getElementById('location').value = combined_details;
+            var popup = document.getElementById("background_popup");
+            popup.style.display = "none";
+            var loc=document.getElementById("location");
+            loc.style.display="block";
+            var button = document.getElementById('loc-text');
+            button.textContent = 'Edit location on map';
+            
+        }
+        // Call the initializeMap function when the page loads
+        $(document).ready(function() {
+            initializeMap();
+        });
+    </script>
 </body>
 </html>
 

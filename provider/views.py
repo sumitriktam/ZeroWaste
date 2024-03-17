@@ -11,8 +11,9 @@ def homePage(request):
         messages.error(request, 'You need to login first.')
         return redirect("/login")
     matching_posts = post.objects.filter(user=user).filter(mode='active').order_by('-created_at')
-    orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('-date_time')  
-    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders}
+    orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode="active").filter(status="pending").order_by('-date_time')  
+    success = Order.objects.filter(ordered_post__user=user).filter(status="delivered")
+    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders, 'zscore':user.zerowaste_score, 'number':len(success)}
     return render(request, "provider/dashboard.html", context)
 
 def newPost(request):
@@ -61,6 +62,7 @@ def newPost(request):
             description_id = obj.id,
             name = data.get('name'),
             location = data.get('location'),
+            latlong =data.get('latlong'),
             will_expire = data.get('will_expire'),
             quantity = data.get('quantity'),
         )
@@ -72,15 +74,25 @@ def newPost(request):
 
     return render(request, "provider/form_newpost.html", context)
 
+def requestsViewActive(request):
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
+    orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode='active').filter(status="pending").order_by('date_time')
+    context = {'ords':orders}
+    return render(request,"provider/active_reqs.html", context)
+
 def requestsViewAll(request):
     user = auth(request)
     if not user:
         messages.error(request, 'You need to login first.')
         return redirect("/login")
     uid = request.session['user_id']
-    orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('date_time')
+    orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode='active').order_by('date_time')
     context = {'ords':orders}
-    return render(request,"provider/all_reqs.html", context)
+    return render(request,"provider/requestsall.html", context)
 
 def allPosts(request):
     user = auth(request)
