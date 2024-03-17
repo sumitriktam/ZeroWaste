@@ -7,16 +7,26 @@
 {% endblock %}
 
 {% block content %}
+<div class="paraclass_r">
+    <p>
+        <a style="color: #1D710F;text-decoration: none;" href="/provider/home">
+            <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+        </a>
+        All Requests 
+    </p>
+    <div class="button-container">
+   
+       <a href="{% url 'provider:requests' %}">
+           <button>Active Requests</button>
+       </a>
+   </div>
+</div>
+
+
+
+
         
-        <div class="" style="
-        position: absolute;
-        top: 150px;">
-            <p>
-                <a style ="color: #1D710F;text-decoration: none;" href="/provider/home">
-                    <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
-                </a>
-                All Requests   <a href="{% url 'provider:requests' %}">View Active</a></p>
-        </div>
+        
 
         {% for message in messages %}
         <div style="
@@ -39,7 +49,7 @@
 
 
 
-        <div class="outer-outer">
+        <div class="outer-outer2_r">
             <table class="order-table">
                 <thead>
                     <tr>

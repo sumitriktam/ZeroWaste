@@ -4,6 +4,8 @@ from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, Feed
 from django.contrib import messages
 from datetime import datetime
 from .prov_auth import auth, post_auth
+from .plotter import returnhistory 
+import json
 
 def homePage(request):
     user = auth(request)
@@ -188,8 +190,26 @@ def delete_post(request, post_id):
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
     return redirect("provider:homepage")  
   
+
+
 def graph(request):
-    return render(request, "provider/graph.html") 
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
+    
+    score, date = returnhistory(uid)
+    context = {
+        'score_json': json.dumps(score),
+        'date_json': json.dumps(date)
+    }
+
+    
+    return render(request, 'provider/graph.html', context)
+
+
+
 
      
 

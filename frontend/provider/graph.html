@@ -1,4 +1,4 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -117,22 +117,24 @@
     <div id="graph-container">
         <canvas id="zeroWasteChart" width="800" height="400"></canvas>
     </div>
+    
 
     <script>
-        // Sample data
-        const dates = ['2023-01-01', '2023-02-15', '2023-03-10','2023-04-12' ,'2023-04-25', '2023-05-10', '2023-06-05', '2023-10-20'];
-        const scores = [100, 120, 90,34, 150, 130, 170, 700];
+        
 
-        // Convert dates to JavaScript Date objects
-        const formattedDates = dates.map(date => new Date(date));
+    const scores = JSON.parse('{{ score_json | escapejs }}');
+    const dates = JSON.parse('{{ date_json | escapejs }}');
+        
+    
+    const formattedDates = dates.map(date => new Date(date));
 
-        // Get the month-year labels for x-axis
-        const monthYearLabels = formattedDates.map(date => {
+        
+    const monthYearLabels = formattedDates.map(date => {
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             return monthNames[date.getMonth()] + '-' + date.getFullYear();
         });
 
-        // Initialize Chart.js
+     
         const ctx = document.getElementById('zeroWasteChart').getContext('2d');
         const zeroWasteChart = new Chart(ctx, {
             type: 'line',
