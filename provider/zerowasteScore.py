@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from django.utils import timezone
-from .models import post, FeedbackTab
+from .models import post, FeedbackTab, scoreHistory
 from receiver.models import Order
+from admin_mod.models import User
 
 base_score = 100
 multipliers = {'clothes': 6, 'toys': 4.4, 'groceries': 1, 'food': 2.5, 'others': 6}
@@ -31,4 +32,5 @@ def calculate_total_score(post_id):
     user_id = post.objects.get(id=post_id).user_id
     streak_multiplier = calculate_streak_multiplier(user_id)
     total_score = ((zerowaste_score * quantity) + feedback_score) * streak_multiplier
+    scoreHistory(user=User.objects.get(id=user_id), score=total_score).save()
     return total_score
