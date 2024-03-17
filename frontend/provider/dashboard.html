@@ -36,7 +36,20 @@
             <a class="view-all" href="/provider/requests" style="text-decoration: none;">View all requests -> </a>
 
             <div class="custom-box-2">
-            {% for or in orders %}
+                <div class="image-container1">
+                    <div class="flex-container2">
+                        <div class="image-container2">
+                            <img src="/statics/provider/images/requestimg.jpg" alt="Your Image" class="image8">
+                        </div>
+                        <div class="text-container2">
+                            <span class="pending-requests">
+                            <p>You have {{ordernumber}} pending requests</p>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                
+            <!-- {% for or in orders %}
                 
                     <center>
                         <p style="font-family: 'Poppins', sans-serif;font-size:20px;">
@@ -46,12 +59,16 @@
                         {{ or.date_time|timesince }} ago.
                     </span></p></center>     
                     <hr>
-           {% endfor %}
+           {% endfor %} -->
         </div>
         </div>
         <div class="custom-box5">
             <p class="performance">Your <span style="color:#1D710F">performance</span></p>
-            <img src="/statics/provider/images/image3.jpeg" alt="Your Image" class="image3">
+            <div class="image-container">
+                <img src="/statics/provider/images/image3.jpeg" alt="Your Image" class="image3">
+                <!-- Add the "See my graph ->" button -->
+                <a href="/provider/graph" class="see-graph-button">See my graph -&gt;</a>
+            </div>
         </div>
         <div class="custom-box6">
             <center><p style="font-family: 'Inter', sans-serif;font-size:22px; position:absolute;top:20px;left:60px;">Share what you can spare, someone out there will care</p></center>

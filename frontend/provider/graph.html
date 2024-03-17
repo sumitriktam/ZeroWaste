@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #graph-container {
+            margin-top: 10%;
+            width: 70%; 
+            margin-left:15%;
+        }
+        .top-left-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    left: 69px; /* X-axis */
+    top: 30px; /* Y-axis */
+}
+.req-name {
+    color: #1D710F;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
+    width: 157px;
+    height: 50px;
+    position: absolute;
+    top: 130px;
+    left: 80px;
+}
+.navbar {
+    position: absolute;
+    left: 700px;
+    top: 40px;
+    width: 647px;
+    height: 55px;
+    border-radius: 20px;
+    background-color: #D9D9D9;
+}
+
+.navbar ul {
+    position:relative;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    top:18px;
+    left:50px;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar li {
+    margin-right: 100px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Profile circle styles */
+.circle {
+    width: 53px;
+    height: 50px;
+    background-color: #D9D9D9;
+    border-radius: 50%;
+    position: absolute;
+    left: 1370px;
+    top: 45px;
+    text-align: center;
+}
+.image {
+    position: absolute;
+    left: 22px;
+    top: 48px;
+    width: 40px;
+    height: 37px;
+}
+    </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
+        <p class="top-left-text" >ZeroWaste</p>
+        <nav class="navbar">
+            <!-- Add your navbar content here -->
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+                <li><a href="#chatbox">Chat box</a></li>
+            </ul>
+        </nav>
+        <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
+        
+        <div class="req-name">
+            <p >
+                <a style ="color: #1D710F;text-decoration: none;" href="/provider/home">
+                    <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+                </a>Your Performance</p>
+        </div>
+    <div id="graph-container">
+        <canvas id="zeroWasteChart" width="800" height="400"></canvas>
+    </div>
+
+    <script>
+        // Sample data
+        const dates = ['2023-01-01', '2023-02-15', '2023-03-10','2023-04-12' ,'2023-04-25', '2023-05-10', '2023-06-05', '2023-10-20'];
+        const scores = [100, 120, 90,34, 150, 130, 170, 700];
+
+        // Convert dates to JavaScript Date objects
+        const formattedDates = dates.map(date => new Date(date));
+
+        // Get the month-year labels for x-axis
+        const monthYearLabels = formattedDates.map(date => {
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return monthNames[date.getMonth()] + '-' + date.getFullYear();
+        });
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('zeroWasteChart').getContext('2d');
+        const zeroWasteChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: monthYearLabels,
+                datasets: [{
+                    label: 'Zero Waste Score',
+                    data: scores,
+                    borderColor: scores.map((score, index) => (index > 0 && score < scores[index - 1]) ? 'red' : 'green'),
+                    borderWidth: 3,
+                    pointStyle: 'circle',
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: false
+                        
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const date = formattedDates[context.dataIndex];
+                                let scoreChange = '';
+                                if (context.dataIndex > 0) {
+                                    scoreChange = scores[context.dataIndex] - scores[context.dataIndex - 1];
+                                    scoreChange = scoreChange >= 0 ? ` (+${scoreChange})` : ` (${scoreChange})`;
+                                }
+                                return `Score: ${scores[context.dataIndex]}${scoreChange}\nDate: ${date.toDateString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Zero Waste Score',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

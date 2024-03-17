@@ -13,7 +13,8 @@ def homePage(request):
     matching_posts = post.objects.filter(user=user).filter(mode='active').order_by('-created_at')
     orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode="active").filter(status="pending").order_by('-date_time')  
     success = Order.objects.filter(ordered_post__user=user).filter(status="delivered")
-    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders, 'zscore':user.zerowaste_score, 'number':len(success)}
+    order_number = orders.count()
+    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders, 'zscore':user.zerowaste_score, 'number':len(success),'ordernumber':order_number}
     return render(request, "provider/dashboard.html", context)
 
 def newPost(request):
@@ -187,7 +188,8 @@ def delete_post(request, post_id):
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
     return redirect("provider:homepage")  
   
-    
+def graph(request):
+    return render(request, "provider/graph.html") 
 
      
 

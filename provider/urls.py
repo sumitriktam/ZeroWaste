@@ -13,4 +13,5 @@ urlpatterns = [
     path("accept/<int:order_id>", views.accept, name="accept"),
     path("reject/<int:order_id>", views.reject, name="reject"),
     path("delete/<int:post_id>", views.delete_post, name="deletion"),
+    path("graph",views.graph,name="graph")
 ]
