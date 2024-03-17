@@ -183,11 +183,15 @@ body {
 {
     left: 51px; /* X-axis */
     top: 222px; /* Y-axis */
+    border-radius: 10px; /* Adjust the value to change the roundness of the corners */
+    box-shadow: 0 1px 9px rgba(0, 0, 0, 0.2);
 }
 .box2
 {
     left: 350px; /* X-axis */
     top: 222px; /* Y-axis */
+    border-radius: 10px; /* Adjust the value to change the roundness of the corners */
+    box-shadow: 0 1px 9px rgba(0, 0, 0, 0.2);
 }
 .zerowastescore{
     font-size: 30px;
@@ -236,6 +240,17 @@ body {
     position: absolute;
     top: 60px;
     overflow-y: clip; /* Enable vertical scrolling */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.custom-box-22{
+    width: 520px;
+    height: 200px; /* Set the height to limit the number of visible items */
+    background-color: #ffffff;
+    position: absolute;
+    top: 60px;
+    overflow-y: auto; /* Enable vertical scrolling */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -536,7 +551,7 @@ body {
     display: block;
 }
 
-.see-graph-button {
+/* .see-graph-button {
    
     position: absolute;
     top: 50%;
@@ -550,10 +565,27 @@ body {
     cursor: pointer;
     transition: color 0.3s;
     text-decoration: none;
-}
+} */
+.see-graph-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 20px;
+    color: green;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    background: linear-gradient(rgba(230, 230, 230, 0.5), rgba(230, 230, 230, 0.5)); 
+  }
 
 .see-graph-button:hover {
     color: blue;
+    background-color: #F0EFEF;
 }
 .image-container1 {
     display: flex;
