@@ -5,11 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>{% block title %} {% endblock %}</title>
     
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="stylesheet" href="/statics/provider/provider_all.css">
+    {% block css %}
+    {% endblock %}
 </head>
 
 <body>
@@ -18,23 +19,18 @@
         <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
         <p class="top-left-text" >ZeroWaste</p>
         <nav class="navbar">
-            <!-- Add your navbar content here -->
             <ul>
                 <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#about">Testing</a></li>
                 <li><a href="#feedback">Feedback</a></li>
                 <li><a href="#chatbox">Chat box</a></li>
             </ul>
         </nav>
         <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
-        <div>
             <!-- {% for message in messages %}
                 <li class="message-any">{{ message }}</li>
-            {% endfor %} -->
-        </ul>
-
+            {% endfor %} -->   
+    
         {% block content %}
-        {% endblock %}
-
-    </div>
+        {% endblock %}  
 </body>
