@@ -8,6 +8,7 @@ from datetime import datetime
 from admin_mod import views
 from django.urls import reverse
 from django.http import JsonResponse
+from provider.zerowasteScore import calculate_total_score
 
   
 
@@ -251,4 +252,14 @@ def logout(request):
   return redirect('/')
      
      
-     
+def order_delivered(request, post_id):
+  user_id = request.session.get('user_id')
+  order = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=user_id).first()
+  order.status = 'delivered'
+  total_score = calculate_total_score(post_id)
+  userId = post.objects.get(id=post_id).user_id
+  user = User.objects.get(id=userId)
+  user.zerowaste_score += total_score
+  user.save(update_fields=['zerowaste_score'])
+  order.save(update_fields=['status'])
+  return HttpResponse(status=204)

@@ -1,0 +1,177 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999; /* set z-index to a high value to ensure it appears on top of other elements */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* semi-transparent background */
+    overflow: auto;
+    justify-content: center; /* horizontally center the modal */
+    align-items: center; /* vertically center the modal */
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    margin: 5% auto; /* 15% from the top and centered */
+    border: 1px solid #ccc;
+    width: 60%; /* adjust width as needed */
+    border-radius: 8px;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  @keyframes modal-show {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="date"],
+  input[type="time"],
+  input[type="number"] {
+    width: calc(100% - 20px); /* Adjust width as needed */
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+  }
+  
+  button.close {
+    background-color: #f44336;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  button.close:hover {
+    background-color: #da190b;
+  }
+  .btn-del{
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-del:hover {
+    background-color: #d32f2f;
+  }
+  
+  .btn-cancel {
+    padding: 10px 20px;
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #ccc;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd; /* Border for the entire table */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Border between rows */
+}
+
+th {
+    background-color: #f2f2f2; /* Background color for table header */
+    font-weight: bold;
+    color: #333; /* Text color for table header */
+}
+
+tr:hover {
+    background-color: #f5f5f5; /* Background color on hover */
+}
+
+/* Responsive styles for smaller screens */
+@media screen and (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    
+    /* Hide table header */
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    td {
+        /* Styling for table cells */
+        border: none;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    td:before {
+        /* Content for pseudo-element */
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    /* Define content for each cell based on data attribute */
+    td:nth-of-type(1):before { content: "Column 1"; }
+    td:nth-of-type(2):before { content: "Column 2"; }
+    td:nth-of-type(3):before { content: "Column 3"; }
+    /* Add more for additional columns */
+}

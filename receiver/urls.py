@@ -13,6 +13,7 @@ urlpatterns = [
   path("track-order/id=<int:post_id>/",views.track_order,name="track_order"),
   path("feedback/id=<int:post_id>/",views.feedback,name="feedback"),
   path("send_feedback/",views.send_feedback,name="send_feedback"),
-  path("logout",views.logout,name="logout")
+  path("logout",views.logout,name="logout"),
+  path("order-delivered/id=<int:post_id>/",views.order_delivered,name="order_delivered"),
   
 ]

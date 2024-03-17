@@ -1,30 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Waste Page</title>
-    <link rel="stylesheet" href="/statics/provider/newpost.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-</head>
-<body>
-    <div class="container">
-        <!-- Top part containing zero waste logo, nav bar, and profile -->
-        <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
-        <p class="top-left-text" >ZeroWaste</p>
-        <nav class="navbar">
-            <!-- Add your navbar content here -->
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#feedback">Feedback</a></li>
-                <li><a href="#chatbox">Chat box</a></li>
-            </ul>
-        </nav>
-        <div class="circle"><i class="fa fa-user user" aria-hidden="true" style="line-height:2.5"></i></div>
-        
+{% extends "provider/provbase.html" %}
+{% block title %} New Post {% endblock %}
+
+{% block css %}
+        <link rel="stylesheet" href="/statics/provider/newpost.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+{% endblock %}
+
+{% block content %}
+            
         <div class="req-name">
             <p>
                 <a style ="color: #1D710F;text-decoration: none;" href="/provider/home">
@@ -219,6 +204,6 @@
             initializeMap();
         });
     </script>
-</body>
-</html>
+
+{% endblock %}
 

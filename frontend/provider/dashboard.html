@@ -1,6 +1,17 @@
 {% extends "provider/provbase.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/statics/provider/provider_all.css">
+{% endblock %}
+
+
 {% block content %}
 
+    <div>
         <p class="welcome" >Welcome <span style="color:green">{{uname}}</span>!</p>
         <p class="code" >You are an <span style="color:green">{{data}}</span> donor!</p>
         <div class="custom-box box1"><p class="text-donations" >No.of donations:</p>
@@ -109,6 +120,8 @@
         </div>
       </div>
     {% endfor %}
+
+    </div>
 
 
     <script>
