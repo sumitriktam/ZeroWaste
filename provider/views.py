@@ -4,7 +4,10 @@ from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, Feed
 from django.contrib import messages
 from datetime import datetime
 from .prov_auth import auth, post_auth
-
+from django.contrib.auth import logout
+def logout_user(request):
+    logout(request)
+    return redirect('/')
 def homePage(request):
     user = auth(request)
     if not user:

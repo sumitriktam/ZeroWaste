@@ -23,14 +23,23 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">Testing</a></li>
                 <li><a href="#feedback">Feedback</a></li>
-                <li><a href="#chatbox">Chat box</a></li>
+                <li> <button onclick="display_logout()" style="border:none; background-color:#D9D9D9;font-weight:bold;font-size:16px;" class="logout">Logout</button> </li>
             </ul>
         </nav>
         <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
             <!-- {% for message in messages %}
                 <li class="message-any">{{ message }}</li>
             {% endfor %} -->   
-    
+            <div id="popup-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" style="background-color:red" onclick="closePopup()"><i class="fas fa-times" style="position:absolute;left:15%;"></i></span>
+                    <p style="font-size:145%; font-weight:bold;" class="text_logout">LogOut</p>
+                    <p style="font-size:120%;" class="text_logout">Are you sure,do you want to logout?</p>
+                    <button class="button_logout" style="background-color:#0084FF;" onclick="closePopup()">Cancel</button>
+                    <button class="button_logout" style="background-color:red;"> <a href="{% url 'provider:logout' %}" style="text-decoration:none;color:#ffffff">Log Out</a> </button>
+                </div>
+            </div>
         {% block content %}
         {% endblock %}  
+        <script src="/statics/provider/logout.js"></script>
 </body>
