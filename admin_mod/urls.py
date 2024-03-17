@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path("", views.index),
-    path("login", views.login),
+    path("login", views.login, name='login'),
     path("register", views.register),
     path("wait", views.waitingPage),
     path('approve_user/<int:user_id>/', views.approve_user, name='approve_user'),
@@ -24,5 +24,12 @@ urlpatterns = [
     path('orders/', views.showOrders, name='showOrders'),
     path('admins/', views.showAdmins, name='showAdmins'),
     path('save_post_changes/', views.save_post_changes, name='save_post_changes'),
-     path('delete_post/', views.delete_post, name='delete_post'),
+    path('delete_post/', views.delete_post, name='delete_post'),
+    path('approve_admin/<int:admin_id>/', views.approve_admin, name='approve_admin'),
+    path('reject_admin/<int:admin_id>/', views.reject_admin, name='reject_admin'),
+    path('register-new/<str:token>/' , views.reg_admin , name="reg_admin"),
+    path("adminRegister/", views.adminRegister, name='adminRegister'),
+    path("send_regEmail", views.send_regEmail, name='send_regEmail'),
+    path('registration-success/', views.registration_success_view, name='registration_success'),
+
 ]

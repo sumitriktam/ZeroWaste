@@ -1,9 +1,249 @@
-{% extends 'admin/adminbase.html' %}
+{% extends "admin/adminbase.html" %}
 
-{% block title %} Admin {% endblock %}
+{% block title %}Admins{% endblock %}
+
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/css/showAdmins.css' %}">
+{% endblock %}
 
 {% block content %}
 
-<h1>admins edit page</h1>
+    <div class="stats">
+        <div class="stats-card accepted">
+            <h2>Active</h2>
+            <h3 id="acceptedCount">{{ accepted_count }}</h3>
+            <button onclick="showActiveAdmins()">View</button>
+        </div>
+        <div class="stats-card rejected">
+            <h2>Inactive</h2>
+            <h3 id="rejectedCount">{{ rejected_count }}</h3>
+            <button onclick="showInActiveAdmins()">View</button>
+        </div>
+        
+    </div>
+    <div class="add-button">
+        <button type="button" id="add_admin">Add Admin</button>
+    </div>
+
+    <!-- Display accepted users -->
+    <div class="users-list-container" id="activeAdminsContainer" style="display: none;">
+        <h2 id="acceptedListHeading">Active Admins</h2>
+        <table class="users-list" id="activeAdminsList">
+            <thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>
+            {% for admin in active_admins %}
+            <tr class="user-details">
+                <td>{{ admin.username }}</td>
+                <td>{{ admin.email }}</td>
+                <td> {{ admin.location }}</td>
+                <td><button id="btn-reject" type="button" onclick="rejectUser('{{ admin.id }}')">Reject</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="users-list-container" id="inactiveAdminsContainer" style="display: none;">
+        <h2 id="rejectedListHeading">Inactive Admins</h2>
+        <table class="users-list" id="inactiveAdminsList">
+            <thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>
+            {% for admin in inactive_admins %}
+            <tr class="user-details">
+                <td>{{ admin.username }}</td>
+                <td>{{ admin.email }}</td>
+                <td> {{ admin.location }}</td>
+                <td> <button id="btn-accept" type="button" onclick="approveUser('{{ admin.id }}')">Approve</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="modal" id="addAdminModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAdminForm" method="post" action="{% url 'send_regEmail' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="Enter email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Email</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <script>
+
+        document.getElementById("add_admin").addEventListener("click", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('addAdminModal'));
+            myModal.show();
+        });
+
+        document.getElementById("addAdminModal").addEventListener("hidden.bs.modal", function() {
+            document.getElementById('email').value = ''; // Clear the email input
+        });
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("addAdminModal")) {
+                document.getElementById("addAdminModal").style.display = "none";
+            }
+        };
+
+
+         let activeAdmins = JSON.parse('{{ active_admins | safe }}');
+         let inactiveAdmins = JSON.parse('{{ inactive_admins | safe }}');
+         
+         function renderActiveAdmins() {
+             let activeContainer = document.getElementById("activeAdminsList");
+             activeContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
+         
+        activeAdmins.forEach(admin => {
+                 activeContainer.innerHTML += `
+                     <tr class="user-details" data-user-id="${admin.id}">
+                         <td> ${admin.username}</td>
+                         <td> ${admin.email}</td>
+                        <td> ${admin.location}</td>
+                        <td>    <button id="btn-reject" onclick="rejectUser(${admin.id})">Reject</button>  </td>
+                     </tr>
+                 `;
+             });
+         }
+ 
+         // Function to render rejected users
+         function renderInActiveAdmins() {
+             let inactiveContainer = document.getElementById("inactiveAdminsList");
+             inactiveContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
+             rejectedUsers.forEach(admin => {
+                 inactiveContainer.innerHTML += `
+                 <tr class="user-details" data-user-id="${admin.id}">
+                    <td> ${admin.username}</td>
+                    <td> ${admin.email}</td>
+                   <td> ${admin.location}</td>
+                   <td> <button id="btn-accept" onclick="approveUser(${admin.id})">Approve</button></td>
+                </tr>
+                 `;
+             });
+         }
+ 
+         function approveUser(adminId) {
+            fetch(`/approve_admin/${adminId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                
+             updateUI(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function rejectUser(adminId) {
+            fetch(`/reject_admin/${adminId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateUI(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function updateUI(data) {
+             let acceptedContainer = document.getElementById("activeAdminsList");
+             acceptedContainer.innerHTML = `<thead>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Location</td>
+                <td>Action</td>
+            </thead>`;
+         
+        data.active_admins.forEach(admin => {
+                 acceptedContainer.innerHTML += `
+                     <tr class="user-details" data-user-id="${admin.id}">
+                         <td> ${admin.username}</td>
+                         <td> ${admin.email}</td>
+                        <td> ${admin.location}</td>
+                        <td>    <button id="btn-reject" onclick="rejectUser(${admin.id})">Reject</button>  </td>
+                     </tr>
+                 `;
+             });    
+        
+        
+            let inactiveContainer = document.getElementById("inactiveAdminsList");
+            inactiveContainer.innerHTML = `<thead>
+               <td>Username</td>
+               <td>Email</td>
+               <td>Location</td>
+               <td>Action</td>
+           </thead>`;
+           data.inactive_admins.forEach(admin => {
+                inactiveContainer.innerHTML += `
+                <tr class="user-details" data-user-id="${admin.id}">
+                   <td> ${admin.username}</td>
+                   <td> ${admin.email}</td>
+                  <td> ${admin.location}</td>
+                  <td> <button id="btn-accept" onclick="approveUser(${admin.id})">Approve</button></td>
+               </tr>
+                `;
+            });
+
+            document.getElementById("acceptedCount").innerText = data.accepted_count;
+            document.getElementById("rejectedCount").innerText = data.rejected_count;
+        }
+        
+         renderActiveAdmins();
+         renderInActiveAdmins();
+        function showActiveAdmins() {
+            document.getElementById("activeAdminsContainer").style.display = "block";
+            document.getElementById("inactiveAdminsContainer").style.display = "none";
+        }
+
+        function showInActiveAdmins() {
+            document.getElementById("activeAdminsContainer").style.display = "none";
+            document.getElementById("inactiveAdminsContainer").style.display = "block";
+        }
+        location.onload = function() {
+            showInActiveAdmins();
+        };
+
+        
+
+    </script>
 
 {% endblock %}

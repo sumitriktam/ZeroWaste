@@ -1,18 +1,32 @@
 import json
 from django.shortcuts import render, redirect
 from django import forms
-from .models import User, Admin, Resetpass, EmailVerification
+from .models import User, Admin, Resetpass, EmailVerification, adminReg
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .custom_auth import  CustomBackend
+from .custom_auth import  CustomBackend, auth
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 import uuid
-from .mail_helper import send_forget_password_mail, send_user_confirmation_email
+from .mail_helper import send_forget_password_mail, send_user_confirmation_email, send_admin_reg_email
 from django.utils import timezone
 from datetime import timedelta, datetime
 from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
+
+# from django.contrib.admin.sites import AdminSite
+# from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.views import LoginView
+
+# class CustomAdminSite(AdminSite):
+#     def login(self, request, extra_context=None):
+#         response = super().login(request, extra_context)
+#         if request.user.is_superuser and response.status_code == 200:
+#             print("it is coming here")
+#             return redirect('/adminPanel')
+#         return response
+
+# custom_admin_site = CustomAdminSite()
 
 def index(request):
     #only get users who ate providers and whose status is accepted
@@ -28,7 +42,6 @@ def showUsers(request):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
-    # Here, counting the users for each status
     accepted_count = accepted_users.count()
     pending_count = pending_users.count()
     rejected_count = rejected_users.count()
@@ -118,22 +131,28 @@ def login(request):
         # regUser = custom_backend.authenticate(request, email=email)
         
         if user is not None:
-            request.session['user_id'] = user.id
-            if user.is_verified == 0:
-                return redirect('email-verification-pending/')
-            elif user.status == 'pending':
-                return  redirect("/wait")
-            elif user.status == 'rejected':
-                return redirect("/application-rejected")
-            elif user.role=='admin':
-                return  redirect("/adminPanel")
-            elif user.role=='provider':
-                return  redirect("provider/home")
-            elif user.role=='receiver':
-                request.session['role']='receiver'
-                return  redirect("/receiver/home")
-            else:
-                return redirect('/register')
+            if isinstance(user, User):
+                request.session['user_id'] = user.id
+                if user.is_verified == 0:
+                    return redirect('email-verification-pending/')
+                elif user.status == 'pending':
+                    return redirect("/wait")
+                elif user.status == 'rejected':
+                    return redirect("/application-rejected")
+                elif user.role == 'provider':
+                    return redirect("provider/home")
+                elif user.role == 'receiver':
+                    request.session['role'] = 'receiver'
+                    return redirect("/receiver/home")
+                else:
+                    return redirect('/register')
+            elif isinstance(user, Admin):
+                request.session['admin_id'] = user.id
+                if user.status == 'active':
+                    return redirect("/adminPanel")
+                else:
+                    messages.error(request, 'Admin status inactive.')
+                    return redirect('/login')
         else:
             request.session['user_id'] = 0    #invalidated user
             messages.error(request, 'Invalid email or password.')
@@ -313,6 +332,10 @@ def application_rejected(request):
     return render(request, 'admin/rejecteduser.html')
 
 def adminPanel(request):
+    # user = auth(request)
+    # if not user:
+    #     messages.error(request, 'You need to login first.')
+    #     return redirect("/login")
     return render(request, 'admin/adminHome.html')
 
 def showOrders(request):
@@ -442,3 +465,102 @@ def delete_post(request):
         post_del = post.objects.get(id=post_id)
         post_del.delete()
         return redirect('/posts/')
+
+def showAdmins(request):
+    accepted_admins = Admin.objects.filter(status='active')
+    rejected_admins = Admin.objects.filter(status='inactive')
+
+    accepted_count = accepted_admins.count()
+    rejected_count = rejected_admins.count()
+
+    context = {
+        'active_admins': accepted_admins,
+        'inactive_admins': rejected_admins,
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    return render(request, "admin/showAdmins.html", context)
+
+
+def approve_admin(request, admin_id):
+    admin = get_object_or_404(Admin, id=admin_id)
+    admin.status = 'active'
+    admin.save(update_fields=['status'])
+
+    accepted_admins = Admin.objects.filter(status='active')
+    rejected_admins = Admin.objects.filter(status='inactive')
+
+    accepted_count = accepted_admins.count()
+    rejected_count = rejected_admins.count()
+
+    data = {
+        'active_admins': list(accepted_admins.values()),
+        'inactive_admins': list(rejected_admins.values()),
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    return JsonResponse(data)
+
+def reject_admin(request, admin_id):
+    admin = get_object_or_404(Admin, id=admin_id)
+    admin.status = 'inactive'
+    admin.save(update_fields=['status'])
+
+    accepted_admins = Admin.objects.filter(status='active')
+    rejected_admins = Admin.objects.filter(status='inactive')
+
+    accepted_count = accepted_admins.count()
+    rejected_count = rejected_admins.count()
+
+    data = {
+        'active_admins': list(accepted_admins.values()),
+        'inactive_admins': list(rejected_admins.values()),
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    return JsonResponse(data)
+
+
+def send_regEmail(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        print(email)
+        if email == '':
+            messages.success(request, 'No email provided.')
+            return redirect('/forget-password/')
+        send_admin_reg_email(email)
+    return redirect('/admins/')
+
+def reg_admin(request, token):
+    try:
+        verification = get_object_or_404(adminReg, token=token)
+        user = verification.email
+        print(user)
+        if user is not None:
+            return render(request, 'admin/adminReg.html')
+        else:
+            error_message = 'Invalid URL.'
+            return render(request, 'admin/invalid_token.html', {'error_message': error_message})
+
+    except:
+        error_message = 'Invalid URL.'
+        return render(request, 'admin/invalid_token.html', {'error_message': error_message})
+    
+
+def adminRegister(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        location = request.POST.get('location')
+
+        # Save data to the Admin model
+        admin = Admin(email=email, username=username, password=password, location=location)
+        admin.save()
+        return redirect('registration_success')
+
+    return render(request, 'admin/adminReg.html')
+
+
+def registration_success_view(request):
+    return render(request, 'admin/registration_success.html')
