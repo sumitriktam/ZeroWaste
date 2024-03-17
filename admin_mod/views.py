@@ -13,23 +13,11 @@ from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
 from datetime import timedelta, datetime
 from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
+from .admin_auth import CustomBackend1
 
-# from django.contrib.admin.sites import AdminSite
-# from django.contrib.auth.decorators import login_required
-# from django.contrib.auth.views import LoginView
-
-# class CustomAdminSite(AdminSite):
-#     def login(self, request, extra_context=None):
-#         response = super().login(request, extra_context)
-#         if request.user.is_superuser and response.status_code == 200:
-#             print("it is coming here")
-#             return redirect('/adminPanel')
-#         return response
-
-# custom_admin_site = CustomAdminSite()
 
 def index(request):
-    #only get users who ate providers and whose status is accepted
+    #only get users who are providers and whose status is accepted
     #other condition is get users whose zerowaste score is grater than zero because by default we're assigning everyone a score of zero
     users = User.objects.filter(status="accepted", role="provider", zerowaste_score__gt=0).order_by('-zerowaste_score')[:9]
     context = {
@@ -125,11 +113,10 @@ def check_user_existence(request):
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = request.POST.get('password')
+        password = request.POST.get('password') 
         custom_backend = CustomBackend()
         user = custom_backend.authenticate(request, email=email, password=password)
         # regUser = custom_backend.authenticate(request, email=email)
-        
         if user is not None:
             if isinstance(user, User):
                 request.session['user_id'] = user.id
@@ -154,9 +141,15 @@ def login(request):
                     messages.error(request, 'Admin status inactive.')
                     return redirect('/login')
         else:
-            request.session['user_id'] = 0    #invalidated user
-            messages.error(request, 'Invalid email or password.')
-            return redirect('/login')
+            admin_backend = CustomBackend1()
+            user = admin_backend.authenticate(request, email=email, password=password)
+            print(user)
+            if user is not None:
+                return redirect("/adminPanel")
+            else:
+                request.session['user_id'] = 0    #invalidated user
+                messages.error(request, 'Invalid email or password.')
+                return redirect('/login')
     else:
         # Render the login page
         return render(request, 'admin/login.html' , {"message":messages.get_messages(request)})

@@ -91,7 +91,9 @@
           <hr />
           <!-- <button class="button">CANCEL ORDER</button> -->
           <!-- Cancel order button -->
-          <button class="button" onclick="showPopup()">ORDER RECEIVED</button>
+          <form id="myForm" action="{% url 'receiver:order_delivered' post_id=data.post_id %}" onsubmit="return showPopup()">
+          <button class="button" type="submit">ORDER RECEIVED</button>
+          </form>
         </div>
       </div>
     </div>
@@ -105,8 +107,8 @@
         style="width: 20%; height: auto; margin-left: 40%"
       />
       <p>Your order is delivered.</p>
-      <button class="button" onclick="closePopup('{{data.post_id}}')">
-        CLOSE
+          <button class="button" onclick="closePopup('{{data.post_id}}')">
+          CLOSE
       </button>
     </div>
   </div>
