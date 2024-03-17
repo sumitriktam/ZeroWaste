@@ -1,6 +1,6 @@
-venv
-eVar
-virt
+venv/
+eVar/
+virt/
 admin_mod/__pycache__
 admin_mod/migrations/__pycache__
 provider/__pycache__

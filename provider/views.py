@@ -6,6 +6,11 @@ from datetime import datetime
 from .prov_auth import auth, post_auth
 from .plotter import returnhistory 
 import json
+from django.contrib.auth import logout
+def logout_user(request):
+    logout(request)
+    return redirect('/')
+
 
 def homePage(request):
     user = auth(request)
