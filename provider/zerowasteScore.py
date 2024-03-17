@@ -21,7 +21,7 @@ def calculate_streak_multiplier(user_id):
         current_date -= timedelta(days=1)
     return streak_multiplier
 
-def calculate_total_score(post_id):
+def calculate_total_score(request, post_id):
     quantity = int(post.objects.get(id=post_id).quantity)
     category = post.objects.get(id=post_id).category
     feedback_rating = FeedbackTab.objects.filter(post_id=post_id).first().rating
