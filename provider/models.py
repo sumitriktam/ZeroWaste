@@ -42,6 +42,7 @@ class post(models.Model):
         ('inactive', 'inactive')
     ]
     mode = models.CharField(max_length=20,choices=MODE_CHOICES, default="active")
+    
     def delete(self, *args, **kwargs):
         if self.category == 'toys':
             toysDes.objects.filter(id=self.description_id).delete()
