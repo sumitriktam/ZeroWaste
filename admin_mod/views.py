@@ -13,7 +13,8 @@ from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
 from datetime import timedelta, datetime
 from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
-from .admin_auth import CustomBackend1
+from receiver.models import Order
+from .admin_auth import CustomBackend1, auth1
 
 
 def index(request):
@@ -136,6 +137,7 @@ def login(request):
             elif isinstance(user, Admin):
                 request.session['admin_id'] = user.id
                 if user.status == 'active':
+                    request.session['role'] = 'admin'
                     return redirect("/adminPanel")
                 else:
                     messages.error(request, 'Admin status inactive.')
@@ -145,6 +147,8 @@ def login(request):
             user = admin_backend.authenticate(request, email=email, password=password)
             print(user)
             if user is not None:
+                request.session['super_admin_id'] = user.id
+                request.session['role'] = 'superadmin'
                 return redirect("/adminPanel")
             else:
                 request.session['user_id'] = 0    #invalidated user
@@ -325,11 +329,12 @@ def application_rejected(request):
     return render(request, 'admin/rejecteduser.html')
 
 def adminPanel(request):
-    # user = auth(request)
-    # if not user:
-    #     messages.error(request, 'You need to login first.')
-    #     return redirect("/login")
-    return render(request, 'admin/adminHome.html')
+    user = auth(request)
+    superadmin = auth1(request)
+    if not user and not superadmin:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    return render(request, 'admin/showUsers.html')
 
 def showOrders(request):
     return render(request, 'admin/showOrders.html')
@@ -557,3 +562,94 @@ def adminRegister(request):
 
 def registration_success_view(request):
     return render(request, 'admin/registration_success.html')
+
+def showOrders(request):
+    orders=Order.objects.all()
+   #seperate all kinds of orders made by this user
+    accepted=[]
+    pending=[]
+    rejected=[]
+    delivered=[] #receiver have a button wether the order is delivered or not when he clicks on that the status will be updated to delivered(not yet implemented)  
+    for order in orders:
+        order_details={}
+        order_details['status']=order.status
+        order_details['order_id']=order.id
+        order_details['date']=order.date_time.strftime('%d-%m-%Y')
+        order_details['time']=order.date_time.strftime('%H:%M')
+        order_details['quantity']=order.quantity
+        order_details['receiver_user'] = order.receiver_user.username
+
+        if(order.status=='accepted'):
+            accepted.append(order_details)
+        elif(order.status=='pending'):
+            pending.append(order_details)
+        elif(order.status=='rejected'):
+            rejected.append(order_details)
+        else:
+            delivered.append(order_details)
+        
+        #take image,item_name,user_post location from user_post table
+        user_post=post.objects.get(id=order.ordered_post_id)
+        order_details['image']=user_post.photo.url
+        order_details['item_name']=user_post.name
+        order_details['location']=user_post.location
+        order_details['post_user'] = user_post.user.username
+        #take location from user table
+        
+    all_orders={
+        'accepted':accepted,
+        'pending':pending,
+        'rejected':rejected,
+        'delivered':delivered,
+        }
+           
+
+    return render(request, 'admin/showOrders.html' , {'orders':all_orders})
+
+def edit_order(request):
+    if request.method == 'POST' :
+        # Get the form data
+        status = request.POST['status']
+        order_id = request.POST['order_id']
+        date = request.POST['date']
+        time = request.POST['time']
+        quantity = request.POST['quantity']
+        image = request.POST['image']
+        item_name = request.POST['item_name']
+        location = request.POST['location']
+        receiver_user = request.POST['receiver_user']
+        post_user = request.POST['post_user']
+
+        # Get the order object from the database
+        order = Order.objects.get(pk=order_id)
+        user_post=post.objects.get(id=order.ordered_post_id)
+
+        
+        # Update the order with the new data
+        order.status = status
+        order.receiver_user.username = receiver_user
+        order.quantity = quantity
+        # user_post.photo.url = image
+        user_post.user.username = post_user
+        user_post.name = item_name
+        user_post.location = location
+        order.save()
+        user_post.save()
+        
+        
+        return JsonResponse({'message': 'Order updated successfully!'})
+    else:
+        return JsonResponse({'error': 'Invalid request!'}, status=400)
+    
+
+def delete_order(request, order_id):
+    try:
+        order = Order.objects.get(pk=order_id)
+        order.delete()
+        return JsonResponse({'message': 'Order deleted successfully!'})
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order does not exist'}, status=404)
+    
+def logout(request):
+    request.session.flush()
+    return redirect('/')

@@ -63,11 +63,13 @@
             <h1>ZeroWaste</h1>
         </div>
         <nav class="navbar">
-            <a class="nav-link {% if request.path == '/adminPanel' %}active{% endif %}" href="{% url 'adminPanel' %}">Home</a>
             <a class="nav-link {% if request.path == '/showUsers' %}active{% endif %}" href="{% url 'showUsers' %}">Users</a>
             <a class="nav-link {% if request.path == '/posts/' %}active{% endif %}" href="{% url 'showPosts' %}">Posts</a>
             <a class="nav-link {% if request.path == '/orders/' %}active{% endif %}" href="{% url 'showOrders' %}">Orders</a>
-            <a class="nav-link {% if request.path == '/admins/' %}active{% endif %}" href="{% url 'showAdmins' %}">Admins</a>
+            {% if request.session.role == 'superadmin' %}
+                <a class="nav-link {% if request.path == '/admins/' %}active{% endif %}" href="{% url 'showAdmins' %}">Admins</a>
+            {% endif %}
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </nav>
     </div>
     <div class="container mt-4">

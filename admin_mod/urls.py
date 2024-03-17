@@ -31,5 +31,7 @@ urlpatterns = [
     path("adminRegister/", views.adminRegister, name='adminRegister'),
     path("send_regEmail", views.send_regEmail, name='send_regEmail'),
     path('registration-success/', views.registration_success_view, name='registration_success'),
-
+    path('edit_order/', views.edit_order, name='edit_order'),
+    path('delete_order/<int:order_id>/', views.delete_order, name='delete_user'),
+    path('logout/', views.logout, name='logout'),
 ]
