@@ -119,4 +119,8 @@ class FeedbackTab(models.Model):
     rating = models.IntegerField(choices=RatingChoices.choices)
     feedback = models.CharField(max_length=500, default="")
 
+class scoreHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_time = models.DateTimeField(default=timezone.now)
+    score = models.IntegerField(default=0)
 
