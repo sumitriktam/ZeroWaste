@@ -396,9 +396,9 @@ body {
 }
 .custom-box5{
     position: absolute;
-    left: 50px; /* X-axis */
+    left: 30px; /* X-axis */
     top: 400px; /* Y-axis */
-    width: 515px;
+    width: 600px;
     height:280px;
 }
 .performance{
@@ -525,8 +525,10 @@ body {
   }
   .custom-box5 {
     position: relative;
-    width: 515px;
+    width: 600px;
     height: 280px;
+    left: 30px;
+
 }
 
 .performance {
