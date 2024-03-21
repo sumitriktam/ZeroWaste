@@ -36,6 +36,12 @@ def give_all_posts():
       post_data['quantity']=user_post.quantity
       post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
       post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
+    elif category=='groceries':
+      description = groceryDes.objects.get(id=user_post.description_id)
+      post_data['quantity']=user_post.quantity
+      post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
+      post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
+
     combined_posts.append(post_data) 
   data={'posts':combined_posts}
   return data
@@ -217,6 +223,8 @@ def order_history(request):
       'rejected':rejected,
       'delivered':delivered,
     }
+   
+
    return render(request,'receiver/orderHistory.html',{'orders':all_orders})
            
 def feedback(request,post_id):
@@ -263,3 +271,6 @@ def order_delivered(request, post_id):
   user.save(update_fields=['zerowaste_score'])
   order.save(update_fields=['status'])
   return HttpResponse(status=204)
+
+
+    
