@@ -126,13 +126,16 @@ Dashboard
 
     <script>
 
+function closePopup(event) {
+            
+         document.querySelector('.overlay').style.display = 'none';
+        }
+
         function toggleExpand(arrow) {
         const innerBox = arrow.parentNode;
         innerBox.classList.toggle('expanded');}
   
-        function closePopup() {
-        document.querySelector('.overlay').style.display = 'none';
-        }
+        
         
         let arrowPressCount = 0;
       

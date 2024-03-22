@@ -126,6 +126,18 @@ def allPosts(request):
             food_desc = foodDes.objects.filter(id=single_post.description_id).first()
         elif single_post.category == 'others':
             other_desc = otherDes.objects.filter(id=single_post.description_id).first()
+
+        
+        if Order.objects.filter(ordered_post_id=single_post.id, status='accepted').exists():
+            single_post.delete_disabled = True
+        else:
+            single_post.delete_disabled = False
+
+        
+        
+        
+        
+
         posts_with_descriptions.append({
             'post': single_post,
             'toys_desc': toys_desc,
@@ -193,7 +205,7 @@ def delete_post(request, post_id):
     p.mode = 'inative'
     p.save()
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
-    return redirect("provider:homepage")  
+    return redirect("provider:allposts")  
   
 
 
