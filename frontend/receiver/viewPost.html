@@ -298,10 +298,17 @@
                   margin: 5px;
                 ">
                 <b>QUANTITY AVAILABLE:</b>
-                <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                <span style="margin-left:5px;flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                   {{post_data.quantity}}
                 </span>
-              </div>
+                {% if has_pending_order %}
+                  <!-- <button type="button" class="button" style="height:30px;" onclick="checkQuantity();" disabled>ORDER NOW</button> -->
+                  <b>QUANTITY ORDERED: </b>
+                  <span style="margin-left:5px;flex-grow: 2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                  {{post_data.pending_quantity}}
+                </span>
+                  {% endif %}
+                </div>
             <div
               class="bold-line"
               style="border-top: 3px solid black; width: 95%; margin-left: 5px"
@@ -322,10 +329,15 @@
               action="{% url 'receiver:order' %}"
             >
              {% csrf_token %}
-              QUANTITY REQUIRED&nbsp&nbsp
-              <input type="number" name="quantity" id="quantityInput" min=1 value=1 style="width:60px;height:30px;border-radius:10px;">&nbsp&nbsp
               <input type="hidden" name="post_id" value="{{post_data.post_id}}"/>
-              <button type="button" class="button" style="height:30px;" onclick="checkQuantity();">ORDER NOW</button>
+              {% if has_pending_order %}
+                  <!-- <button type="button" class="button" style="height:30px;" onclick="checkQuantity();" disabled>ORDER NOW</button> -->
+                    <p style="margin-left:9%;font-size:105%;margin-top:1%;color:green;font-weight:500;">You already have a pending order for this item.</p>
+              {% else %}
+                  QUANTITY REQUIRED&nbsp&nbsp
+                  <input type="number" name="quantity" id="quantityInput" min=1 value=1 style="width:60px;height:30px;border-radius:10px;">&nbsp&nbsp
+                  <button type="button" class="button" style="height:30px;" onclick="checkQuantity();">ORDER NOW</button>
+              {% endif %}
             </form>
             </div>
           </div>
