@@ -105,13 +105,18 @@ def view_post(request,post_id):
             'expiry_time': description.expiry_time.strftime('%H:%M')
         }
       post_data['quantity'] = user_post.quantity
-      return render(request, 'receiver/viewPost.html',{'post_data':post_data})
+      has_pending_order = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=request.session['user_id'], status='pending').exists()
+      if has_pending_order:
+            # Retrieve the quantity ordered for pending orders
+            pending_orders = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=request.session['user_id'], status='pending')
+            pending_quantity = sum(order.quantity for order in pending_orders)
+            post_data['pending_quantity'] = pending_quantity
+      return render(request, 'receiver/viewPost.html', {'post_data': post_data,'has_pending_order': has_pending_order})
+      #return render(request, 'receiver/viewPost.html',{'post_data':post_data})
   except post.DoesNotExist:
         #clear previous error messages
-          
         messages.error(request, 'Sorry, the user_post does not exist')
         return redirect('/receiver/home')
-        
 
 def order(request):
     #take post_id from the submitted form
@@ -147,7 +152,29 @@ def order(request):
       #render the page with the specific error(not implemented)
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
       return redirect('/receiver/home')
-    
+def update_order(request, post_id):
+    if request.method == 'POST':
+        # Retrieve updated order details from the form
+        new_quantity = request.POST.get('quantity')
+        
+        # Update the existing order with the new quantity
+        order = Order.objects.get(pk=post_id)
+        order.quantity = new_quantity
+        order.save()
+       # Get the order ID
+        order_id = order.id
+        
+        # Construct the success message including the order ID
+        success_message = f"Order {order_id} has been updated successfully!"
+        
+        # Add success message with the order ID
+        messages.success(request, success_message)
+        # Redirect to the order history page or any other appropriate page
+        return redirect('receiver:order_history')
+    else:
+        # Handle invalid request method
+        messages.error(request,"your order not updated!")
+        return redirect('receiver:home') 
 def track_order(request, ord_id):
     
     post_id = Order.objects.get(id=ord_id).ordered_post.id
@@ -275,6 +302,16 @@ def order_delivered(request, ord_id):
   user.save(update_fields=['zerowaste_score'])
   order.save(update_fields=['status'])
   return HttpResponse(status=204)
-
+def get_post_details(request, post_id):
+    try:
+        pos = post.objects.get(id=post_id)
+        # Assuming Post has a 'name' field, you can access other fields similarly
+        quantity = pos.quantity
+        # Return the post details as JSON response
+        return JsonResponse({'post_quantity': quantity})
+    except post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
     
