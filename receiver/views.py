@@ -148,7 +148,9 @@ def order(request):
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
       return redirect('/receiver/home')
     
-def track_order(request,post_id):
+def track_order(request, ord_id):
+    
+    post_id = Order.objects.get(id=ord_id).ordered_post.id
    
     user_id=request.session['user_id']
     #user can only track his active order(not implemeted)
@@ -163,7 +165,8 @@ def track_order(request,post_id):
      data['message']='Order successful'
      data['provider_location']=provider_location
      data['receiver_location']=receiver_location
-     data['post_id']=post_id    
+     data['post_id']=post_id 
+     data['ord_id'] = ord_id   
    
      #render order tracking page with sucess message
      return render(request,"receiver/trackOrder.html",{'data':data})
@@ -260,11 +263,12 @@ def logout(request):
   return redirect('/')
      
      
-def order_delivered(request, post_id):
+def order_delivered(request, ord_id):
+  post_id = Order.objects.get(id=ord_id).ordered_post.id
   user_id = request.session.get('user_id')
   order = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=user_id).first()
   order.status = 'delivered'
-  total_score = calculate_total_score(post_id)
+  total_score = calculate_total_score(ord_id)
   userId = post.objects.get(id=post_id).user_id
   user = User.objects.get(id=userId)
   user.zerowaste_score += total_score

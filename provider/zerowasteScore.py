@@ -23,11 +23,16 @@ def calculate_streak_multiplier(user_id):
         current_date -= timedelta(days=1)
     return streak_multiplier
 
-def calculate_total_score(post_id):
-    quantity = int(Order.objects.get(ordered_post_id=post_id).quantity)
-    category = post.objects.get(id=post_id).category
-    feedback_rating = FeedbackTab.objects.filter(post_id=post_id).first().rating
-    feedback_score = calculate_feedback_score(feedback_rating)
+def calculate_total_score(ord_id):
+    post_id = Order.objects.get(id=ord_id).ordered_post.id
+    quantity = int(Order.objects.get(id=ord_id).quantity)
+    category = post.objects.get(id=post_id).category 
+    try: 
+
+        feedback_rating = FeedbackTab.objects.filter(post_id=post_id).first().rating
+        feedback_score = calculate_feedback_score(feedback_rating)
+    except:
+        feedback_score = 60
     zerowaste_score = calculate_zerowaste_score(category)
     user_id = post.objects.get(id=post_id).user_id
     streak_multiplier = calculate_streak_multiplier(user_id)
