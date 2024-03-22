@@ -653,3 +653,5 @@ def delete_order(request, order_id):
 def logout(request):
     request.session.flush()
     return redirect('/')
+
+
