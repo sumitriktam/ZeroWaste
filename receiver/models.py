@@ -12,6 +12,7 @@ class Order(models.Model):
         ('accept','Accept'),
         ('reject','Reject'), 
         ('pending','Pending'),
+        ('delivered','Delivered')
     )
     status=models.CharField(max_length=10,choices=STATUS_OPTIONS,default='pending')
     receiver_location=models.CharField(max_length=30)

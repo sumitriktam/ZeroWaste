@@ -293,7 +293,8 @@ def logout(request):
 def order_delivered(request, ord_id):
   post_id = Order.objects.get(id=ord_id).ordered_post.id
   user_id = request.session.get('user_id')
-  order = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=user_id).first()
+  # print(ord_id , user_id , post_id)
+  order = Order.objects.get(id=ord_id, receiver_user_id=user_id)
   order.status = 'delivered'
   total_score = calculate_total_score(ord_id)
   userId = post.objects.get(id=post_id).user_id
