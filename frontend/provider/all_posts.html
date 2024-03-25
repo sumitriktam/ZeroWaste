@@ -1,127 +1,280 @@
-{% extends "provider/provbase.html" %}
-{% block title %} {{postdetails.name}} Feedback {% endblock %}
+{% extends "provider/provbase.html" %} {% block title %} {{postdetails.name}}
+Feedback {% endblock %} {% block css %}
+<link rel="stylesheet" href="/statics/provider/all_posts.css" />
 
-{% block css %}
-<link rel="stylesheet" href="/statics/provider/all_posts.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{% endblock %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
+<style>
+  .overlay {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.5); /* Transparent black overlay */
+    z-index: 1;
+  }
+  .popup {
+    width: 30%;
+    height: 50%;
+    background: #fff; /* Popup background color */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Box shadow for depth */
+    border-radius: 10px;
+  }
+  .close-btn {
+    margin-top: 0px;
+    padding: 5px 10px;
+    background-color: #0084ff;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    color: #fff;
+    position: relative;
+    bottom: 0;
+    left: 85%;
+    width: 17%;
+    top: 23%;
+    height: 12%;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .imagetick {
+    position: relative;
+    left: 32%;
+    top: 10%;
+    width: 35%;
+    height: 45%;
+  }
+</style>
+{% endblock %} {% block content %}
 
-{% block content %}
-        
-        <div class="req-name">
-            <p>
-                <a style ="color: #1D710F;text-decoration: none;" href="/provider/home">
-                    <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
-                </a>
-            All Post</p>
-        </div>
-        <div class="outerbox">
-        
-        
-            <div class="custom-box2 "> 
-
-
-
+<div class="req-name">
+  <p>
+    <a style="color: #1d710f; text-decoration: none" href="/provider/home">
+      <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px"></i>
+    </a>
+    All Post
+  </p>
+</div>
+<div class="outerbox">
+  <div class="custom-box2">
     {% for item in posts_with_descriptions %}
     <div class="historybox">
-        <img src="/{{ item.post.photo}}" alt="Your Image" class="image2">
-        <div class="history-details">
-            <div class="custom-box-line2 line2_position1"><b>ID: </b><span style="color:green">{{ item.post.id }}</span> <span style="position:absolute;right:0px">{{ item.post.created_at|timesince }}</span></div>
-            <div class="custom-box-line2 line2_position2"><b>Name: </b><span>{{ item.post.name }}</span></div>
-            <div class="custom-box-line2 line2_position3"><b>Quantity: </b><span>{{ item.post.quantity }}</span></div>
-            <!-- Display fields related to the category -->
-            {% if item.post.category == 'toys' %}
-                
-                    <div class="custom-box-line2 line2_position4"><b>Age Group: </b>{{ item.toys_desc.age_group }}</div>
-                    <div class="custom-box-line2 line2_position5"><b>Condition: </b>{{ item.toys_desc.condition }}</div>
-                    <div class="custom-box-line2 line2_position6"><b>Description: </b>{{ item.toys_desc.desc }}</div>
-                
-            {% elif item.post.category == 'groceries' %}
-                
-                    
-                    <div class="custom-box-line2 line2_position4"><b>Expiry Date: </b>{{ item.grocery_desc.expiry_date }}</div>
-                    <div class="custom-box-line2 line2_position5"><b>Expiry Time: </b>{{ item.grocery_desc.expiry_time }}</div>
-                    <div class="custom-box-line2 line2_position6"><b>Description: </b>{{ item.grocery_desc.desc }}</div>
-                
-            {% elif item.post.category == 'clothes' %}
-                
-                    
-                    <div class="custom-box-line2 line2_position4"><b>Gender: </b>{{ item.cloth_desc.gender }}</div>
-                    <div class="custom-box-line2 line2_position5"><b>Condition: </b>{{ item.cloth_desc.condition }}</div>
-                    <div class="custom-box-line2 line2_position6"><b>Size: </b>{{ item.cloth_desc.size }}</div>
-                    <div class="custom-box-line2 line2_position7"><b>Description: </b>{{ item.cloth_desc.desc }}</div>
-                
-            {% elif item.post.category == 'food' %}
-                
-                    
-                    <div class="custom-box-line2 line2_position4"><b>Expiry Date: </b>{{ item.food_desc.expiry_date }}</div>
-                    <div class="custom-box-line2 line2_position5"><b>Expiry Time: </b>{{ item.food_desc.expiry_time }}</div>
-                    <div class="custom-box-line2 line2_position6"><b>Description: </b>{{ item.food_desc.desc }}</div>
-                
-            {% elif item.post.category == 'others' %}
-                
-                    <div class="custom-box-line2 line2_position4"><b>Description: </b>{{ item.other_desc.desc }}</div>
-                
-            {% endif %}
-
-            <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:1100px;">
-                <a href="{% url 'provider:deletion' item.post.id %}" style="color:#ab2b0b;"><i class="material-icons" style="font-size:40px;color:red; padding-left: 90px;">delete</i></a>
-                <br>
-                <a href="{% url 'receiver:view_post' item.post.id %}" style="color:#1D710F;">View Post -></a> 
-                <a href="{% url 'provider:feedback' item.post.id %}" style="color:#1D710F; margin-left: 8px;">Feedback -></a>
-            </span></center></div>
-
-            
+      <img src="/{{ item.post.photo}}" alt="Your Image" class="image2" />
+      <div class="history-details">
+        <div class="custom-box-line2 line2_position1">
+          <b>ID: </b><span style="color: green">{{ item.post.id }}</span>
+          <span style="position: absolute; right: 0px"
+            >{{ item.post.created_at|timesince }}</span
+          >
         </div>
-        </div> 
+        <div class="custom-box-line2 line2_position2">
+          <b>Name: </b><span>{{ item.post.name }}</span>
+        </div>
+        <div class="custom-box-line2 line2_position3">
+          <b>Quantity: </b><span>{{ item.post.quantity }}</span>
+        </div>
+        <!-- Display fields related to the category -->
+        {% if item.post.category == 'toys' %}
+
+        <div class="custom-box-line2 line2_position4">
+          <b>Age Group: </b>{{ item.toys_desc.age_group }}
+        </div>
+        <div class="custom-box-line2 line2_position5">
+          <b>Condition: </b>{{ item.toys_desc.condition }}
+        </div>
+        <div class="custom-box-line2 line2_position6">
+          <b>Description: </b>{{ item.toys_desc.desc }}
+        </div>
+
+        {% elif item.post.category == 'groceries' %}
+
+        <div class="custom-box-line2 line2_position4">
+          <b>Expiry Date: </b>{{ item.grocery_desc.expiry_date }}
+        </div>
+        <div class="custom-box-line2 line2_position5">
+          <b>Expiry Time: </b>{{ item.grocery_desc.expiry_time }}
+        </div>
+        <div class="custom-box-line2 line2_position6">
+          <b>Description: </b>{{ item.grocery_desc.desc }}
+        </div>
+
+        {% elif item.post.category == 'clothes' %}
+
+        <div class="custom-box-line2 line2_position4">
+          <b>Gender: </b>{{ item.cloth_desc.gender }}
+        </div>
+        <div class="custom-box-line2 line2_position5">
+          <b>Condition: </b>{{ item.cloth_desc.condition }}
+        </div>
+        <div class="custom-box-line2 line2_position6">
+          <b>Size: </b>{{ item.cloth_desc.size }}
+        </div>
+        <div class="custom-box-line2 line2_position7">
+          <b>Description: </b>{{ item.cloth_desc.desc }}
+        </div>
+
+        {% elif item.post.category == 'food' %}
+
+        <div class="custom-box-line2 line2_position4">
+          <b>Expiry Date: </b>{{ item.food_desc.expiry_date }}
+        </div>
+        <div class="custom-box-line2 line2_position5">
+          <b>Expiry Time: </b>{{ item.food_desc.expiry_time }}
+        </div>
+        <div class="custom-box-line2 line2_position6">
+          <b>Description: </b>{{ item.food_desc.desc }}
+        </div>
+
+        {% elif item.post.category == 'others' %}
+
+        <div class="custom-box-line2 line2_position4">
+          <b>Description: </b>{{ item.other_desc.desc }}
+        </div>
+
+        {% endif %}
+
+        <div class="custom-box-line line_position2">
+          <center>
+            <span
+              style="
+                color: #1d710f;
+                font-weight: bold;
+                position: absolute;
+                bottom: 10px;
+                left: 1100px;
+              "
+            >
+              {% if not item.post.delete_disabled %}
+              <a
+                href="{% url 'provider:deletion' item.post.id %}"
+                style="color: #ab2b0b"
+              >
+                <i
+                  class="material-icons"
+                  style="font-size: 40px; color: red; padding-left: 90px"
+                  >delete</i
+                >
+              </a>
+              {% else %}
+              <i
+                class="material-icons"
+                style="
+                  font-size: 40px;
+                  color: gray;
+                  padding-left: 90px;
+                  cursor: not-allowed;
+                "
+                >delete</i
+              >
+              {% endif %}
+              <br />
+
+              <a
+                href="{% url 'provider:feedback' item.post.id %}"
+                style="color: #1d710f; margin-left: 8px"
+                >Feedback -></a
+              >
+            </span>
+          </center>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% for message in messages %}
+    <div class="overlay" style="display: flex">
+      <div class="popup">
+        <!-- Your popup content goes here -->
+        <p
+          style="
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            font-size: 25px;
+            position: relative;
+            left: 33%;
+            top: 7%;
+          "
+        >
+          Delete successful
+        </p>
+        <img
+          src="/statics/provider/images/tick.jpeg"
+          alt=""
+          class="imagetick"
+        />
+        <br /><br />
+        <p
+          id="popupMessage"
+          style="
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            position: relative;
+            left: 26%;
+            top: 10%;
+            font-weight: bold;
+          "
+        >
+          {{ message }}
+        </p>
+        <button class="close-btn">Close</button>
+      </div>
+    </div>
     {% endfor %}
-                
-    </div>
-        
-            
-    </div>
-        
-                        
-        
-    </div>
-    <i class="fas fa-comment chatbox-icon"></i>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var innerBoxes = document.querySelectorAll(".custom-box4");
+  </div>
+</div>
 
-            function revealInnerBoxes() {
-                innerBoxes.forEach(function (innerBox) {
-                    var boxPosition = innerBox.getBoundingClientRect().top;
-                    var windowHeight = document.querySelector('.box2').clientHeight;
-                    if (boxPosition < windowHeight) {
-                        innerBox.style.opacity = 1;
-                        innerBox.style.transform = "translateY(0)";
-                    }
-                });
-            }
+<script>
+  document.addEventListener("click", function (event) {
+    document.querySelector(".overlay").style.display = "none";
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    var innerBoxes = document.querySelectorAll(".custom-box4");
 
-            document.querySelector('.box2').addEventListener("scroll", revealInnerBoxes);
-            revealInnerBoxes(); // Initial check on page load
-        });
-        document.addEventListener("DOMContentLoaded", function () {
-            var innerBoxes = document.querySelectorAll(".custom-box");
+    function revealInnerBoxes() {
+      innerBoxes.forEach(function (innerBox) {
+        var boxPosition = innerBox.getBoundingClientRect().top;
+        var windowHeight = document.querySelector(".box2").clientHeight;
+        if (boxPosition < windowHeight) {
+          innerBox.style.opacity = 1;
+          innerBox.style.transform = "translateY(0)";
+        }
+      });
+    }
 
-            function revealInnerBoxes() {
-                innerBoxes.forEach(function (innerBox) {
-                    var boxPosition = innerBox.getBoundingClientRect().top;
-                    var windowHeight = document.querySelector('.outerbox').clientHeight;
-                    if (boxPosition < windowHeight) {
-                        innerBox.style.opacity = 1;
-                        innerBox.style.transform = "translateY(0)";
-                    }
-                });
-            }
+    document
+      .querySelector(".box2")
+      .addEventListener("scroll", revealInnerBoxes);
+    revealInnerBoxes(); // Initial check on page load
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    var innerBoxes = document.querySelectorAll(".custom-box");
 
-            document.querySelector('.outerbox').addEventListener("scroll", revealInnerBoxes);
-            revealInnerBoxes(); // Initial check on page load
-        });
-    </script>
-    <script src="/statics/provider/logout.js"></script>
+    function revealInnerBoxes() {
+      innerBoxes.forEach(function (innerBox) {
+        var boxPosition = innerBox.getBoundingClientRect().top;
+        var windowHeight = document.querySelector(".outerbox").clientHeight;
+        if (boxPosition < windowHeight) {
+          innerBox.style.opacity = 1;
+          innerBox.style.transform = "translateY(0)";
+        }
+      });
+    }
+
+    document
+      .querySelector(".outerbox")
+      .addEventListener("scroll", revealInnerBoxes);
+    revealInnerBoxes(); // Initial check on page load
+  });
+</script>
+<script src="/statics/provider/logout.js"></script>
 {% endblock %}

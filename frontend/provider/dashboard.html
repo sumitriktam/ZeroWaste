@@ -18,7 +18,7 @@ Dashboard
         <p class="donation"><span style="color:green">{{number}}</p></div>
         <div class="custom-box box2"><p class="text-donations" >ZeroWaste score:</p>
         <p class="zerowastescore"><span style="color:green">{{zscore}}</span></p></div>
-        <div class="custom-box-history ">
+        <div class="custom-box-history " style="cursor: pointer;" onclick="showHistory()">
             <p class="history" >Posts History</p>
             <a class="view-all" href="/provider/all_posts" style="text-decoration: none;">View all -></a>  
             <div class="custom-box-line line_position1"></div>
@@ -46,7 +46,7 @@ Dashboard
             <p class="requests">Pending Requests</p>
             <a class="view-all" href="/provider/requests" style="text-decoration: none;">View all requests -> </a>
 
-            <div class="custom-box-2">
+            <div class="custom-box-2" style="cursor: pointer;" onclick="showRequests()">
                 <div class="image-container1">
                     <div class="flex-container2">
                         <div class="image-container2">
@@ -116,7 +116,7 @@ Dashboard
           <img src="/statics/provider/images/tick.jpeg" alt="" class="imagetick">
           <br><br>
           <p id="popupMessage" style="font-family: Arial, Helvetica, sans-serif;font-size:20px; position:relative;left:26%;top:10%;font-weight: bold;">{{ message }}</p>
-          <button class="close-btn" onclick= closePopup(event) >Done</button>
+          <button class="close-btn" >Done</button>
         </div>
       </div>
     {% endfor %}
@@ -125,17 +125,26 @@ Dashboard
 
 
     <script>
+     
+        function showRequests(){
+            window.location.href="/provider/requests"
+        }
+        function showHistory(){
+             window.location.href="/provider/all_posts"
+        }
+
+document.addEventListener('click', function(event) {
+      document.querySelector('.overlay').style.display = 'none';
+    });
 
         function toggleExpand(arrow) {
         const innerBox = arrow.parentNode;
         innerBox.classList.toggle('expanded');}
-  
-        function closePopup() {
-        document.querySelector('.overlay').style.display = 'none';
-        }
+     
+        
         
         let arrowPressCount = 0;
-      
+         
         function showText() {
           arrowPressCount++;
           const message = `Down arrow icon clicked ${arrowPressCount} times`;

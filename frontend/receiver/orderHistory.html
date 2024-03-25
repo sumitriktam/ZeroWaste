@@ -4,7 +4,15 @@
 <link rel="stylesheet" href="{%static 'receiver/css/orderHistory.css'%}">
 {%endblock%}
 {%block body%}
-
+{% if messages %}
+<div class="messages">
+    <ul class="message">
+        {% for message in messages %}
+        <li class="message_font">{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 <div class="tabels">
       
 
@@ -50,7 +58,6 @@
         Your accepted orders will be displayed here
       </h3>
       <h1 style="margin-top:90px">All Orders</h1>
-
       <div class="dropdown">
         <a
           class="btn btn-secondary dropdown-toggle"
@@ -165,10 +172,10 @@
       document.querySelector(".empty-all-orders").style.display = "none";
     }
     filterPosts('all')
-    function trackOrder(ordId){
+    function trackOrder(orderId){
       //send to track order page
-      console.log('>>>>', ordId);
-      window.location.href = `/receiver/track-order/id=${ordId}/`;
+      
+      window.location.href = `/receiver/track-order/id=${orderId}/`;
 
 
     }
@@ -291,12 +298,105 @@
                 <p>Time: ${order.time}</p>
             </td>
             <td class=${order.status} style="font-size: 18px; font-weight: 600;text-align:center">
-                ${order.status}
-          </td>
+               ${order.status}
+               ${order.status === 'pending' ? `<button onclick="openEditPopup(${order.order_id})">Edit</button>` : ''}
+            </td>
         `;
         document.querySelector(".table-content").appendChild(newRow);
       });
       console.log( document.querySelector(".dropdown-table"));
     }
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function openEditPopup(orderId) {
+    // Get the order details based on the orderId
+    let orderDetails = filteredOrders.find(order => order.order_id === orderId);
+    let postDetailsUrl = `/receiver/get_post_details/${orderDetails.post_id}/`;
+    fetch(postDetailsUrl)
+    .then(response => {
+        // Check if the response is successful
+        if (!response.ok) {
+            throw new Error('Failed to fetch post details');
+        }
+        // Parse the JSON response
+        return response.json();
+    })
+    .then(data => {
+        // Check if the response contains post details
+        if (data.error) {
+            // Handle the case where an error occurred
+            console.error(data.error);
+        } else {
+            // Access the post details from the response data
+            let quantity = data.post_quantity;
+            let updateUrl = `/receiver/update-order/${orderDetails.order_id}/`;
+            const csrftoken = getCookie('csrftoken');
+            // Construct the HTML content for the popup/modal
+            let popupContent = `
+                <div class="edit-popup">
+                    <h2>Edit Order</h2>
+                    <label for="Available_quantity">Available Quantity:</label>
+                    <input type="number" name="Available_quantity" id="Available_quantity" value="${quantity}" Readonly>
+                    <form id="editOrderForm" action="${updateUrl}" method="POST">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                        <label for="quantity">Quantity Required:</label>
+                        <input type="number" name="quantity" id="quantity" value="${orderDetails.quantity}" min="1" max="${quantity}" required oninput="checkInputValidity()">
+                        <button type="submit" class="update_button">Update Now</button>
+                    </form>
+                    <button onclick="closeEditPopup()" class="close">Close</button>
+                </div>
+            `;
+
+            // Create a div element to hold the popup content
+            let popupContainer = document.createElement("div");
+            popupContainer.classList.add("popup-container");
+            popupContainer.innerHTML = popupContent;
+
+            // Append the popup container to the body
+            document.body.appendChild(popupContainer);
+                }
+    })
+    .catch(error => {
+        // Handle any errors that occurred during the fetch
+        console.error('Error:', error);
+    });
+}
+function checkInputValidity() {
+    // Get the input element
+    let quantityInput = document.getElementById('quantity');
+    let enteredValue = parseInt(quantityInput.value);
+    let quantityavail = document.getElementById('Available_quantity');
+    let availValue = parseInt(quantityavail.value);
+
+    // Check if the entered value is valid
+    if (enteredValue < 1 || enteredValue > availValue) {
+        // If not valid, set border color to red
+        quantityInput.style.border = '1px solid red';
+    } else {
+        // If valid, remove red border color
+        quantityInput.style.border = '';
+    }
+}
+function closeEditPopup() {
+    // Remove the popup container from the DOM
+    let popupContainer = document.querySelector(".popup-container");
+    if (popupContainer) {
+        popupContainer.remove();
+    }
+}
 </script>
 {%endblock%}

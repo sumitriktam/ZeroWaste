@@ -126,6 +126,18 @@ def allPosts(request):
             food_desc = foodDes.objects.filter(id=single_post.description_id).first()
         elif single_post.category == 'others':
             other_desc = otherDes.objects.filter(id=single_post.description_id).first()
+
+        
+        if post.objects.filter(id=single_post.id, quantity=0).exists():
+            single_post.delete_disabled = True
+        else:
+            single_post.delete_disabled = False
+
+        
+        
+        
+        
+
         posts_with_descriptions.append({
             'post': single_post,
             'toys_desc': toys_desc,
@@ -167,7 +179,6 @@ def accept(request,order_id):
         return redirect("provider:requests")
 
 def reject(request):
-    print("ikkada")
     post_id = request.POST.get('post_id')
     order_id = request.POST.get('order_id')
     quantity = request.POST.get('quantity')
@@ -207,10 +218,12 @@ def delete_post(request, post_id):
     if not p:
         messages.error(request, 'Delete your own post.')
         return redirect("/login")
-    p.mode = 'inative'
+    print(p.status)
+    p.mode = 'inactive'
     p.save()
+    print(p.status)
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
-    return redirect("provider:homepage")  
+    return redirect("provider:allposts")  
   
 
 def graph(request):

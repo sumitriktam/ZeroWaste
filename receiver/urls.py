@@ -15,5 +15,6 @@ urlpatterns = [
   path("send_feedback/",views.send_feedback,name="send_feedback"),
   path("logout",views.logout,name="logout"),
   path("order-delivered/id=<int:ord_id>/",views.order_delivered,name="order_delivered"),
-  
+  path("update-order/<int:post_id>/", views.update_order, name="update_order"),
+  path("get_post_details/<int:post_id>/", views.get_post_details, name="get_post_details")
 ]

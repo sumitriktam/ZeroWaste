@@ -86,3 +86,93 @@ img {
 .tabels {
   margin-left: 30px;
 }
+/* Style for the popup container */
+.popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style for the edit popup */
+.edit-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Drop shadow */
+  width:25%;
+  height:45%;
+}
+
+.edit-popup h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.edit-popup label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.edit-popup input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+
+.update_button {
+  padding: 10px 20px;
+  background-color: #2C991B; /* Blue color */
+  color: white;
+  font-weight: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position:relative;
+  left:61%;
+  border-radius: 10px;
+}
+
+.edit-popup button:hover {
+  background-color: #0084FF; /* Darker blue color on hover */
+  border-color: none;
+  color:white;
+  font-weight: 5px;
+  border:none;
+  border-radius: 10px;
+}
+.close{
+  
+  background-color: #ffffff;
+  color: black;
+  border-color: black;
+  border-radius: 10px;
+  cursor: pointer;
+  position:relative;
+  left:28%;
+  top:-15.5%;
+  width:25%;
+  height:15%;
+  justify-content: center;
+  text-align: center;
+}
+.message{
+  list-style-type: none;
+  color:#ffffff;
+}
+.message_font{
+  font-size: 130%;
+}
+.messages{
+  justify-content: center;
+  text-align: center;
+  background-color: #2C991B;
+}

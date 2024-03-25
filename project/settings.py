@@ -78,8 +78,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 #enter your email and password here
-EMAIL_HOST_USER = 'bantuvenkatesh.20.it@anits.edu.in'
-EMAIL_HOST_PASSWORD = 'pellptesyfcbjvxd'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 
 WSGI_APPLICATION = 'project.wsgi.application'
@@ -91,9 +91,9 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zw3',
+        'NAME': '',
         'USER': 'root',
-        'PASSWORD': 'j@g@nN1969',
+        'PASSWORD': '',
         'HOST':'localhost',
         'PORT':'3306',
         
