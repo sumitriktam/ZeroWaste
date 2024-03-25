@@ -36,6 +36,12 @@ def give_all_posts():
       post_data['quantity']=user_post.quantity
       post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
       post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
+    elif category=='groceries':
+      description = groceryDes.objects.get(id=user_post.description_id)
+      post_data['quantity']=user_post.quantity
+      post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
+      post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
+
     combined_posts.append(post_data) 
   data={'posts':combined_posts}
   return data
@@ -111,19 +117,28 @@ def order(request):
     #take post_id from the submitted form
     # if(request.method == 'POST'):
     post_id = request.POST.get('post_id')
+    print(type(post_id))
     try:
      ordered_post=post.objects.get(id=post_id)
      provider_location=ordered_post.location
      receiver_user_id=request.session['user_id']
      receiver_user=User.objects.get(id=receiver_user_id)
      delivery_location=User.objects.get(id=receiver_user_id).location
-     #take quantity from the submitted form
-     quantity=request.POST.get('quantity')
+     #update the quantity in post table
+     Post=post.objects.get(id=post_id)
+     available_quantity=int(Post.quantity)
+     ordered_quantity=int(request.POST.get('quantity'))
      
+     quantity_left=available_quantity-ordered_quantity
+     Post.quantity=quantity_left
+     #if quantity becomes zero mark it as expired
+     if(Post.quantity==0):
+      Post.status='expired'
+     Post.save()
      #create a new order in order table
      new_order=Order.objects.create(
        ordered_post=ordered_post, receiver_user=receiver_user,receiver_location=delivery_location,
-       quantity=quantity
+       quantity=ordered_quantity
        )
      data = {
        'image':ordered_post.photo.url,
@@ -142,7 +157,9 @@ def order(request):
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
       return redirect('/receiver/home')
     
-def track_order(request,post_id):
+def track_order(request, ord_id):
+    
+    post_id = Order.objects.get(id=ord_id).ordered_post.id
    
     user_id=request.session['user_id']
     #user can only track his active order(not implemeted)
@@ -157,7 +174,8 @@ def track_order(request,post_id):
      data['message']='Order successful'
      data['provider_location']=provider_location
      data['receiver_location']=receiver_location
-     data['post_id']=post_id    
+     data['post_id']=post_id 
+     data['ord_id'] = ord_id   
    
      #render order tracking page with sucess message
      return render(request,"receiver/trackOrder.html",{'data':data})
@@ -217,6 +235,8 @@ def order_history(request):
       'rejected':rejected,
       'delivered':delivered,
     }
+   
+
    return render(request,'receiver/orderHistory.html',{'orders':all_orders})
            
 def feedback(request,post_id):
@@ -252,14 +272,19 @@ def logout(request):
   return redirect('/')
      
      
-def order_delivered(request, post_id):
+def order_delivered(request, ord_id):
+  post_id = Order.objects.get(id=ord_id).ordered_post.id
   user_id = request.session.get('user_id')
   order = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=user_id).first()
   order.status = 'delivered'
-  total_score = calculate_total_score(post_id)
+  total_score = calculate_total_score(ord_id)
   userId = post.objects.get(id=post_id).user_id
   user = User.objects.get(id=userId)
   user.zerowaste_score += total_score
   user.save(update_fields=['zerowaste_score'])
   order.save(update_fields=['status'])
   return HttpResponse(status=204)
+
+
+
+    

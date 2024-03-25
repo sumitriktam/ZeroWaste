@@ -23,7 +23,7 @@
         <tbody>
           <!-- {{orders}} -->
           {% for order in orders.accepted %}
-          <tr style="cursor: pointer" onclick="trackOrder('{{order.post_id}}')">
+          <tr style="cursor: pointer" onclick="trackOrder('{{order.order_id}}')">
               <td style="text-align:center">{{ order.order_id }}</td>
               <td style="text-align:center"><img src="{{ order.image }}" alt="Product Image" /></td>
               <td style="text-align:center">
@@ -165,10 +165,10 @@
       document.querySelector(".empty-all-orders").style.display = "none";
     }
     filterPosts('all')
-    function trackOrder(postId){
+    function trackOrder(ordId){
       //send to track order page
-      
-      window.location.href = `/receiver/track-order/id=${postId}/`;
+      console.log('>>>>', ordId);
+      window.location.href = `/receiver/track-order/id=${ordId}/`;
 
 
     }

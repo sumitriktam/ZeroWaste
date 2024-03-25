@@ -149,23 +149,29 @@ def feedback(request, post_id):
     feedbacks = FeedbackTab.objects.filter(post_id=post_id)
     return render(request, "provider/feedback.html", context={'feedbacks':feedbacks, "pid":post_id,"postdetails":postdetails})
 
-def accept(request, order_id):
-    user = auth(request)
-    if not user:
-        messages.error(request, 'You need to login first.')
-        return redirect("/login")
-    uid = request.session['user_id']
-    try:
-        order = Order.objects.get(id=order_id)
-    except:
-        messages.error(request, 'No such order to accept.')
-        return redirect("provider:homepage")
-    order.status = "accepted"
-    order.save()
-    messages.error(request, f'Order accepted of user {order.receiver_user.email}.')
-    return redirect("provider:requests")
+def accept(request,order_id):    
+        user = auth(request)
+        if not user:
+            messages.error(request, 'You need to login first.')
+            return redirect("/login")
+        uid = request.session['user_id']
+        try:
+            order = Order.objects.get(id=order_id)
+        except:
+            print("No such order")
+            messages.error(request, 'No such order to accept.')
+            return redirect("provider:homepage")
+        order.status = "accepted"
+        order.save()
+        messages.error(request, f'Order accepted of user {order.receiver_user.email}.')
+        return redirect("provider:requests")
 
-def reject(request, order_id):
+def reject(request):
+    print("ikkada")
+    post_id = request.POST.get('post_id')
+    order_id = request.POST.get('order_id')
+    quantity = request.POST.get('quantity')
+    print(post_id, order_id, quantity)
     user = auth(request)
     if not user:
         messages.error(request, 'You need to login first.')
@@ -176,8 +182,19 @@ def reject(request, order_id):
     except:
         messages.error(request, 'No such order to reject.')
         return redirect("provider:homepage")
+    #get the post and add the ordered quantity
+    Post=post.objects.get(id=post_id)
+    available_quantity=Post.quantity
+    print(quantity,available_quantity)
+    updated_quantity=int(available_quantity)+int(quantity)
+    Post.quantity=updated_quantity
+    #if updated quantity is >=1 make it live
+    if(updated_quantity>=1):
+        Post.status='live'
+    Post.save()
     order.status = "rejected"
     order.save()
+    
     messages.error(request, f'Order rejected of user {order.receiver_user.email}.')
     return redirect("provider:requests")
 
@@ -195,7 +212,6 @@ def delete_post(request, post_id):
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
     return redirect("provider:homepage")  
   
-
 
 def graph(request):
     user = auth(request)

@@ -91,7 +91,7 @@
           <hr />
           <!-- <button class="button">CANCEL ORDER</button> -->
           <!-- Cancel order button -->
-          <form id="myForm" action="{% url 'receiver:order_delivered' post_id=data.post_id %}" onsubmit="return showPopup()">
+          <form id="myForm" action="{% url 'receiver:order_delivered' ord_id=data.ord_id %}" onsubmit="return showPopup()">
           <button class="button" type="submit">ORDER RECEIVED</button>
           </form>
         </div>
