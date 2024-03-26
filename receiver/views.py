@@ -3,27 +3,14 @@ from admin_mod.models import User
 from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes,FeedbackTab
 from receiver.models import Order
 from django.contrib import messages
+from django.http import HttpResponse
 from datetime import datetime
 from admin_mod import views
 from django.urls import reverse
 from django.http import JsonResponse
-from django.http import HttpResponse
+from provider.zerowasteScore import calculate_total_score
 
-
-
-
-def check_user_login_status(request):
-   try:
-    user_id=request.session['user_id']
-   except KeyError:
-    #clear previous error messages
-      
-    messages.error(request,"Please login before acessing the page")
-    return redirect('/login')
-def is_receiver(request):
-  user_id=request.session['user_id']
-  user_role=User.objects.get(id=user_id).role
-  return user_role=='receiver'  
+  
 
 def give_all_posts():
   #send all the posts as list of dictionaries 
@@ -49,25 +36,17 @@ def give_all_posts():
       post_data['quantity']=user_post.quantity
       post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
       post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
+    elif category=='groceries':
+      description = groceryDes.objects.get(id=user_post.description_id)
+      post_data['quantity']=user_post.quantity
+      post_data['expiry_date']=description.expiry_date.strftime('%Y-%m-%d')
+      post_data['expiry_time']=description.expiry_time.strftime('%H:%M')
+
     combined_posts.append(post_data) 
   data={'posts':combined_posts}
   return data
 
-def home(request):
-   #check wether the user is logged in or not
-   try:
-    user_id=request.session['user_id']
-   except KeyError:
-    #clear previous error messages
-      
-    messages.error(request,"Please login before acessing the page")
-    return redirect('/login')
-  #if the user is not receiver redirect to login
-   if(not is_receiver(request)):
-    #clear previous error messages
-      
-    messages.error(request,"Sorry,you dont have permission")
-    return redirect('/login')
+def home(request):    
    #take all posts into 'data' dictionary
    data=give_all_posts()
    return render(request, "receiver/dashboard.html", {'data':data}) 
@@ -75,16 +54,7 @@ def home(request):
   
 
 def view_post(request,post_id):
-  #check if user is logged in or not
-  try:
-    user_id=request.session['user_id']
-  except KeyError:
-    #clear previous error messages
-      
-    messages.error(request,"Please login before acessing the page")
-    return redirect('/login') 
-  #check wether the user_post id is valid
-  
+ #check wether the post exist
   try:
       user_post = post.objects.get(id=post_id)
       post_data={
@@ -135,20 +105,23 @@ def view_post(request,post_id):
             'expiry_time': description.expiry_time.strftime('%H:%M')
         }
       post_data['quantity'] = user_post.quantity
-      return render(request, 'receiver/viewPost.html',{'post_data':post_data})
+      has_pending_order = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=request.session['user_id'], status='pending').exists()
+      if has_pending_order:
+            # Retrieve the quantity ordered for pending orders
+            pending_orders = Order.objects.filter(ordered_post_id=post_id, receiver_user_id=request.session['user_id'], status='pending')
+            pending_quantity = sum(order.quantity for order in pending_orders)
+            post_data['pending_quantity'] = pending_quantity
+      return render(request, 'receiver/viewPost.html', {'post_data': post_data,'has_pending_order': has_pending_order})
+      #return render(request, 'receiver/viewPost.html',{'post_data':post_data})
   except post.DoesNotExist:
         #clear previous error messages
-          
         messages.error(request, 'Sorry, the user_post does not exist')
         return redirect('/receiver/home')
-        
 
 def order(request):
-    print('gotcha')
-    check_user_login_status(request)
     #take post_id from the submitted form
+    # if(request.method == 'POST'):
     post_id = request.POST.get('post_id')
-    print(post_id)
     try:
      ordered_post=post.objects.get(id=post_id)
      provider_location=ordered_post.location
@@ -179,15 +152,35 @@ def order(request):
       #render the page with the specific error(not implemented)
       messages.error(request, 'Sorry there is no such item or the item is already ordered')
       return redirect('/receiver/home')
+def update_order(request, post_id):
+    if request.method == 'POST':
+        # Retrieve updated order details from the form
+        new_quantity = request.POST.get('quantity')
+        
+        # Update the existing order with the new quantity
+        order = Order.objects.get(pk=post_id)
+        order.quantity = new_quantity
+        order.save()
+       # Get the order ID
+        order_id = order.id
+        
+        # Construct the success message including the order ID
+        success_message = f"Order {order_id} has been updated successfully!"
+        
+        # Add success message with the order ID
+        messages.success(request, success_message)
+        # Redirect to the order history page or any other appropriate page
+        return redirect('receiver:order_history')
+    else:
+        # Handle invalid request method
+        messages.error(request,"your order not updated!")
+        return redirect('receiver:home') 
+def track_order(request, ord_id):
     
-def track_order(request,post_id):
-    try:
-     user_id=request.session['user_id']
-    except KeyError:
-    #clear previous error messages
-     messages.error(request,"Please login before acessing the page")
-     return redirect('/login')
-    #user can only track his active order(not yet implemeted)
+    post_id = Order.objects.get(id=ord_id).ordered_post.id
+   
+    user_id=request.session['user_id']
+    #user can only track his active order(not implemeted)
     try:
      receiver_location=User.objects.get(id=user_id).location
      ordered_post=post.objects.get(id=post_id)
@@ -199,7 +192,8 @@ def track_order(request,post_id):
      data['message']='Order successful'
      data['provider_location']=provider_location
      data['receiver_location']=receiver_location
-     data['post_id']=post_id    
+     data['post_id']=post_id 
+     data['ord_id'] = ord_id   
    
      #render order tracking page with sucess message
      return render(request,"receiver/trackOrder.html",{'data':data})
@@ -214,7 +208,6 @@ def track_order(request,post_id):
 
 
 def waiting_page(request):
-  check_user_login_status(request)
   return render(request,'receiver/waitingPage.html')
     
 
@@ -260,6 +253,8 @@ def order_history(request):
       'rejected':rejected,
       'delivered':delivered,
     }
+   
+
    return render(request,'receiver/orderHistory.html',{'orders':all_orders})
            
 def feedback(request,post_id):
@@ -283,16 +278,41 @@ def send_feedback(request):
             rating=rating,
             feedback=feedback_text
         )
-    print("success")
     return HttpResponse(status=204)
   #  else:
   #   data=give_all_posts()
   #   messages.error(request, "Can't access")
   #   return redirect('/receiver/home')
   
-  
+def logout(request):
+  request.session['user_id']=None
+  request.session['role']=None
+  return redirect('/')
      
      
-     
-  
-     
+def order_delivered(request, ord_id):
+  post_id = Order.objects.get(id=ord_id).ordered_post.id
+  user_id = request.session.get('user_id')
+  # print(ord_id , user_id , post_id)
+  order = Order.objects.get(id=ord_id, receiver_user_id=user_id)
+  order.status = 'delivered'
+  total_score = calculate_total_score(ord_id)
+  userId = post.objects.get(id=post_id).user_id
+  user = User.objects.get(id=userId)
+  user.zerowaste_score += total_score
+  user.save(update_fields=['zerowaste_score'])
+  order.save(update_fields=['status'])
+  return HttpResponse(status=204)
+def get_post_details(request, post_id):
+    try:
+        pos = post.objects.get(id=post_id)
+        # Assuming Post has a 'name' field, you can access other fields similarly
+        quantity = pos.quantity
+        # Return the post details as JSON response
+        return JsonResponse({'post_quantity': quantity})
+    except post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    

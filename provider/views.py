@@ -4,6 +4,13 @@ from .models import post, toysDes, groceryDes, clothDes, foodDes, otherDes, Feed
 from django.contrib import messages
 from datetime import datetime
 from .prov_auth import auth, post_auth
+from .plotter import returnhistory 
+import json
+from django.contrib.auth import logout
+def logout_user(request):
+    logout(request)
+    return redirect('/')
+
 
 def homePage(request):
     user = auth(request)
@@ -11,8 +18,10 @@ def homePage(request):
         messages.error(request, 'You need to login first.')
         return redirect("/login")
     matching_posts = post.objects.filter(user=user).filter(mode='active').order_by('-created_at')
-    orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('-date_time')  
-    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders}
+    orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode="active").filter(status="pending").order_by('-date_time')  
+    success = Order.objects.filter(ordered_post__user=user).filter(status="delivered")
+    order_number = orders.count()
+    context = {'uname': user.username, 'email': user.email, 'location':user.location, 'posts':matching_posts, 'orders':orders, 'zscore':user.zerowaste_score, 'number':len(success),'ordernumber':order_number}
     return render(request, "provider/dashboard.html", context)
 
 def newPost(request):
@@ -61,6 +70,7 @@ def newPost(request):
             description_id = obj.id,
             name = data.get('name'),
             location = data.get('location'),
+            latlong =data.get('latlong'),
             will_expire = data.get('will_expire'),
             quantity = data.get('quantity'),
         )
@@ -72,15 +82,25 @@ def newPost(request):
 
     return render(request, "provider/form_newpost.html", context)
 
+def requestsViewActive(request):
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
+    orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode='active').filter(status="pending").order_by('date_time')
+    context = {'ords':orders}
+    return render(request,"provider/active_reqs.html", context)
+
 def requestsViewAll(request):
     user = auth(request)
     if not user:
         messages.error(request, 'You need to login first.')
         return redirect("/login")
     uid = request.session['user_id']
-    orders = Order.objects.filter(ordered_post__user=user).filter(status="pending").order_by('date_time')
+    orders = Order.objects.filter(ordered_post__user=user).filter(ordered_post__mode='active').order_by('date_time')
     context = {'ords':orders}
-    return render(request,"provider/all_reqs.html", context)
+    return render(request,"provider/requestsall.html", context)
 
 def allPosts(request):
     user = auth(request)
@@ -106,6 +126,18 @@ def allPosts(request):
             food_desc = foodDes.objects.filter(id=single_post.description_id).first()
         elif single_post.category == 'others':
             other_desc = otherDes.objects.filter(id=single_post.description_id).first()
+
+        
+        if Order.objects.filter(ordered_post_id=single_post.id, status='accepted').exists():
+            single_post.delete_disabled = True
+        else:
+            single_post.delete_disabled = False
+
+        
+        
+        
+        
+
         posts_with_descriptions.append({
             'post': single_post,
             'toys_desc': toys_desc,
@@ -173,8 +205,28 @@ def delete_post(request, post_id):
     p.mode = 'inative'
     p.save()
     messages.error(request, f'Post {p.name} id = {p.id} deleted.')
-    return redirect("provider:homepage")    
+    return redirect("provider:allposts")  
+  
+
+
+def graph(request):
+    user = auth(request)
+    if not user:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    uid = request.session['user_id']
     
+    score, date = returnhistory(uid)
+    context = {
+        'score_json': json.dumps(score),
+        'date_json': json.dumps(date)
+    }
+
+    
+    return render(request, 'provider/graph.html', context)
+
+
+
 
      
 

@@ -5,11 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>{% block title %} {% endblock %}</title>
     
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="stylesheet" href="/statics/provider/provider_all.css">
+    {% block css %}
+    {% endblock %}
 </head>
 
 <body>
@@ -18,23 +19,27 @@
         <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
         <p class="top-left-text" >ZeroWaste</p>
         <nav class="navbar">
-            <!-- Add your navbar content here -->
             <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#feedback">Feedback</a></li>
-                <li><a href="#chatbox">Chat box</a></li>
+                <li><a href="/provider/home">Home</a></li>
+                <li><a href="/provider/all_posts">Posts</a></li>
+                <li><a href="/provider/requests">Requests</a></li>
+                <li> <button onclick="display_logout()" style="border:none; background-color:#D9D9D9;font-weight:bold;font-size:16px;" class="logout">Logout</button> </li>
             </ul>
         </nav>
         <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
-        <div>
             <!-- {% for message in messages %}
                 <li class="message-any">{{ message }}</li>
-            {% endfor %} -->
-        </ul>
-
+            {% endfor %} -->   
+            <div id="popup-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" style="background-color:red" onclick="closePopup()"><i class="fas fa-times" style="position:absolute;left:15%;"></i></span>
+                    <p style="font-size:145%; font-weight:bold;" class="text_logout">LogOut</p>
+                    <p style="font-size:120%;" class="text_logout">Are you sure,do you want to logout?</p>
+                    <button class="button_logout" style="background-color:#0084FF;" onclick="closePopup()">Cancel</button>
+                    <button class="button_logout" style="background-color:red;"> <a href="{% url 'provider:logout' %}" style="text-decoration:none;color:#ffffff">Log Out</a> </button>
+                </div>
+            </div>
         {% block content %}
-        {% endblock %}
-
-    </div>
+        {% endblock %}  
+        <script src="/statics/provider/logout.js"></script>
 </body>

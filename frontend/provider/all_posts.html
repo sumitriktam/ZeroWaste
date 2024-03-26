@@ -1,27 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Webpage Title</title>
-    <link rel="stylesheet" href="/statics/provider/all_posts.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <img src="/statics/admin/media/simple-icons_overleaf.png" alt="Your Image" class="image">
-        <p class="top-left-text" >ZeroWaste</p>
-        <nav class="navbar">
-            <!-- Add your navbar content here -->
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#feedback">Feedback</a></li>
-                <li><a href="#chatbox">Chat box</a></li>
-            </ul>
-        </nav>
-        <div class="circle"><i class="fa fa-user user" aria-hidden="true"></i></div>
+{% extends "provider/provbase.html" %}
+{% block title %} {{postdetails.name}} Feedback {% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/statics/provider/all_posts.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
         
         <div class="req-name">
             <p>
@@ -79,16 +65,43 @@
                 
             {% endif %}
 
-            <div class="custom-box-line line_position2"><center> <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:1100px;">
-                <a href="{% url 'provider:deletion' item.post.id %}" style="color:#ab2b0b;"><i class="material-icons" style="font-size:40px;color:red; padding-left: 90px;">delete</i></a>
-                <br>
-                <a href="{% url 'receiver:view_post' item.post.id %}" style="color:#1D710F;">View Post -></a> 
-                <a href="{% url 'provider:feedback' item.post.id %}" style="color:#1D710F; margin-left: 8px;">Feedback -></a>
-            </span></center></div>
+            <div class="custom-box-line line_position2">
+                <center>
+                    <span style="color:#1D710F;font-weight:bold; position:absolute; bottom:10px;left:1100px;">
+                        {% if not item.post.delete_disabled %}
+                            <a href="{% url 'provider:deletion' item.post.id %}" style="color:#ab2b0b;">
+                                <i class="material-icons" style="font-size:40px;color:red; padding-left: 90px;">delete</i>
+                            </a> 
+                        {% else %}
+                            <i class="material-icons" style="font-size:40px;color:gray; padding-left: 90px;" title="This post cannot be deleted because delivery was done">delete</i>
+                        {% endif %}
+                        <br>
+                        <a href="{% url 'receiver:view_post' item.post.id %}" style="color:#1D710F;">View Post -></a> 
+                        <a href="{% url 'provider:feedback' item.post.id %}" style="color:#1D710F; margin-left: 8px;">Feedback -></a>
+                    </span>
+                </center>
+            </div>
+
+            
+            
+
+            
 
             
         </div>
         </div> 
+    {% endfor %}
+    {% for message in messages %}
+    <div class="overlay" style="display: flex">
+        <div class="popup">
+          <!-- Your popup content goes here -->
+          <p style="font-family: Arial, Helvetica, sans-serif;font-weight: bold;font-size:25px; position:relative;left:33%;top:7%; ">Delete successful</p>
+          <img src="/statics/provider/images/tick.jpeg" alt="" class="imagetick">
+          <br><br>
+          <p id="popupMessage" style="font-family: Arial, Helvetica, sans-serif;font-size:20px; position:relative;left:26%;top:10%;font-weight: bold;">{{ message }}</p>
+          <button class="close-btn" onclick= closePopup(event) >Done</button>
+        </div>
+      </div>
     {% endfor %}
                 
     </div>
@@ -102,6 +115,9 @@
     <i class="fas fa-comment chatbox-icon"></i>
     </div>
     <script>
+        function closePopup() {
+        document.querySelector('.overlay').style.display = 'none';
+        }
         document.addEventListener("DOMContentLoaded", function () {
             var innerBoxes = document.querySelectorAll(".custom-box4");
 
@@ -137,5 +153,5 @@
             revealInnerBoxes(); // Initial check on page load
         });
     </script>
-</body>
-</html>
+    <script src="/statics/provider/logout.js"></script>
+{% endblock %}

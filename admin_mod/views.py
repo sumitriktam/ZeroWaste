@@ -1,22 +1,24 @@
 import json
 from django.shortcuts import render, redirect
 from django import forms
-from .models import User, Admin, Resetpass, EmailVerification
+from .models import User, Admin, Resetpass, EmailVerification, adminReg
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .custom_auth import  CustomBackend
+from .custom_auth import  CustomBackend, auth
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 import uuid
-import hashlib
-from .mail_helper import send_forget_password_mail, send_user_confirmation_email
+from .mail_helper import send_forget_password_mail, send_user_confirmation_email, send_admin_reg_email
 from django.utils import timezone
-from datetime import timedelta
-import base64
+from datetime import timedelta, datetime
+from provider.models import post, toysDes, groceryDes, clothDes, foodDes, otherDes
+from receiver.models import Order
+from .admin_auth import CustomBackend1, auth1
+
 
 def index(request):
-    #only get users who ate providers and whose status is accepted
+    #only get users who are providers and whose status is accepted
     #other condition is get users whose zerowaste score is grater than zero because by default we're assigning everyone a score of zero
     users = User.objects.filter(status="accepted", role="provider", zerowaste_score__gt=0).order_by('-zerowaste_score')[:9]
     context = {
@@ -29,7 +31,6 @@ def showUsers(request):
     pending_users = User.objects.filter(status='pending')
     rejected_users = User.objects.filter(status='rejected')
 
-    # Here, counting the users for each status
     accepted_count = accepted_users.count()
     pending_count = pending_users.count()
     rejected_count = rejected_users.count()
@@ -113,31 +114,46 @@ def check_user_existence(request):
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = request.POST.get('password')
+        password = request.POST.get('password') 
         custom_backend = CustomBackend()
         user = custom_backend.authenticate(request, email=email, password=password)
         # regUser = custom_backend.authenticate(request, email=email)
-        
         if user is not None:
-            request.session['user_id'] = user.id
-            if user.is_verified == 0:
-                return redirect('email-verification-pending/')
-            elif user.status == 'pending':
-                return  redirect("/wait")
-            elif user.status == 'rejected':
-                return redirect("/application-rejected")
-            elif user.role=='admin':
-                return  redirect("/adminPanel")
-            elif user.role=='provider':
-                return  redirect("provider/home")
-            elif user.role=='receiver':
-                return  redirect("/receiver")
-            else:
-                return redirect('/register')
+            if isinstance(user, User):
+                request.session['user_id'] = user.id
+                if user.is_verified == 0:
+                    return redirect('email-verification-pending/')
+                elif user.status == 'pending':
+                    return redirect("/wait")
+                elif user.status == 'rejected':
+                    return redirect("/application-rejected")
+                elif user.role == 'provider':
+                    return redirect("provider/home")
+                elif user.role == 'receiver':
+                    request.session['role'] = 'receiver'
+                    return redirect("/receiver/home")
+                else:
+                    return redirect('/register')
+            elif isinstance(user, Admin):
+                request.session['admin_id'] = user.id
+                if user.status == 'active':
+                    request.session['role'] = 'admin'
+                    return redirect("/adminPanel")
+                else:
+                    messages.error(request, 'Admin status inactive.')
+                    return redirect('/login')
         else:
-            request.session['user_id'] = 0    #invalidated user
-            messages.error(request, 'Invalid email or password.')
-            return redirect('/login')
+            admin_backend = CustomBackend1()
+            user = admin_backend.authenticate(request, email=email, password=password)
+            print(user)
+            if user is not None:
+                request.session['super_admin_id'] = user.id
+                request.session['role'] = 'superadmin'
+                return redirect("/adminPanel")
+            else:
+                request.session['user_id'] = 0    #invalidated user
+                messages.error(request, 'Invalid email or password.')
+                return redirect('/login')
     else:
         # Render the login page
         return render(request, 'admin/login.html' , {"message":messages.get_messages(request)})
@@ -313,13 +329,327 @@ def application_rejected(request):
     return render(request, 'admin/rejecteduser.html')
 
 def adminPanel(request):
-    return render(request, 'admin/adminHome.html')
+    user = auth(request)
+    superadmin = auth1(request)
+    if not user and not superadmin:
+        messages.error(request, 'You need to login first.')
+        return redirect("/login")
+    return render(request, 'admin/showUsers.html')
 
 def showOrders(request):
     return render(request, 'admin/showOrders.html')
 
 def showPosts(request):
-    return render(request, 'admin/showPosts.html')
+    posts_with_descriptions = []
+    posts = post.objects.all().order_by('-created_at')
+    for single_post in posts:
+        toys_desc = None
+        grocery_desc = None
+        cloth_desc = None
+        food_desc = None
+        other_desc = None
+        if single_post.category == 'toys':
+            toys_desc = toysDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'groceries':
+            grocery_desc = groceryDes.objects.filter(id=single_post.description_id).first()
+            print(grocery_desc)
+
+        elif single_post.category == 'clothes':
+            cloth_desc = clothDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'food':
+            food_desc = foodDes.objects.filter(id=single_post.description_id).first()
+        elif single_post.category == 'others':
+            other_desc = otherDes.objects.filter(id=single_post.description_id).first()
+        posts_with_descriptions.append({
+            'post': single_post,
+            'toys_desc': toys_desc,
+            'grocery_desc': grocery_desc,
+            'cloth_desc': cloth_desc,
+            'food_desc': food_desc,
+            'other_desc': other_desc,
+        })
+    context = {
+        'posts_with_descriptions': posts_with_descriptions,
+    }
+    return render(request, 'admin/showPosts.html', context)
 
 def showAdmins(request):
     return render(request, 'admin/showAdmins.html')
+
+
+def save_post_changes(request):
+    # print("It reached function")
+    def convert_time_to_duration(time_str):
+        time_mapping = {
+            "midnight": "00:00:00:000000",
+            "noon": "12:00:00:000000",
+            "a.m": "00:00:00",
+            "p.m": "12:00:00"
+        }
+
+        if time_str.lower() in time_mapping:
+            return time_mapping[time_str.lower()]
+
+        parts = time_str.strip().lower().split()
+        if len(parts) != 2:
+            raise ValueError("Invalid time format")
+
+        hour, minute = parts[0].split(':')
+        if parts[1] == 'a.m':
+            if hour == '12':
+                hour = '00'
+        elif parts[1] == 'p.m':
+            if hour != '12':
+                hour = str(int(hour) + 12)
+        else:
+            raise ValueError("Invalid time format")
+
+        return f"{hour.zfill(2)}:{minute.zfill(2)}:00:000000"
+    if request.method == 'POST':
+        post_id = request.POST.get('editPostId')
+        print("post Id is : ", post_id)
+        post_obj = post.objects.get(pk=post_id)
+        post_obj.name = request.POST.get('editName')
+        post_obj.category = request.POST.get('editCategory')
+        post_obj.drop_pickup = request.POST.get('editdropPickup')
+        post_obj.location = request.POST.get('editLocation')
+        post_obj.will_expire = request.POST.get('editwillExpire')
+        post_obj.status = request.POST.get('editStatus')
+
+        if post_obj.category == 'toys':
+            toys_desc, created = toysDes.objects.get_or_create(id=post_obj.description_id)
+            toys_desc.desc = request.POST.get('editToysDesc', '')
+            toys_desc.age_group = request.POST.get('editAgeGroup', 0)
+            toys_desc.condition = request.POST.get('editConditionToys', '')
+            toys_desc.save()
+
+        elif post_obj.category == 'groceries':
+            grocery_desc, created = groceryDes.objects.get_or_create(id=post_obj.description_id)
+            grocery_desc.desc = request.POST.get('editGroceryDesc', '')
+            grocery_desc.expiry_date = datetime.strptime(request.POST.get('editExpiryDate', ''), "%B %d, %Y").strftime("%Y-%m-%d")
+            ins_time = request.POST.get('editExpiryTime', '')
+            data_time = convert_time_to_duration(ins_time)
+            print(data_time)
+            grocery_desc.expiry_time = data_time
+            grocery_desc.save()
+
+        elif post_obj.category == 'clothes':
+            cloth_desc, created = clothDes.objects.get_or_create(id=post_obj.description_id)
+            cloth_desc.desc = request.POST.get('editClothDesc', '')
+            cloth_desc.gender = request.POST.get('editGender', '')
+            cloth_desc.condition = request.POST.get('editConditionCloth', '')
+            cloth_desc.size = request.POST.get('editSize', '')
+            cloth_desc.save()
+
+        elif post_obj.category == 'food':
+            food_desc, created = foodDes.objects.get_or_create(id=post_obj.description_id)
+            food_desc.desc = request.POST.get('editFoodDesc', '')
+            food_desc.expiry_date = request.POST.get('editExpiryDateFood', '')
+            food_desc.expiry_time = request.POST.get('editExpiryTimeFood', '')
+            food_desc.save()
+
+        elif post_obj.category == 'others':
+            other_desc, created = otherDes.objects.get_or_create(id=post_obj.description_id)
+            other_desc.desc = request.POST.get('editOtherDesc', '')
+            other_desc.save()
+
+        post_obj.save()
+        return redirect('/posts/')
+    return redirect('/posts/')
+
+def delete_post(request):
+    if request.method == 'GET':
+        post_id = request.GET.get('post_id')
+        post_del = post.objects.get(id=post_id)
+        post_del.delete()
+        return redirect('/posts/')
+
+def showAdmins(request):
+    accepted_admins = Admin.objects.filter(status='active')
+    rejected_admins = Admin.objects.filter(status='inactive')
+
+    accepted_count = accepted_admins.count()
+    rejected_count = rejected_admins.count()
+
+    context = {
+        'active_admins': accepted_admins,
+        'inactive_admins': rejected_admins,
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    return render(request, "admin/showAdmins.html", context)
+
+
+def approve_admin(request, admin_id):
+    admin = get_object_or_404(Admin, id=admin_id)
+    admin.status = 'active'
+    admin.save(update_fields=['status'])
+
+    accepted_admins = Admin.objects.filter(status='active')
+    rejected_admins = Admin.objects.filter(status='inactive')
+
+    accepted_count = accepted_admins.count()
+    rejected_count = rejected_admins.count()
+
+    data = {
+        'active_admins': list(accepted_admins.values()),
+        'inactive_admins': list(rejected_admins.values()),
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    return JsonResponse(data)
+
+def reject_admin(request, admin_id):
+    admin = get_object_or_404(Admin, id=admin_id)
+    admin.status = 'inactive'
+    admin.save(update_fields=['status'])
+
+    accepted_admins = Admin.objects.filter(status='active')
+    rejected_admins = Admin.objects.filter(status='inactive')
+
+    accepted_count = accepted_admins.count()
+    rejected_count = rejected_admins.count()
+
+    data = {
+        'active_admins': list(accepted_admins.values()),
+        'inactive_admins': list(rejected_admins.values()),
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    return JsonResponse(data)
+
+
+def send_regEmail(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        print(email)
+        if email == '':
+            messages.success(request, 'No email provided.')
+            return redirect('/forget-password/')
+        send_admin_reg_email(email)
+    return redirect('/admins/')
+
+def reg_admin(request, token):
+    try:
+        verification = get_object_or_404(adminReg, token=token)
+        user = verification.email
+        print(user)
+        if user is not None:
+            return render(request, 'admin/adminReg.html')
+        else:
+            error_message = 'Invalid URL.'
+            return render(request, 'admin/invalid_token.html', {'error_message': error_message})
+
+    except:
+        error_message = 'Invalid URL.'
+        return render(request, 'admin/invalid_token.html', {'error_message': error_message})
+    
+
+def adminRegister(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        location = request.POST.get('location')
+
+        # Save data to the Admin model
+        admin = Admin(email=email, username=username, password=password, location=location)
+        admin.save()
+        return redirect('registration_success')
+
+    return render(request, 'admin/adminReg.html')
+
+
+def registration_success_view(request):
+    return render(request, 'admin/registration_success.html')
+
+def showOrders(request):
+    orders=Order.objects.all()
+   #seperate all kinds of orders made by this user
+    accepted=[]
+    pending=[]
+    rejected=[]
+    delivered=[] #receiver have a button wether the order is delivered or not when he clicks on that the status will be updated to delivered(not yet implemented)  
+    for order in orders:
+        order_details={}
+        order_details['status']=order.status
+        order_details['order_id']=order.id
+        order_details['date']=order.date_time.strftime('%d-%m-%Y')
+        order_details['time']=order.date_time.strftime('%H:%M')
+        order_details['quantity']=order.quantity
+        order_details['receiver_user'] = order.receiver_user.username
+
+        if(order.status=='accepted'):
+            accepted.append(order_details)
+        elif(order.status=='pending'):
+            pending.append(order_details)
+        elif(order.status=='rejected'):
+            rejected.append(order_details)
+        else:
+            delivered.append(order_details)
+        
+        #take image,item_name,user_post location from user_post table
+        user_post=post.objects.get(id=order.ordered_post_id)
+        order_details['image']=user_post.photo.url
+        order_details['item_name']=user_post.name
+        order_details['location']=user_post.location
+        order_details['post_user'] = user_post.user.username
+        #take location from user table
+        
+    all_orders={
+        'accepted':accepted,
+        'pending':pending,
+        'rejected':rejected,
+        'delivered':delivered,
+        }
+           
+
+    return render(request, 'admin/showOrders.html' , {'orders':all_orders})
+
+def edit_order(request):
+    if request.method == 'POST' :
+        # Get the form data
+        status = request.POST['status']
+        order_id = request.POST['order_id']
+        date = request.POST['date']
+        time = request.POST['time']
+        quantity = request.POST['quantity']
+        image = request.POST['image']
+        item_name = request.POST['item_name']
+        location = request.POST['location']
+        receiver_user = request.POST['receiver_user']
+        post_user = request.POST['post_user']
+
+        # Get the order object from the database
+        order = Order.objects.get(pk=order_id)
+        user_post=post.objects.get(id=order.ordered_post_id)
+
+        
+        # Update the order with the new data
+        order.status = status
+        order.receiver_user.username = receiver_user
+        order.quantity = quantity
+        # user_post.photo.url = image
+        user_post.user.username = post_user
+        user_post.name = item_name
+        user_post.location = location
+        order.save()
+        user_post.save()
+        
+        
+        return JsonResponse({'message': 'Order updated successfully!'})
+    else:
+        return JsonResponse({'error': 'Invalid request!'}, status=400)
+    
+
+def delete_order(request, order_id):
+    try:
+        order = Order.objects.get(pk=order_id)
+        order.delete()
+        return JsonResponse({'message': 'Order deleted successfully!'})
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order does not exist'}, status=404)
+    
+def logout(request):
+    request.session.flush()
+    return redirect('/')

@@ -1,0 +1,104 @@
+{% extends "provider/provbase.html" %}
+ {% block title %} {{postdetails.name}} Feedback {% endblock %}
+ 
+ {% block css %}
+     <link rel="stylesheet" href="/statics/provider/graph.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ {% endblock %}
+ 
+ {% block content %}
+ <div class="req-name">
+    <p >
+        <a style ="color: #1D710F;text-decoration: none;" href="/provider/home">
+            <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+        </a>Your Performance</p>
+</div>
+<div id="graph-container">
+<canvas id="zeroWasteChart" width="800" height="400"></canvas>
+</div>
+
+
+<script>
+
+
+const scores = JSON.parse('{{ score_json | escapejs }}');
+const dates = JSON.parse('{{ date_json | escapejs }}');
+
+
+const formattedDates = dates.map(date => new Date(date));
+
+
+const monthYearLabels = formattedDates.map(date => {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return monthNames[date.getMonth()] + '-' + date.getFullYear();
+});
+
+
+const ctx = document.getElementById('zeroWasteChart').getContext('2d');
+const zeroWasteChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: monthYearLabels,
+        datasets: [{
+            label: 'Zero Waste Score',
+            data: scores,
+            borderColor: scores.map((score, index) => (index > 0 && score < scores[index - 1]) ? 'red' : 'green'),
+            borderWidth: 3,
+            pointStyle: 'circle',
+            pointRadius: 6
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: false
+                
+            },
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const date = formattedDates[context.dataIndex];
+                        let scoreChange = '';
+                        if (context.dataIndex > 0) {
+                            scoreChange = scores[context.dataIndex] - scores[context.dataIndex - 1];
+                            scoreChange = scoreChange >= 0 ? ` (+${scoreChange})` : ` (${scoreChange})`;
+                        }
+                        return `Score: ${scores[context.dataIndex]}${scoreChange}\nDate: ${date.toDateString()}`;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                title: {
+                    display: true,
+                    text: 'Zero Waste Score',
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+        }
+    }
+});
+// Function to display the popup
+function display_logout() {
+var modal = document.getElementById("popup-modal");
+modal.style.display = "block";
+}
+
+// Function to close the popup
+function closePopup() {
+var modal = document.getElementById("popup-modal");
+modal.style.display = "none";
+}
+
+</script>
+</body>
+</html>
+
+{% endblock %}

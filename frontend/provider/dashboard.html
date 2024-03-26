@@ -1,17 +1,28 @@
 {% extends "provider/provbase.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/statics/provider/provider_all.css">
+{% endblock %}
+
+
 {% block content %}
 
+    <div>
         <p class="welcome" >Welcome <span style="color:green">{{uname}}</span>!</p>
         <p class="code" >You are an <span style="color:green">{{data}}</span> donor!</p>
         <div class="custom-box box1"><p class="text-donations" >No.of donations:</p>
-        <p class="donation">50</p></div>
+        <p class="donation"><span style="color:green">{{number}}</p></div>
         <div class="custom-box box2"><p class="text-donations" >ZeroWaste score:</p>
-        <p class="zerowastescore">100</p></div>
+        <p class="zerowastescore"><span style="color:green">{{zscore}}</span></p></div>
         <div class="custom-box-history ">
             <p class="history" >Posts History</p>
             <a class="view-all" href="/provider/all_posts" style="text-decoration: none;">View all -></a>  
             <div class="custom-box-line line_position1"></div>
-            <div class=" custom-box-2">
+            <div class=" custom-box-22">
                 {% for post in posts %}
                     <div class="historybox">
                         <img src="/{{ post.photo }}" alt="Your Image" class="image2">
@@ -36,7 +47,20 @@
             <a class="view-all" href="/provider/requests" style="text-decoration: none;">View all requests -> </a>
 
             <div class="custom-box-2">
-            {% for or in orders %}
+                <div class="image-container1">
+                    <div class="flex-container2">
+                        <div class="image-container2">
+                            <img src="/statics/provider/images/requestimg.jpg" alt="Your Image" class="image8">
+                        </div>
+                        <div class="text-container2">
+                            <span class="pending-requests">
+                            <p>You have {{ordernumber}} pending requests</p>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                
+            <!-- {% for or in orders %}
                 
                     <center>
                         <p style="font-family: 'Poppins', sans-serif;font-size:20px;">
@@ -46,12 +70,16 @@
                         {{ or.date_time|timesince }} ago.
                     </span></p></center>     
                     <hr>
-           {% endfor %}
+           {% endfor %} -->
         </div>
         </div>
         <div class="custom-box5">
             <p class="performance">Your <span style="color:#1D710F">performance</span></p>
-            <img src="/statics/provider/images/image3.jpeg" alt="Your Image" class="image3">
+            <div class="image-container">
+                <img src="/statics/provider/images/image3.jpeg" alt="Your Image" class="image3">
+                <!-- Add the "See my graph ->" button -->
+                <a href="/provider/graph" class="see-graph-button">See my graph -&gt;</a>
+            </div>
         </div>
         <div class="custom-box6">
             <center><p style="font-family: 'Inter', sans-serif;font-size:22px; position:absolute;top:20px;left:60px;">Share what you can spare, someone out there will care</p></center>
@@ -93,16 +121,21 @@
       </div>
     {% endfor %}
 
+    </div>
+
 
     <script>
+
+function closePopup(event) {
+            
+         document.querySelector('.overlay').style.display = 'none';
+        }
 
         function toggleExpand(arrow) {
         const innerBox = arrow.parentNode;
         innerBox.classList.toggle('expanded');}
   
-        function closePopup() {
-        document.querySelector('.overlay').style.display = 'none';
-        }
+        
         
         let arrowPressCount = 0;
       

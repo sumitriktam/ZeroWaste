@@ -183,11 +183,15 @@ body {
 {
     left: 51px; /* X-axis */
     top: 222px; /* Y-axis */
+    border-radius: 10px; /* Adjust the value to change the roundness of the corners */
+    box-shadow: 0 1px 9px rgba(0, 0, 0, 0.2);
 }
 .box2
 {
     left: 350px; /* X-axis */
     top: 222px; /* Y-axis */
+    border-radius: 10px; /* Adjust the value to change the roundness of the corners */
+    box-shadow: 0 1px 9px rgba(0, 0, 0, 0.2);
 }
 .zerowastescore{
     font-size: 30px;
@@ -206,7 +210,7 @@ body {
     top: 110px; /* Y-axis */
     width: 550px;
     height:280px;
-    overflow-y: auto;
+    overflow-wrap: inherit;
 }
 
 /* Add this to the existing CSS file */
@@ -230,6 +234,17 @@ body {
     top: 110px;
 }
 .custom-box-2 {
+    width: 520px;
+    height: 200px; /* Set the height to limit the number of visible items */
+    background-color: #ffffff;
+    position: absolute;
+    top: 60px;
+    overflow-y: clip; /* Enable vertical scrolling */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.custom-box-22{
     width: 520px;
     height: 200px; /* Set the height to limit the number of visible items */
     background-color: #ffffff;
@@ -381,9 +396,9 @@ body {
 }
 .custom-box5{
     position: absolute;
-    left: 50px; /* X-axis */
+    left: 30px; /* X-axis */
     top: 400px; /* Y-axis */
-    width: 515px;
+    width: 600px;
     height:280px;
 }
 .performance{
@@ -452,7 +467,7 @@ body {
     width:90%;
     position:relative;
     top:128%;
-    left:2.5%;
+    left:-15%;
     
   }
 
@@ -508,3 +523,182 @@ body {
     top:20px;
     transform: rotate(180deg);
   }
+  .custom-box5 {
+    position: relative;
+    width: 600px;
+    height: 280px;
+    left: 30px;
+
+}
+
+.performance {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    
+    left: 30%;
+    transform: translateX(-50%);
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.image3 {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* .see-graph-button {
+   
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: white;
+    border: 4px solid grey;
+    border-radius: 20px;
+    color: green;
+    cursor: pointer;
+    transition: color 0.3s;
+    text-decoration: none;
+} */
+.see-graph-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 20px;
+    color: green;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    background: linear-gradient(rgba(230, 230, 230, 0.5), rgba(230, 230, 230, 0.5)); 
+  }
+
+.see-graph-button:hover {
+    color: blue;
+    background-color: #F0EFEF;
+}
+.image-container1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-container2{
+    display: flex;
+    align-items: center;
+}
+
+.image-container2 {
+    flex: 0 0 auto;
+    margin-right: 20px;
+}
+
+.image8 {
+    width: 250px; /* Adjust size as needed */
+    height:auto;
+    
+}
+
+.text-container2 {
+    flex: 1 1 auto;
+}
+
+.pending-requests {
+    color: green;
+    font-weight: bold;
+    font-size: 24px;
+}
+.modal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.5); /* Transparent black overlay */
+    z-index: 1;
+}
+
+/* Popup content */
+.modal-content {
+    display: block;
+    position:absolute;
+    width:40%;
+    height:30%;
+    left:30%;
+    top:30%;
+    background-color:#ffffff /* Use rgba for opacity */;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 10px;
+}
+.logout:hover{
+    cursor: pointer;
+    color:red;
+}
+.text_logout{
+    position:relative;
+    left:5%;
+    top:5%;
+
+}
+.button_logout{
+    position: relative;
+    left:60%;
+    top:18%;
+    margin-right:15px;
+    height:16%;
+    width:16%;
+    border-radius: 8px;
+    cursor: pointer;
+    color:#ffffff;
+    font-size: 100%;
+    border:none;
+}
+.button_logout:hover{
+   border:2px solid black;
+}
+/* Close button */
+.close {
+    position:absolute;
+    left:95.5%;
+    top:4%;
+    color:white;
+    font-weight: 3px;
+    width:3.5%;
+    height:8%;
+    font-size:20px;
+    border:none;
+    cursor: pointer;;
+}
+
+.close:hover{
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1.8px solid black;
+}
+@media only screen and (max-width: 1024px) {
+    .modal-content{
+        width:40%;
+        height:20%;
+    }
+    .button_logout{
+        top:15%;
+    }
+}

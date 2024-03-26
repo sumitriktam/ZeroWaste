@@ -1,0 +1,81 @@
+
+ {% extends "provider/provbase.html" %}
+ {% block title %} {{postdetails.name}} Feedback {% endblock %}
+ 
+ {% block css %}
+     <link rel="stylesheet" href="/statics/provider/requests.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+ {% endblock %}
+ 
+ {% block content %}
+ <div class=" outer-outer">
+     
+ 
+     <div class="paraclass">
+         <p>
+             <a style="color: #1D710F;text-decoration: none;" href="/provider/home">
+                 <i class="fas fa-arrow-left icon-with-space" style="font-size: 20px;"></i>
+             </a>
+             Active Requests 
+         </p>
+         <div class="button-container">
+        
+            <a href="{% url 'provider:allrequests' %}">
+                <button>All Requests</button>
+            </a>
+        </div>
+ </div>
+ 
+     {% for message in messages %}
+     <div style="
+         background-color: #f7a9af;
+         color: #721c24;
+         border: 1px solid #f5c6cb;
+         padding: 10px;
+         border-radius: 5px;
+         margin-bottom: 10px;
+     ">
+         <ul>    
+             <li>{{ message }}</li>
+         </ul>
+     </div>
+     {% endfor %}
+ 
+     <link rel="stylesheet" href="/statics/provider/reqs.css">
+ 
+     <div class="outer-outer2">
+         <table class="order-table">
+             <thead>
+                 <tr>
+                     <th>Ordered Post</th>
+                     <th>Ordered Time</th>
+                     <th>Ordered By</th>
+                     <th>Receiver Location</th>
+                     <th>Quantity</th>
+                     <th>Actions</th>
+                 </tr>
+             </thead>
+             {% for order in ords %}
+                 <tbody>
+                     <tr>
+                         <td>{{ order.ordered_post.name }} (post id={{order.ordered_post.id}})</td>
+                         <td>{{ order.date_time }}</td>
+                         <td>{{ order.receiver_user.email }}</td>
+                         <td>{{ order.receiver_location }}</td>
+                         <td>{{ order.quantity }}</td>
+                         <td>
+                             <a href="{% url 'provider:accept' order.id %}">
+                                 <button class="accept-btn">Accept</button>
+                             </a>
+                             <a href="{% url 'provider:reject' order.id %}">
+                                 <button class="reject-btn">Reject</button>
+                             </a>
+                         </td>
+                     </tr>
+                 </tbody>
+             {% endfor %}
+         </table>
+     </div>
+    </div>
+ {% endblock %}
+ 

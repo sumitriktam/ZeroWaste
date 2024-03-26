@@ -24,6 +24,7 @@ class post(models.Model):
     description_id = models.CharField(max_length=100)  
     name = models.CharField(max_length=1000)
     location = models.CharField(max_length = 100)
+    latlong = models.CharField(max_length = 100, blank=True, null=True)
     EXPIRY_CHOICES = (
         ('expirable', 'Expirable or Perishable'),
         ('non_expirable', 'Not Expirable or Non Perishable'),
@@ -41,6 +42,20 @@ class post(models.Model):
         ('inactive', 'inactive')
     ]
     mode = models.CharField(max_length=20,choices=MODE_CHOICES, default="active")
+    
+    def delete(self, *args, **kwargs):
+        if self.category == 'toys':
+            toysDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'groceries':
+            groceryDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'clothes':
+            clothDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'food':
+            foodDes.objects.filter(id=self.description_id).delete()
+        elif self.category == 'others':
+            otherDes.objects.filter(id=self.description_id).delete()
+        
+        super(post, self).delete(*args, **kwargs)
 
 class toysDes(models.Model):
     age_group = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(30)])
@@ -89,6 +104,7 @@ class foodDes(models.Model):
 class otherDes(models.Model):
     desc = models.CharField(max_length=1000, default="")
 
+
 class FeedbackTab(models.Model):
     post_id = models.ForeignKey(post, on_delete=models.CASCADE)  
     given_by = models.ForeignKey(User, blank=True, on_delete=models.CASCADE)
@@ -103,4 +119,8 @@ class FeedbackTab(models.Model):
     rating = models.IntegerField(choices=RatingChoices.choices)
     feedback = models.CharField(max_length=500, default="")
 
+class scoreHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_time = models.DateTimeField(default=timezone.now)
+    score = models.IntegerField(default=0)
 

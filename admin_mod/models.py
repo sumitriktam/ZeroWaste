@@ -32,12 +32,18 @@ class User(models.Model):
 
 
 
-class Admin(models.Model):
-    name = models.CharField(max_length=100)
-    password = models.CharField(max_length=300)
+class Admin (models.Model):
+    email = models.EmailField()
+    username = models.CharField(max_length=100)
+    password = models.CharField(max_length=64) 
+    location = models.CharField(max_length=255)
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
 
     def save(self, *args, **kwargs):
-        # Hash the password using sha256
         if self.password:
             self.password = hashlib.sha256(self.password.encode()).hexdigest()
         super().save(*args, **kwargs)
@@ -60,3 +66,11 @@ class EmailVerification(models.Model):
 
     def __str__(self):
         return self.user.email
+    
+class adminReg(models.Model):
+    email = models.EmailField(max_length=100)
+    token = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.admin.email
