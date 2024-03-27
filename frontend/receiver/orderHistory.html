@@ -13,6 +13,16 @@
     </ul>
 </div>
 {% endif %}
+<div class="message-container">
+</div>
+<div id="deletepopup" class="deletepopup">
+  <div class="deletemodal-content">
+    <p id="deleteMessage"></p>
+    <input type="hidden" value="" id="deleteorderid"/>
+    <button id="confirmBtn" class="deleteyes">Yes</button>
+    <button onclick="closeModal()" class="deleteno">No</button>
+  </div>
+</div>
 <div class="tabels">
       
 
@@ -145,6 +155,73 @@
 
 
 <script>
+    // Get the modal
+    var moda = document.getElementById("deletepopup");
+
+    // Get the confirm button
+    var confirmBtn = document.getElementById("confirmBtn");
+
+    // Get the message element
+    var deleteMessage = document.getElementById("deleteMessage");
+    var inputorderid=document.getElementById("deleteorderid");
+
+    // When the user clicks the delete button, open the modal
+    function opendelete(orderId) {
+      // Set the message with the order number
+      deleteMessage.innerHTML = `Are you sure you want to delete order number ${orderId}?`;
+      inputorderid.value= orderId;
+      moda.style.display = "block";
+    }
+
+    // When the user clicks the confirm button, call the deleteOrder function
+    confirmBtn.addEventListener("click", function() {
+      closeModal(); // Close the modal
+      var inputElement = document.getElementById("deleteorderid");
+      var num=inputElement.value;
+      var orderId=parseInt(num);
+      deleteOrder(orderId); // Call the deleteOrder function
+    });
+    function deleteOrder(orderId) {
+    // Send an AJAX request to delete the order
+    const csrftoken = getCookie('csrftoken');
+    fetch(`/delete_order/${orderId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            // If deletion is successful, reload the page or update the UI
+            displayMessage('Order removed successfully');
+        } else {
+            // Handle errors if any
+            console.error('Error deleting order');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting order:', error);
+    });
+}
+function displayMessage(message) {
+    // Create a message element
+    let messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageElement.classList.add('success-message'); // Add CSS class for styling
+    
+    // Append the message element to a suitable container
+    let container = document.querySelector('.message-container'); // Change this selector to match your HTML structure
+    container.appendChild(messageElement);
+    
+    // Automatically remove the message after a certain duration (e.g., 5 seconds)
+    setTimeout(() => {
+        messageElement.remove();
+        location.reload();
+    }, 2000);
+}
+function closeModal() {
+    moda.style.display = "none"; // Hide the modal
+}
    allOrders={{ orders | safe }};
     if (allOrders.accepted.length === 0) {
       document.querySelector(".non-empty-accepted").style.display = "none";
@@ -299,7 +376,9 @@
             </td>
             <td class=${order.status} style="font-size: 18px; font-weight: 600;text-align:center">
                ${order.status}
-               ${order.status === 'pending' ? `<button onclick="openEditPopup(${order.order_id})">Edit</button>` : ''}
+               <br>
+               ${order.status === 'pending' ? `<button class="edit" onclick="openEditPopup(${order.order_id})">Edit</button>` : ''}
+               ${order.status === 'pending' ? `<button class="delete" onclick="opendelete  (${order.order_id})">Delete</button>` : ''}
             </td>
         `;
         document.querySelector(".table-content").appendChild(newRow);
@@ -398,5 +477,11 @@ function closeEditPopup() {
         popupContainer.remove();
     }
 }
+setTimeout(function() {
+        var messagesDiv = document.querySelector('.messages');
+        if (messagesDiv) {
+            messagesDiv.remove();
+        }
+    }, 2000);
 </script>
 {%endblock%}
