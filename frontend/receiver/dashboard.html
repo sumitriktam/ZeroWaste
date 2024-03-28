@@ -111,7 +111,7 @@
     color: #333;
     position: relative;
     top:auto;
-    margin-top:15%;
+    margin-top:5%;
     bottom: 0px;
     width: 100%;
   }
@@ -119,6 +119,12 @@
   .accordion-button {
     background-color: #86b77d;
     color: #fff;
+  }
+  .nopost{
+    margin-bottom:10%;
+    position:relative;
+    top:10%;
+    margin-top: 13%;
   }
 </style>
 
@@ -313,7 +319,7 @@ filterSubcategories(MainDropDownValue.value);
    filteredPosts = filteritems(all_posts , category , subcategory);
    if(category==='all')filteredPosts=all_posts
    document.querySelector('.restaurant-cards').innerHTML=''
-   if(filteredPosts.length===0)document.querySelector('.restaurant-cards').innerHTML="<h2>Sorry no posts available</h2>"
+   if(filteredPosts.length===0)document.querySelector('.restaurant-cards').innerHTML="<h2 class='nopost'>Sorry no posts available</h2>"
    filteredPosts.forEach(function(post) { let postElement =
    document.createElement('div'); postElement.className = 'restaurant-card';
    postElement.onclick = function() { sendRequest(post.post_id); };

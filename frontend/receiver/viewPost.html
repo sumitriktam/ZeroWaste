@@ -177,6 +177,15 @@
   margin-left: 3%;
   margin-bottom:3%;
 }
+@media (max-width: 700px) {
+  .horizontal {
+    flex-direction: column;
+  }
+}
+
+b{
+  margin-right: 10px;
+}
 
 </style>
 {%endblock%}
@@ -197,16 +206,17 @@
       <div class="one">
         <p style="color: green; font-weight: bold; margin-top: 20px; margin-left: 30px;">ORDER-DETAILS</p>
         <div class="det">
-          {% if post_data.category == 'toys' %}
+          {% if post_data.category == 'food' %}
             <div class="details">
               <div style="border-radius: 20px; background-color: rgb(237, 237, 237); display: flex; padding: 10px; margin: 5px;">
-                <b>TOY NAME:</b>
+                <b>FOOD NAME:</b>
                 <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{post_data.item_name}}</span>
               </div>
               <div style="border-radius: 20px; background-color: rgb(237, 237, 237); display: flex; padding: 10px; margin: 5px;">
                 <b>PICKUP/DROP:</b>
                 <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{post_data.drop_pickup}}</span>
               </div>
+              <!-- Add other food details here -->
             </div>
           {% endif %}
           {% if post_data.category == 'Groceries' %}
@@ -242,6 +252,11 @@
             <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{post_data.item_name}}</span>
           </div>
             <div class="details">
+              <div style="border-radius: 20px; background-color: rgb(237, 237, 237); display: flex; padding: 10px; margin: 5px;">
+                <b>GENDER:</b>
+                <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{post_data.description.gender}}</span>
+              </div>
+              <!-- Add other clothes details here -->
               <div
                 style="
                   border-radius: 20px;
@@ -266,23 +281,43 @@
             <b>LOCATION:</b>
             <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{post_data.location}}</span>
           </div>
+          <!-- Add other common details here -->
           <div style="border-radius: 20px; background-color: rgb(237, 237, 237); padding: 10px; margin: 5px;">
             <b>DESCRIPTION:</b><br>
-            <p>Age Group: 3 years and above</p>
-            <p>Quality: Used but in good condition</p>
-            <div
-              style="
-                border-radius: 20px;
-                background-color: rgb(237, 237, 237);
-                display: flex;
-                padding: 10px;
-                margin: 5px;
-              ">
-              <b>QUANTITY AVAILABLE:</b>
-              <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                {{post_data.quantity}}
-              </span>
-            </div>
+            <!-- Include food and clothes specific description details here -->
+            {% if post_data.category == 'food' %}
+              <b>EXPIRY DATE:</b>
+              <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ post_data.description.expiry_date }}</span><br>
+              <b>EXPIRY TIME:</b>
+              <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ post_data.description.expiry_time }}</span><br>
+            {% endif %}
+            {% if post_data.category == 'clothes' %}
+              <b>SIZE:</b>
+              <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ post_data.description.size }}</span><br>
+            {% endif %}
+            <b>COMMENT:</b>
+            <span style="flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ post_data.description.desc }}</span>
+          </div>     
+              <div
+                style="
+                  border-radius: 20px;
+                  background-color: rgb(237, 237, 237);
+                  display: flex;
+                  padding: 10px;
+                  margin: 5px;
+                ">
+                <b>QUANTITY AVAILABLE:</b>
+                <span style="margin-left:5px;flex-grow: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                  {{post_data.quantity}}
+                </span>
+                {% if has_pending_order %}
+                  <!-- <button type="button" class="button" style="height:30px;" onclick="checkQuantity();" disabled>ORDER NOW</button> -->
+                  <b>QUANTITY ORDERED: </b>
+                  <span style="margin-left:5px;flex-grow: 2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                  {{post_data.pending_quantity}}
+                </span>
+                  {% endif %}
+                </div>
             <div
               class="bold-line"
               style="border-top: 3px solid black; width: 95%; margin-left: 5px"
@@ -313,16 +348,15 @@
                   <button type="button" class="button" style="height:30px;" onclick="checkQuantity();">ORDER NOW</button>
               {% endif %}
             </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 </body>
 <div id="myModal" class="modal">
   <div class="modal-content">
       <h2>Thank You!</h2>
-      <img src="\statics\provider\images\tick.jpeg" alt="Tick Mark Image" style="width:20%;height:20%;margin-left:38%;">
+      <img src="{% static '/provider/images/tick.jpeg' %}" alt="Tick Mark Image" style="width:20%;height:20%;margin-left:38%;">
       <p>Your order has been placed successfully.</p>
       <form action="{% url 'receiver:waiting_page' %}" method="post">
       {% csrf_token %}
@@ -346,7 +380,7 @@
       >
         Close
       </button>
-  </div>
+  
 </div>
 
 
@@ -376,7 +410,7 @@
         showPopup()
      
     }
-   }   
+}
 
   function showPopup() {
       var modal = document.getElementById('myModal');
